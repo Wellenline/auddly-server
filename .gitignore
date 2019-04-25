@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.art/
+.cache/
+.env
+.DS_Store
+yarn-error.log
+.art_cache
+data
+docker-compose.yml
