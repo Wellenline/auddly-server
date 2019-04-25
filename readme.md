@@ -1,4 +1,8 @@
 # Waveline Music Server
+<a href="https://play.google.com/store/apps/details?id=com.waveline.app" target="_blank">
+<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" width="200">
+</a>
+
 
 ### Getting started
 
