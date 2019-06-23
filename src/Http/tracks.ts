@@ -47,7 +47,7 @@ export class Tracks {
 		return {
 			tracks: await tracks,
 			query,
-			total: await TrackModel.countDocuments(query),
+			total: await TrackModel.countDocuments(lookup),
 		};
 
 	}
