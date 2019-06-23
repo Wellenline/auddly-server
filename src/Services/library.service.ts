@@ -8,6 +8,7 @@ import { ArtistModel } from "../Models/artist.model";
 import { GenreModel, Genre } from "../Models/genre.model";
 import { TrackModel } from "../Models/track.model";
 import { AlbumModel } from "../Models/album.model";
+import { InfoModel } from "../Models/info.model";
 /**
  * Library Service
  */
@@ -118,7 +119,7 @@ export class LibraryService {
 			await this.extractMetadata(files);
 
 			const end = new Date();
-			return {
+			const data = {
 				start,
 				end,
 				seconds: (end.getTime() - start.getTime()) / 1000,
@@ -129,6 +130,11 @@ export class LibraryService {
 				mount: path,
 				last_scan: new Date(),
 			};
+
+			return await InfoModel.findOneAndUpdate({ last_scan: { $ne: undefined } }, data, {
+				upsert: true,
+				new: true,
+			});
 		} catch (e) {
 			throw e;
 		}

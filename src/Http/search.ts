@@ -1,47 +1,42 @@
-import { Get, Query, Resource, httpException, HttpStatus } from "liquid-http";
 import { AlbumModel } from "../Models/album.model";
 import { TrackModel } from "../Models/track.model";
 import { ArtistModel } from "../Models/artist.model";
+import { Resource, Get, Context } from "@wellenline/via";
 @Resource("/search")
 export class Search {
 	@Get("/")
-	public async index(@Query("q") q: string) {
-		try {
-			const results = {
-				albums: [],
-				artists: [],
-				tracks: [],
-			};
+	public async index(@Context("query") query: { q: string }) {
+		const results = {
+			albums: [],
+			artists: [],
+			tracks: [],
+		};
 
-			// Find tracks
-			results.tracks = await TrackModel.find({
-				title: {
-					$regex: q,
-					$options: "i",
-				},
-			}).populate("album genre artist");
+		// Find tracks
+		results.tracks = await TrackModel.find({
+			title: {
+				$regex: query.q,
+				$options: "i",
+			},
+		}).populate("album genre artist");
 
-			// Find albums
-			results.albums = await AlbumModel.find({
-				name: {
-					$regex: q,
-					$options: "i",
-				},
-			}).populate("artist");
+		// Find albums
+		results.albums = await AlbumModel.find({
+			name: {
+				$regex: query.q,
+				$options: "i",
+			},
+		}).populate("artist");
 
-			// Find albums
-			results.artists = await ArtistModel.find({
-				name: {
-					$regex: q,
-					$options: "i",
-				},
-			});
+		// Find albums
+		results.artists = await ArtistModel.find({
+			name: {
+				$regex: query.q,
+				$options: "i",
+			},
+		});
 
-			return results;
-
-		} catch (e) {
-			throw httpException(e.toString(), HttpStatus.BAD_REQUEST);
-
-		}
+		return results;
 	}
+
 }

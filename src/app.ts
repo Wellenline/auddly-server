@@ -1,51 +1,32 @@
-import * as cors from "cors";
+import { bootstrap, app } from "@wellenline/via";
 import * as dotenv from "dotenv";
-import { IncomingForm } from "formidable";
 import * as ip from "ip";
-// import { app, Autoload } from "laf-http";
+
+import { cors, bodyParser, auth } from "./Http/middleware/global";
 import * as mongoose from "mongoose";
-
-import { bootstrap, app, Use } from "liquid-http";
-
+import { LibraryService } from "./Services/library.service";
 // tslint:disable-next-line:no-var-requires
 import qr = require("qrcode-terminal");
-import { LibraryService } from "./Services/library.service";
-import { AuthService } from "./Services/auth.service";
-class App {
+export class App {
 	constructor() {
-		(<any>mongoose).Promise = global.Promise;
-
 		dotenv.config();
-
+		(<any>mongoose).Promise = global.Promise;
+		bootstrap({
+			port: (process.env.PORT as number | string),
+			middleware: [cors, bodyParser, auth(["art", "play"])],
+			autoload: __dirname + "/Http",
+		});
 		mongoose.connect(process.env.MONGO_URL, {
 			useNewUrlParser: true,
 		});
 
-		bootstrap({
-			port: <any>process.env.PORT || 5002,
-			middleware: [cors(), new AuthService().middleware(["art", "play"]), (req: any, res: any, next: any) => {
-				const form = new IncomingForm();
-				form.maxFields = 500;
-				form.maxFieldsSize = 2 * 1024 * 1024;
-				form.parse(req, (err, fields, files) => {
-					req.files = files;
-					req.body = fields;
-					next();
-				});
-			}],
-			autoload: __dirname + "/Http",
-
-		});
-
-		new LibraryService().sync(process.env.MUSIC_PATH, [".mp3", ".flac", ".m4a"]);
+		// new LibraryService().sync(process.env.MUSIC_PATH, [".mp3", ".flac", ".m4a"]);
 
 		const HOST = process.env.HOST || ip.address();
 		qr.generate(`http://${HOST}:${process.env.PORT || 5002}?key=${process.env.API_KEY}`);
 
 		console.info(`[DEBUG] Server running: http://${HOST}:${process.env.PORT || 5002}?key=${process.env.API_KEY}`);
-
 	}
-
 }
 
 export default new App();
