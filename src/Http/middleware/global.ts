@@ -57,7 +57,6 @@ export const auth = (whitelist: string[]) => {
 					message: "API Key missing",
 				}));
 
-				context.res.end();
 				return false;
 			}
 
@@ -68,7 +67,6 @@ export const auth = (whitelist: string[]) => {
 					message: "Invalid API Key",
 				}));
 
-				context.res.end();
 				return false;
 
 			}

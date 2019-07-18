@@ -5,7 +5,6 @@ import { Context, IContext, Resource, Get, HttpStatus } from "@wellenline/via";
 @Resource("/tracks")
 export class Tracks {
 	@Get("/")
-	// tslint:disable-next-line:max-line-length
 	public async tracks(@Context("query") query: {
 		skip?: number,
 		limit?: number,
@@ -71,16 +70,6 @@ export class Tracks {
 		};
 
 		return audio;
-		/*res.writeHead(200, {
-
-			"Content-Type": mime.getType(track.path),
-			"Accept-Ranges": "bytes",
-			"Content-Length": stat.size,
-
-		});
-		res.write(audio);
-		res.end();*/
-
 	}
 
 	@Get("/like/:id")

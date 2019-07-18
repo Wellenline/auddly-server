@@ -24,6 +24,7 @@ export class LibraryService {
 					.map((s: string) => s.charAt(0).toUpperCase() + s.substring(1))
 					.join(" ") : string;
 			};
+
 			for (let file of files) {
 				let genre: Genre | any;
 				const exists = await TrackModel.findOne({ path: file });
