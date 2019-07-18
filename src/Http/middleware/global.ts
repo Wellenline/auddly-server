@@ -1,4 +1,4 @@
-import { IContext, HttpStatus, app } from "@wellenline/via";
+import { IContext, HttpStatus, app, HttpException } from "@wellenline/via";
 import { IncomingForm } from "formidable";
 
 /**
@@ -14,8 +14,7 @@ export const cors = async (context: IContext) => {
 
 	if (context.req.method === "OPTIONS") {
 		context.res.writeHead(204, headers);
-		context.res.end();
-		return false;
+		return context.res.end();
 	}
 
 	return true;
@@ -50,25 +49,11 @@ export const auth = (whitelist: string[]) => {
 
 			const api_key = context.req.headers["x-api-key"] || context.req.query.key;
 			if (!api_key) {
-
-				context.res.writeHead(HttpStatus.UNAUTHORIZED, app.headers);
-				context.res.write(JSON.stringify({
-					statusCode: HttpStatus.UNAUTHORIZED,
-					message: "API Key missing",
-				}));
-
-				return context.res.end();
+				throw new HttpException("API key missing", HttpStatus.UNAUTHORIZED);
 			}
 
 			if (process.env.API_KEY !== api_key) {
-				context.res.writeHead(HttpStatus.UNAUTHORIZED, app.headers);
-				context.res.write(JSON.stringify({
-					statusCode: HttpStatus.UNAUTHORIZED,
-					message: "Invalid API Key",
-				}));
-
-				return context.res.end();
-
+				throw new HttpException("Invalid API key", HttpStatus.UNAUTHORIZED);
 			}
 
 			return true;
