@@ -57,7 +57,7 @@ export const auth = (whitelist: string[]) => {
 					message: "API Key missing",
 				}));
 
-				return false;
+				return context.res.end();
 			}
 
 			if (process.env.API_KEY !== api_key) {
@@ -67,7 +67,7 @@ export const auth = (whitelist: string[]) => {
 					message: "Invalid API Key",
 				}));
 
-				return false;
+				return context.res.end();
 
 			}
 
