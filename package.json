@@ -36,7 +36,7 @@
   "license": "MIT",
   "dependencies": {
     "@wellenline/via": "https://github.com/wellenline/via#rev2",
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "cors": "^2.8.1",
     "dotenv": "^4.0.0",
     "formidable": "^1.1.1",
