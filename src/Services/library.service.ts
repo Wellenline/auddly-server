@@ -31,7 +31,7 @@ export class LibraryService {
 				if (!exists) {
 
 					const metadata = await mm.parseFile(file);
-					const id = crypto.createHash("md5").update(`${metadata.common.title}-${metadata.common.album}`).digest("hex");
+					const id = crypto.createHash("md5").update(`${metadata.common.artist}-${metadata.common.album}`).digest("hex");
 
 					// Create artist
 					let artist = await ArtistModel.findOne({ name: capitalize(metadata.common.artist) });
@@ -69,6 +69,9 @@ export class LibraryService {
 					// Create new album
 					let album = await AlbumModel.findOne({ name: metadata.common.album });
 					if (!album) {
+						if (metadata.common.picture && metadata.common.picture.length > 0) {
+							fs.writeFileSync(`${process.env.ART_PATH}/${id}`, metadata.common.picture[0].data);
+						}
 						album = await AlbumModel.create({ name: metadata.common.album, artist: artist._id, art: id, created_at: new Date() });
 					}
 
@@ -76,10 +79,6 @@ export class LibraryService {
 					let track = await TrackModel.findOne({ title: metadata.common.title, artist: artist._id, album: album._id });
 
 					if (!track) {
-						if (metadata.common.picture && metadata.common.picture.length > 0) {
-							fs.writeFileSync(`${process.env.ART_PATH}/${id}`, metadata.common.picture[0].data);
-						}
-
 						track = await TrackModel.create({
 							title: metadata.common.title,
 							artist: artist._id,

@@ -8,6 +8,7 @@ export class Tracks {
 	public async tracks(@Context("query") query: {
 		skip?: number,
 		limit?: number,
+		shuffle?: boolean,
 		genre?: string,
 		favourites?: boolean,
 		artist?: string,
@@ -33,20 +34,34 @@ export class Tracks {
 			lookup.album = query.album;
 		}
 
-		const tracks = TrackModel.find(lookup).populate("album genre artist").sort("-created_at");
+		const model = TrackModel.find(lookup).populate("album genre artist").sort("-created_at");
 
-		if (query.skip) {
-			tracks.skip(query.skip);
+		const total = await TrackModel.countDocuments(lookup);
+
+		if (query.skip && !query.shuffle) {
+			model.skip(query.skip);
 		}
 
-		if (query.limit) {
-			tracks.limit(query.limit);
+		if (query.limit && !query.shuffle) {
+			model.limit(query.limit);
 		}
 
+		let tracks = await model;
+
+		if (query.shuffle) {
+			const min = 0;
+			const n = [];
+
+			for (let i = 0; i < query.limit; i++) {
+				n.push(Math.floor(Math.random() * (tracks.length - min + 1)) + min);
+			}
+
+			tracks = n.map((i) => tracks[i]);
+		}
 		return {
-			tracks: await tracks,
+			tracks,
 			query,
-			total: await TrackModel.countDocuments(lookup),
+			total,
 		};
 
 	}
