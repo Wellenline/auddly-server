@@ -56,7 +56,7 @@ export class Tracks {
 				n.push(Math.floor(Math.random() * (tracks.length - min + 1)) + min);
 			}
 
-			tracks = n.map((i) => tracks[i]);
+			tracks = n.map((i) => tracks[i]).filter((s) => s !== null);
 		}
 		return {
 			tracks,
