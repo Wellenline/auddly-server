@@ -23,9 +23,9 @@ export class App {
 		// new LibraryService().sync(process.env.MUSIC_PATH, [".mp3", ".flac", ".m4a"]);
 
 		const HOST = process.env.HOST || ip.address();
-		qr.generate(`http://${HOST}:${process.env.PORT || 5002}?key=${process.env.API_KEY}`);
+		qr.generate(`${HOST}?key=${process.env.API_KEY}`);
 
-		console.info(`[DEBUG] Server running: http://${HOST}:${process.env.PORT || 5002}?key=${process.env.API_KEY}`);
+		console.info(`[DEBUG] Server running: ${HOST}?key=${process.env.API_KEY}`);
 	}
 }
 
