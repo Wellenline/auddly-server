@@ -8,3 +8,4 @@ yarn-error.log
 .art_cache
 data
 docker-compose.yml
+demo

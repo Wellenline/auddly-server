@@ -7,7 +7,7 @@ export class Albums {
 	public async index(@Context("query") query: { skip?: number, limit?: number }) {
 		const skip = query.skip || 0;
 		const limit = query.limit || 20;
-		return await AlbumModel.find().populate("artist").skip(skip).limit(limit);
+		return await AlbumModel.find().populate("artist").skip(skip).limit(limit).sort({ created_at: -1 });
 	}
 
 	@Get("/artists/:id")
