@@ -75,13 +75,30 @@ export class LibraryService {
 						if (metadata.common.picture && metadata.common.picture.length > 0) {
 							fs.writeFileSync(`${process.env.ART_PATH}/${id}`, metadata.common.picture[0].data);
 						} else {
-							const link = await albumArt(metadata.common.artist, {
+
+							try {
+								if (process.env.SPOTIFY_ID && process.env.SPOTIFY_SECRET) {
+									const spotifyAlbum = await new Spotify().search("album", `album:${metadata.common.album} artist:${metadata.common.artist}`);
+									console.dir(spotifyAlbum.albums.items);
+									if (spotifyAlbum && spotifyAlbum.albums && spotifyAlbum.albums.items && spotifyAlbum.albums.items.length > 0) {
+										const link = spotifyAlbum.albums.items[0].images[0] ? spotifyAlbum.albums.items[0].images[0].url : false;
+
+										if (link) {
+											await this.download(link, `${process.env.ART_PATH}/${id}`);
+										}
+									}
+								}
+							} catch (e) {
+								console.info(e);
+							}
+
+							/*const link = await albumArt(metadata.common.artist, {
 								album: metadata.common.album,
 							});
 
 							if (link) {
 								await this.download(link, `${process.env.ART_PATH}/${id}`);
-							}
+							}*/
 						}
 						album = await AlbumModel.create({ name: metadata.common.album, artist: artist._id, art: id, created_at: new Date() });
 					}
