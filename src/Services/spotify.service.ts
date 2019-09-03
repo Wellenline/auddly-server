@@ -5,7 +5,7 @@ export enum KeyTypes {
 }
 export enum Types {
 	ARTIST = "artist",
-	ALBUM = "albu,,",
+	ALBUM = "album",
 }
 export class SpotifyService {
 	private static _instance: SpotifyService;

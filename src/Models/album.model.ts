@@ -1,16 +1,17 @@
-import { prop, Ref, Typegoose, ModelType } from "typegoose";
+import { prop, Ref, Typegoose, ModelType, staticMethod } from "typegoose";
 import { Artist } from "./artist.model";
 import { capitalize } from "../utils/captialize";
 import { SpotifyService, KeyTypes, Types } from "../Services/spotify.service";
 
 export class Album extends Typegoose {
+	@staticMethod
 	public static async findOrCreate(this: ModelType<Album> & typeof Album, name: string, artist: { name: string, id: any }) {
 
 		let album = await this.findOne({ name: capitalize(name) });
 		if (!album) {
 			album = await this.create({
 				name,
-				artists: artist.id,
+				artist: artist.id,
 				created_at: new Date(),
 				art: await SpotifyService.instance.picture(Types.ALBUM, KeyTypes.ALBUMS, `album:${name} artist:${artist.name}`),
 			});
