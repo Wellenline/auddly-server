@@ -15,19 +15,19 @@
     "start": "yarn lint && tsc --project tsconfig.json && node dist/app.js"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.0",
+    "@types/cors": "^2.8.6",
     "@types/dotenv": "^4.0.0",
     "@types/formidable": "^1.0.29",
     "@types/ip": "^0.0.30",
     "@types/mime": "^2.0.0",
-    "@types/mongoose": "^5.2.0",
-    "@types/node": "^11.9.5",
+    "@types/mongoose": "^5.5.16",
+    "@types/node": "^11.13.20",
     "ava": "^1.2.1",
-    "nodemon": "^1.11.0",
-    "rimraf": "^2.5.4",
+    "nodemon": "^1.19.2",
+    "rimraf": "^2.7.1",
     "supertest": "^3.0.0",
     "tslint": "^4.3.1",
-    "typescript": "^3.3.3333"
+    "typescript": "^3.6.2"
   },
   "pkg": {
     "scripts": "dist/**/*.js"
@@ -35,7 +35,7 @@
   "author": "Mihkel Baranov",
   "license": "MIT",
   "dependencies": {
-    "@wellenline/via": "https://github.com/wellenline/via#rev2",
+    "@wellenline/via": "git+https://github.com/wellenline/via.git#rev2",
     "album-art": "^2.0.1",
     "axios": "^0.18.1",
     "cors": "^2.8.1",
@@ -43,11 +43,11 @@
     "formidable": "^1.1.1",
     "ip": "^1.1.5",
     "laf-http": "^3.0.0",
-    "mime": "^2.2.0",
-    "mongoose": "^5.2.3",
+    "mime": "^2.4.4",
+    "mongoose": "^5.6.11",
     "music-metadata": "^2.6.1",
     "qrcode-terminal": "^0.12.0",
-    "typegoose": "^5.5.1"
+    "typegoose": "^5.9.0"
   },
   "repository": "https://github.com/MihkelBaranov/waveline-server.git"
 }

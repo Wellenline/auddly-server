@@ -1,8 +1,21 @@
 import { Resource, Get, Context, IContext } from "@wellenline/via";
 import { AlbumModel } from "../Models/album.model";
+import { existsSync, readFileSync } from "fs";
 
 @Resource("/albums")
 export class Albums {
+
+	@Get("/art/:id")
+	public async art(@Context() context: IContext) {
+		context.headers = {
+			"Content-type": "image/png",
+		};
+		const id = context.params.id;
+		const image = existsSync(`${process.env.ART_PATH}/${id}`) ?
+			readFileSync(`${process.env.ART_PATH}/${id}`) : readFileSync(`./assets/placeholder.png`);
+		return image;
+	}
+
 	@Get("/")
 	public async index(@Context("query") query: { skip?: number, limit?: number }) {
 		const skip = query.skip || 0;
@@ -39,4 +52,5 @@ export class Albums {
 	public async album(@Context("params") params: { id: string }) {
 		return await AlbumModel.findById(params.id).populate("artist");
 	}
+
 }

@@ -30,25 +30,53 @@ export class LibraryService {
 
 			for (let file of files) {
 				let genre: Genre | any;
-				const exists = await TrackModel.findOne({ path: file });
+				const exists = await TrackModel.exists({ path: file });
 				if (!exists) {
 					const metadata = await mm.parseFile(file);
-
+					console.log(metadata);
 					const artists = await ArtistModel.findOrCreate(metadata.common.artists.length > 1 ? metadata.common.artists : metadata.common.artist.split(","));
 
-					const albumArtist = artists.find((artist) => artist.name === capitalize(metadata.common.albumartist));
+					console.log(artists);
+					const albumArtist = artists.find((artist) => artist.name === (capitalize(metadata.common.albumartist || metadata.common.artist)));
 
-					const album = await AlbumModel.findOrCreate(metadata.common.album, {
-						name: albumArtist.name,
-						id: albumArtist._id,
+					const album = await AlbumModel.findOrCreate({
+						album: metadata.common.album,
+						artist: {
+							name: albumArtist.name,
+							id: albumArtist._id,
+						},
+						year: metadata.common.year,
+						artists,
+						picture: metadata.common.picture && metadata.common.picture.length > 0 ? metadata.common.picture[0].data : false,
 					});
 
-					console.log("Artists", artists);
-
-					console.log("Album", album);
+					if (metadata.common.genre) {
+						genre = await GenreModel.findOne({ name: metadata.common.genre[0] });
+						if (!genre) {
+							genre = await GenreModel.create({ name: metadata.common.genre[0] });
+						}
+					}
 					// console.log(metadata);
 
-					const albumArtID = crypto.createHash("md5").update(`${metadata.common.albumartist}-${metadata.common.album}`).digest("hex");
+					// const albumArtID = crypto.createHash("md5").update(`${metadata.common.albumartist}-${metadata.common.album}`).digest("hex");
+
+					let track = await TrackModel.findOne({ title: capitalize(metadata.common.title), artist: albumArtist._id, album: album._id });
+
+					if (!track) {
+						track = await TrackModel.create({
+							title: metadata.common.title,
+							artists: artists.map((artist) => artist._id),
+							album: album._id,
+							picture: album.picture,
+							genre: genre ? genre._id : undefined,
+							duration: metadata.format.duration,
+							path: file,
+							year: metadata.common.year,
+							created_at: new Date(),
+						});
+					}
+
+					tracks.push(track);
 					// 	console.log(metadata, albumArtID);
 					/*const id = crypto.createHash("md5").update(`${metadata.common.albumartist}-${metadata.common.album}`).digest("hex");
 

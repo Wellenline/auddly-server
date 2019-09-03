@@ -14,7 +14,7 @@ export class Tracks {
 		artist?: string,
 		album?: string,
 	}) {
-		const lookup: { genre?: string, favourited?: boolean, artist?: string, album?: string } = {};
+		const lookup: { genre?: string, favourited?: boolean, artists?: string, album?: string } = {};
 		query.skip = query.skip || 0;
 		query.limit = query.limit || 20;
 
@@ -23,7 +23,7 @@ export class Tracks {
 		}
 
 		if (query.artist) {
-			lookup.artist = query.artist;
+			lookup.artists = query.artist;
 		}
 
 		if (query.favourites) {
@@ -33,8 +33,17 @@ export class Tracks {
 		if (query.album) {
 			lookup.album = query.album;
 		}
+		const model = TrackModel.find(lookup).populate([{
+			path: "album",
+			populate: [{
+				path: "artist",
+			}],
+		}, {
+			path: "genre",
+		}, {
+			path: "artists",
 
-		const model = TrackModel.find(lookup).populate("album genre artist").sort("-created_at");
+		}]).sort("-created_at");
 
 		const total = await TrackModel.countDocuments(lookup);
 
@@ -119,8 +128,8 @@ export class Tracks {
 				title: {
 					$first: "$title",
 				},
-				artist: {
-					$first: "$artist",
+				artists: {
+					$first: "$artists",
 				},
 				album: {
 					$first: "$album",
@@ -147,18 +156,18 @@ export class Tracks {
 			$lookup:
 			{
 				from: "artists",
-				localField: "artist",
+				localField: "artists",
 				foreignField: "_id",
-				as: "artist",
+				as: "artists",
 			},
-		}, { $unwind: { path: "$album" } }, { $unwind: { path: "$artist" } },
+		}, { $unwind: { path: "$album" } },
 		{
 			$project: {
 				_id: "$track_id",
 				plays: "$plays",
 				favourited: "$favourited",
 				title: "$title",
-				artist: "$artist",
+				artists: "$artists",
 				album: "$album",
 				art: "$art",
 				duration: "$duration",

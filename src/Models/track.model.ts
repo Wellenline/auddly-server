@@ -1,15 +1,15 @@
 import * as mongoose from "mongoose";
-import { prop, Ref, Typegoose } from "typegoose";
+import { prop, Ref, Typegoose, arrayProp } from "typegoose";
 import { Artist } from "./artist.model";
 import { Album } from "./album.model";
 import { Genre } from "./genre.model";
 
 export class Track extends Typegoose {
 	@prop()
-	public title: string;
+	public name: string;
 
-	@prop({ ref: Artist })
-	public artist: Ref<Artist>;
+	@arrayProp({ itemsRef: Artist })
+	public artists: Ref<Artist[]>;
 
 	@prop({ ref: Album })
 	public album: Ref<Album>;
@@ -34,6 +34,9 @@ export class Track extends Typegoose {
 
 	@prop()
 	public last_play: Date;
+
+	@prop()
+	public year: number;
 
 	@prop()
 	public created_at: Date = new Date();
