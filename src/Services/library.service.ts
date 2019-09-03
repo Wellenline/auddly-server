@@ -2,9 +2,9 @@ import * as crypto from "crypto";
 import * as fs from "fs";
 import * as mm from "music-metadata";
 import * as path from "path";
-import { Spotify } from "./spotify.service";
+import { SpotifyService } from "./spotify.service";
 
-import { ArtistModel } from "../Models/artist.model";
+import { ArtistModel, Artist } from "../Models/artist.model";
 import { GenreModel, Genre } from "../Models/genre.model";
 import { TrackModel } from "../Models/track.model";
 import { AlbumModel } from "../Models/album.model";
@@ -32,9 +32,25 @@ export class LibraryService {
 				let genre: Genre | any;
 				const exists = await TrackModel.findOne({ path: file });
 				if (!exists) {
-
 					const metadata = await mm.parseFile(file);
-					const id = crypto.createHash("md5").update(`${metadata.common.artist}-${metadata.common.album}`).digest("hex");
+
+					const artists = await ArtistModel.findOrCreate(metadata.common.artists.length > 1 ? metadata.common.artists : metadata.common.artist.split(","));
+
+					const albumArtist = artists.find((artist) => artist.name === capitalize(metadata.common.albumartist));
+
+					const album = await AlbumModel.findOrCreate(metadata.common.album, {
+						name: albumArtist.name,
+						id: albumArtist._id,
+					});
+
+					console.log("Artists", artists);
+
+					console.log("Album", album);
+					// console.log(metadata);
+
+					const albumArtID = crypto.createHash("md5").update(`${metadata.common.albumartist}-${metadata.common.album}`).digest("hex");
+					// 	console.log(metadata, albumArtID);
+					/*const id = crypto.createHash("md5").update(`${metadata.common.albumartist}-${metadata.common.album}`).digest("hex");
 
 					// Create artist
 					let artist = await ArtistModel.findOne({ name: capitalize(metadata.common.artist) });
@@ -92,13 +108,13 @@ export class LibraryService {
 								console.info(e);
 							}
 
-							/*const link = await albumArt(metadata.common.artist, {
+							const link = await albumArt(metadata.common.artist, {
 								album: metadata.common.album,
 							});
 
 							if (link) {
 								await this.download(link, `${process.env.ART_PATH}/${id}`);
-							}*/
+							}
 						}
 						album = await AlbumModel.create({ name: metadata.common.album, artist: artist._id, art: id, created_at: new Date() });
 					}
@@ -120,7 +136,7 @@ export class LibraryService {
 					}
 
 					tracks.push(track);
-
+*/
 				}
 			}
 

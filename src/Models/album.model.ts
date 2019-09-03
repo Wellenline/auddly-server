@@ -1,8 +1,24 @@
-import * as mongoose from "mongoose";
-import { prop, Ref, Typegoose } from "typegoose";
+import { prop, Ref, Typegoose, ModelType } from "typegoose";
 import { Artist } from "./artist.model";
+import { capitalize } from "../utils/captialize";
+import { SpotifyService, KeyTypes, Types } from "../Services/spotify.service";
 
 export class Album extends Typegoose {
+	public static async findOrCreate(this: ModelType<Album> & typeof Album, name: string, artist: { name: string, id: any }) {
+
+		let album = await this.findOne({ name: capitalize(name) });
+		if (!album) {
+			album = await this.create({
+				name,
+				artists: artist.id,
+				created_at: new Date(),
+				art: await SpotifyService.instance.picture(Types.ALBUM, KeyTypes.ALBUMS, `album:${name} artist:${artist.name}`),
+			});
+		}
+
+		return album;
+	}
+
 	@prop()
 	public name: string;
 
@@ -17,6 +33,4 @@ export class Album extends Typegoose {
 
 }
 
-export const AlbumModel = new Album().getModelForClass(Album, {
-	existingMongoose: mongoose,
-});
+export const AlbumModel = new Album().getModelForClass(Album);
