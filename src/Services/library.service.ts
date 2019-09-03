@@ -9,6 +9,9 @@ import { GenreModel, Genre } from "../Models/genre.model";
 import { TrackModel } from "../Models/track.model";
 import { AlbumModel } from "../Models/album.model";
 import { InfoModel } from "../Models/info.model";
+import albumArt = require("album-art");
+import axios from "axios";
+
 /**
  * Library Service
  */
@@ -71,6 +74,14 @@ export class LibraryService {
 					if (!album) {
 						if (metadata.common.picture && metadata.common.picture.length > 0) {
 							fs.writeFileSync(`${process.env.ART_PATH}/${id}`, metadata.common.picture[0].data);
+						} else {
+							const link = await albumArt(metadata.common.artist, {
+								album: metadata.common.album,
+							});
+
+							if (link) {
+								await this.download(link, `${process.env.ART_PATH}/${id}`);
+							}
 						}
 						album = await AlbumModel.create({ name: metadata.common.album, artist: artist._id, art: id, created_at: new Date() });
 					}
@@ -102,6 +113,22 @@ export class LibraryService {
 			throw e;
 		}
 	}
+
+	public download(url: any, file: fs.PathLike) {
+		axios({
+			url,
+			responseType: "stream",
+		}).then(
+			(response) =>
+				new Promise((resolve, reject) => {
+					response.data
+						.pipe(fs.createWriteStream(file))
+						.on("finish", () => resolve())
+						.on("error", (e: any) => reject(e));
+				}),
+		);
+	}
+
 	/**
 	 * Sync music library
 	 * @param path music directory
