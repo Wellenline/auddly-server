@@ -1,6 +1,5 @@
 import { prop, Ref, Typegoose, ModelType, staticMethod, arrayProp, pre, post } from "typegoose";
 import { Artist } from "./artist.model";
-import { capitalize } from "../utils/captialize";
 import { SpotifyService, KeyTypes, Types } from "../Services/spotify.service";
 import { createHash } from "crypto";
 import { writeFileSync } from "fs";

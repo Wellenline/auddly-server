@@ -1,4 +1,4 @@
-import { SpotifyService, KeyTypes, Types } from "../services/spotify.service";
+import { SpotifyService, KeyTypes, Types } from "../Services/spotify.service";
 import { prop, Typegoose, staticMethod, ModelType } from "typegoose";
 import { capitalize } from "../utils/captialize";
 
