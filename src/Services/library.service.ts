@@ -1,181 +1,80 @@
-import * as crypto from "crypto";
-import * as fs from "fs";
+import { PathLike, createWriteStream, existsSync, mkdirSync, readdirSync, statSync } from "fs";
 import * as mm from "music-metadata";
 import * as path from "path";
-import { SpotifyService } from "./spotify.service";
-
-import { ArtistModel, Artist } from "../Models/artist.model";
+import { ArtistModel } from "../Models/artist.model";
 import { GenreModel, Genre } from "../Models/genre.model";
 import { TrackModel } from "../Models/track.model";
 import { AlbumModel } from "../Models/album.model";
 import { InfoModel } from "../Models/info.model";
-import albumArt = require("album-art");
+import { capitalize } from "../utils/captialize";
+
 import axios from "axios";
 
 /**
  * Library Service
  */
 export class LibraryService {
+	private static _instance: LibraryService;
+
+	public static get instance(): LibraryService {
+		if (!LibraryService._instance) {
+			LibraryService._instance = new LibraryService();
+		}
+
+		return LibraryService._instance;
+	}
 	private bytes = 0;
 
 	public async extractMetadata(files: any) {
-		try {
-			const tracks = [];
-			const capitalize = (string: string) => {
-				return string ? string.toLowerCase()
-					.split(" ")
-					.map((s: string) => s.charAt(0).toUpperCase() + s.substring(1))
-					.join(" ") : string;
-			};
+		const tracks = [];
+		for (let file of files) {
+			let genre: Genre | any;
+			const exists = await TrackModel.exists({ path: file });
+			if (!exists) {
+				const metadata = await mm.parseFile(file);
+				// console.log(metadata);
+				const artists = await ArtistModel.findOrCreate(metadata.common.artists.length > 1 ? metadata.common.artists : metadata.common.artist.split(/[&,]+/));
 
-			for (let file of files) {
-				let genre: Genre | any;
-				const exists = await TrackModel.exists({ path: file });
-				if (!exists) {
-					const metadata = await mm.parseFile(file);
-					console.log(metadata);
-					const artists = await ArtistModel.findOrCreate(metadata.common.artists.length > 1 ? metadata.common.artists : metadata.common.artist.split(","));
+				const album = await AlbumModel.findOrCreate({
+					album: metadata.common.album,
+					artist: {
+						name: metadata.common.artist,
+						id: artists[0]._id,
+					},
+					year: metadata.common.year,
+					artists,
+					picture: metadata.common.picture && metadata.common.picture.length > 0 ? metadata.common.picture[0].data : false,
+				});
 
-					console.log(artists);
-					const albumArtist = artists.find((artist) => artist.name === (capitalize(metadata.common.albumartist || metadata.common.artist)));
-
-					const album = await AlbumModel.findOrCreate({
-						album: metadata.common.album,
-						artist: {
-							name: albumArtist.name,
-							id: albumArtist._id,
-						},
-						year: metadata.common.year,
-						artists,
-						picture: metadata.common.picture && metadata.common.picture.length > 0 ? metadata.common.picture[0].data : false,
-					});
-
-					if (metadata.common.genre) {
-						genre = await GenreModel.findOne({ name: metadata.common.genre[0] });
-						if (!genre) {
-							genre = await GenreModel.create({ name: metadata.common.genre[0] });
-						}
+				if (metadata.common.genre) {
+					genre = await GenreModel.findOne({ name: metadata.common.genre[0] });
+					if (!genre) {
+						genre = await GenreModel.create({ name: metadata.common.genre[0] });
 					}
-					// console.log(metadata);
-
-					// const albumArtID = crypto.createHash("md5").update(`${metadata.common.albumartist}-${metadata.common.album}`).digest("hex");
-
-					let track = await TrackModel.findOne({ title: capitalize(metadata.common.title), artist: albumArtist._id, album: album._id });
-
-					if (!track) {
-						track = await TrackModel.create({
-							title: metadata.common.title,
-							artists: artists.map((artist) => artist._id),
-							album: album._id,
-							picture: album.picture,
-							genre: genre ? genre._id : undefined,
-							duration: metadata.format.duration,
-							path: file,
-							year: metadata.common.year,
-							created_at: new Date(),
-						});
-					}
-
-					tracks.push(track);
-					// 	console.log(metadata, albumArtID);
-					/*const id = crypto.createHash("md5").update(`${metadata.common.albumartist}-${metadata.common.album}`).digest("hex");
-
-					// Create artist
-					let artist = await ArtistModel.findOne({ name: capitalize(metadata.common.artist) });
-					if (!artist) {
-						const data: { name?: string, picture?: string, created_at?: Date } = {
-							name: capitalize(metadata.common.artist),
-							created_at: new Date(),
-						};
-
-						try {
-							if (process.env.SPOTIFY_ID && process.env.SPOTIFY_SECRET) {
-								const spotifyArtist = await new Spotify().search("artist", metadata.common.artist);
-								console.dir(spotifyArtist.artists.items);
-								if (spotifyArtist && spotifyArtist.artists && spotifyArtist.artists.items && spotifyArtist.artists.items.length > 0) {
-									data.picture = spotifyArtist.artists.items[0].images[0] ? spotifyArtist.artists.items[0].images[0].url : "";
-								}
-							}
-						} catch (e) {
-							console.info(e);
-						}
-
-						console.info("Creating new artist");
-						console.dir(data);
-						artist = await ArtistModel.create(data);
-					}
-
-					// Create genre
-					if (metadata.common.genre) {
-						genre = await GenreModel.findOne({ name: metadata.common.genre[0] });
-						if (!genre) {
-							genre = await GenreModel.create({ name: metadata.common.genre[0] });
-						}
-					}
-
-					// Create new album
-					let album = await AlbumModel.findOne({ name: metadata.common.album });
-					if (!album) {
-						if (metadata.common.picture && metadata.common.picture.length > 0) {
-							fs.writeFileSync(`${process.env.ART_PATH}/${id}`, metadata.common.picture[0].data);
-						} else {
-
-							try {
-								if (process.env.SPOTIFY_ID && process.env.SPOTIFY_SECRET) {
-									const spotifyAlbum = await new Spotify().search("album", `album:${metadata.common.album} artist:${metadata.common.artist}`);
-									console.dir(spotifyAlbum.albums.items);
-									if (spotifyAlbum && spotifyAlbum.albums && spotifyAlbum.albums.items && spotifyAlbum.albums.items.length > 0) {
-										const link = spotifyAlbum.albums.items[0].images[0] ? spotifyAlbum.albums.items[0].images[0].url : false;
-
-										if (link) {
-											await this.download(link, `${process.env.ART_PATH}/${id}`);
-										}
-									}
-								}
-							} catch (e) {
-								console.info(e);
-							}
-
-							const link = await albumArt(metadata.common.artist, {
-								album: metadata.common.album,
-							});
-
-							if (link) {
-								await this.download(link, `${process.env.ART_PATH}/${id}`);
-							}
-						}
-						album = await AlbumModel.create({ name: metadata.common.album, artist: artist._id, art: id, created_at: new Date() });
-					}
-
-					// Create track
-					let track = await TrackModel.findOne({ title: metadata.common.title, artist: artist._id, album: album._id });
-
-					if (!track) {
-						track = await TrackModel.create({
-							title: metadata.common.title,
-							artist: artist._id,
-							album: album._id,
-							art: id,
-							genre: genre ? genre._id : undefined,
-							duration: metadata.format.duration,
-							path: file,
-							created_at: new Date(),
-						});
-					}
-
-					tracks.push(track);
-*/
 				}
-			}
 
-			return tracks;
-		} catch (e) {
-			console.info(e);
-			throw e;
+				const track = await TrackModel.findOrCreate({
+					name: capitalize(metadata.common.title),
+					artists: artists.map((artist) => artist._id),
+					album: album._id,
+					artist: metadata.common.artist,
+					genre: genre ? genre._id : undefined,
+					duration: metadata.format.duration,
+					path: file,
+					lossless: metadata.format.lossless,
+					year: metadata.common.year || 0,
+					created_at: new Date(),
+				});
+
+				tracks.push(track);
+			}
 		}
+
+		return tracks;
+
 	}
 
-	public download(url: any, file: fs.PathLike) {
+	public download(url: any, file: PathLike) {
 		axios({
 			url,
 			responseType: "stream",
@@ -183,7 +82,7 @@ export class LibraryService {
 			(response) =>
 				new Promise((resolve, reject) => {
 					response.data
-						.pipe(fs.createWriteStream(file))
+						.pipe(createWriteStream(file))
 						.on("finish", () => resolve())
 						.on("error", (e: any) => reject(e));
 				}),
@@ -196,46 +95,46 @@ export class LibraryService {
 	 * @param ext extensions to look for
 	 */
 	public async sync(path: string, ext: string[]) {
-		try {
-			if (!fs.existsSync(process.env.ART_PATH || "art")) {
-				fs.mkdirSync(process.env.ART_PATH || "art");
-			}
-
-			const files = await this.get_files(path).filter((file) => ext.some((e) => file.includes(e)));
-
-			const start = new Date();
-			await this.extractMetadata(files);
-
-			const end = new Date();
-			const data = {
-				start,
-				end,
-				seconds: (end.getTime() - start.getTime()) / 1000,
-				tracks: await TrackModel.estimatedDocumentCount(),
-				albums: await AlbumModel.estimatedDocumentCount(),
-				artists: await ArtistModel.estimatedDocumentCount(),
-				size: this.bytes,
-				mount: path,
-				last_scan: new Date(),
-			};
-
-			return await InfoModel.findOneAndUpdate({ last_scan: { $ne: undefined } }, data, {
-				upsert: true,
-				new: true,
-			});
-		} catch (e) {
-			throw e;
+		console.log("Starting new sync, this may take a while");
+		if (!existsSync(process.env.ART_PATH || "art")) {
+			mkdirSync(process.env.ART_PATH || "art");
 		}
+
+		const files = await this.get_files(path).filter((file) => ext.some((e) => file.includes(e)));
+
+		const start = new Date();
+		await this.extractMetadata(files);
+
+		const end = new Date();
+		const data = {
+			start,
+			end,
+			seconds: (end.getTime() - start.getTime()) / 1000,
+			tracks: await TrackModel.estimatedDocumentCount(),
+			albums: await AlbumModel.estimatedDocumentCount(),
+			artists: await ArtistModel.estimatedDocumentCount(),
+			size: this.bytes,
+			mount: path,
+			last_scan: new Date(),
+		};
+
+		console.log("Sync completed");
+		console.dir(data);
+		return await InfoModel.findOneAndUpdate({ last_scan: { $ne: undefined } }, data, {
+			upsert: true,
+			new: true,
+		});
+
 	}
 
 	/**
 	 * Get all files in folder
 	 * @param dir path to walk
 	 */
-	private get_files(dir: fs.PathLike): string[] {
-		return fs.readdirSync(dir).reduce((list, file) => {
+	private get_files(dir: PathLike): string[] {
+		return readdirSync(dir).reduce((list, file) => {
 			const name = path.join(dir as string, file);
-			const stats = fs.statSync(name);
+			const stats = statSync(name);
 			if (stats.isDirectory()) {
 				return list.concat(this.get_files(name));
 			}

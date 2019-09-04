@@ -31,9 +31,9 @@ export class SpotifyService {
 			// console.log(type, key, query);
 			if (process.env.SPOTIFY_ID && process.env.SPOTIFY_SECRET) {
 				const response = await this.search(type, query);
-				console.dir(response, response[key], key);
+				// console.dir(response, response[key], key);
 				if (response && response[key] && response[key].items && response[key].items.length > 0) {
-					return response[key].items[0].images[0] ? response[key].items[0].images[0].url : false;
+					return response[key].items[0].images[0] ? response[key].items[0].images[0].url : "";
 				}
 			}
 		} catch (e) {
@@ -45,7 +45,7 @@ export class SpotifyService {
 		if (!this.ACCESS_TOKEN) {
 			this.ACCESS_TOKEN = await this.authorize();
 		}
-		console.log(`https://api.spotify.com/v1/search?type=${type}&q=${query}`);
+		// console.log(`https://api.spotify.com/v1/search?type=${type}&q=${query}`);
 		const response = await axios.get(`https://api.spotify.com/v1/search?type=${type}&q=${query}`, {
 			headers: {
 				Authorization: `Bearer ${this.ACCESS_TOKEN}`,

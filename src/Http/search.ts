@@ -11,14 +11,20 @@ export class Search {
 			artists: [],
 			tracks: [],
 		};
-
 		// Find tracks
 		results.tracks = await TrackModel.find({
-			title: {
-				$regex: query.q,
-				$options: "i",
-			},
-		}).populate("album genre artist");
+			$or: [{
+				name: {
+					$regex: query.q,
+					$options: "i",
+				},
+			}, {
+				artist: {
+					$regex: query.q,
+					$options: "i",
+				},
+			}],
+		}).populate("album genre artists");
 
 		// Find albums
 		results.albums = await AlbumModel.find({

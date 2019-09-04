@@ -6,9 +6,8 @@ export class Artist extends Typegoose {
 	@staticMethod
 	public static async findOrCreate(this: ModelType<Artist> & typeof Artist, names: string[]) {
 		const artists: any[] = [];
-		const artistsNames = names.map((name) => capitalize(name));
-		for (let name of artistsNames) {
-			let artist = await this.findOne({ name: capitalize(name) });
+		for (let name of names.map((n) => capitalize(n).trim())) {
+			let artist = await this.findOne({ name });
 
 			if (!artist) {
 				artist = await this.create({

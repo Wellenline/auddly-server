@@ -11,6 +11,4 @@ export class Playlist extends Typegoose {
 
 }
 
-export const PlaylistModel = new Playlist().getModelForClass(Playlist, {
-	existingMongoose: mongoose,
-});
+export const PlaylistModel = new Playlist().getModelForClass(Playlist);

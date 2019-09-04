@@ -31,6 +31,4 @@ export class Info extends Typegoose {
 	public mount: string;
 }
 
-export const InfoModel = new Info().getModelForClass(Info, {
-	existingMongoose: mongoose,
-});
+export const InfoModel = new Info().getModelForClass(Info);

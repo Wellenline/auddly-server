@@ -4,23 +4,19 @@ import { capitalize } from "../utils/captialize";
 import { SpotifyService, KeyTypes, Types } from "../Services/spotify.service";
 import { createHash } from "crypto";
 import { writeFileSync } from "fs";
-// tslint:disable-next-line:only-arrow-functions
-@post<Album>("init", function (data) { // or @pre(this: Car, 'save', ...
-	if (this.picture && !this.picture.includes("http")) {
-		this.picture = `${process.env.HOST}${this.picture}`;
+@post<Album>("init", (album) => {
+	if (album.picture && !album.picture.includes("http")) {
+		album.picture = `${process.env.HOST}${album.picture}`;
 	}
-
-	console.dir(data.picture);
-	// next();
 })
 export class Album extends Typegoose {
 	@staticMethod
 	public static async findOrCreate(this: ModelType<Album> & typeof Album, data: {
 		album: string, artist: { name: string, id: any }, artists: any[], year: number, picture: Buffer | false | string,
 	}) {
-		let album = await this.findOne({ name: capitalize(data.album) });
-		if (!album) {
+		let album = await this.findOne({ name: data.album });
 
+		if (!album) {
 			if (data.picture) {
 				const id = createHash("md5").update(`${data.artist.id}-${data.album}`).digest("hex");
 				writeFileSync(`${process.env.ART_PATH}/${id}`, data.picture);
@@ -31,7 +27,7 @@ export class Album extends Typegoose {
 
 			album = await this.create({
 				name: data.album,
-				year: data.year,
+				year: data.year || 0,
 				artist: data.artist.id,
 				artists: data.artists,
 				created_at: new Date(),

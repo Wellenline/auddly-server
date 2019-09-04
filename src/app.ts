@@ -18,6 +18,8 @@ export class App {
 		});
 		mongoose.connect(process.env.MONGO_URL, {
 			useNewUrlParser: true,
+		}).then(() => {
+			// LibraryService.instance.sync(process.env.MUSIC_PATH, [".mp3", ".flac", ".m4a"]);
 		});
 
 		// new LibraryService().sync(process.env.MUSIC_PATH, [".mp3", ".flac", ".m4a"]);
