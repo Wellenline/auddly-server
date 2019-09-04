@@ -1,4 +1,4 @@
-import { prop, Ref, Typegoose, arrayProp, staticMethod, ModelType, post } from "typegoose";
+import { prop, Ref, Typegoose, arrayProp, staticMethod, ModelType } from "typegoose";
 import { Artist } from "./artist.model";
 import { Album } from "./album.model";
 import { Genre } from "./genre.model";

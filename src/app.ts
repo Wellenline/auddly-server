@@ -1,4 +1,4 @@
-import { bootstrap, app } from "@wellenline/via";
+import { bootstrap } from "@wellenline/via";
 import * as dotenv from "dotenv";
 import * as ip from "ip";
 
@@ -19,10 +19,8 @@ export class App {
 		mongoose.connect(process.env.MONGO_URL, {
 			useNewUrlParser: true,
 		}).then(() => {
-			// LibraryService.instance.sync(process.env.MUSIC_PATH, [".mp3", ".flac", ".m4a"]);
+			LibraryService.instance.sync(process.env.MUSIC_PATH, [".mp3", ".flac", ".m4a"]);
 		});
-
-		// new LibraryService().sync(process.env.MUSIC_PATH, [".mp3", ".flac", ".m4a"]);
 
 		const HOST = process.env.HOST || ip.address();
 		qr.generate(`${HOST}?key=${process.env.API_KEY}`);

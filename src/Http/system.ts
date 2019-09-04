@@ -1,6 +1,6 @@
 import { LibraryService } from "../Services/library.service";
 import { InfoModel } from "../Models/info.model";
-import { Resource, Get, HttpStatus } from "@wellenline/via";
+import { Resource, Get } from "@wellenline/via";
 
 @Resource("/system")
 export class System {

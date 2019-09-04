@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import { TrackModel } from "../Models/track.model";
 import mime = require("mime");
-import { Context, IContext, Resource, Get, HttpStatus } from "@wellenline/via";
+import { Context, IContext, Resource, Get } from "@wellenline/via";
 @Resource("/tracks")
 export class Tracks {
 	@Get("/")
