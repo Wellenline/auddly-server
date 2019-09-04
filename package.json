@@ -1,6 +1,6 @@
 {
 	"name": "waveline-server",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"description": "Waveline Music Server",
 	"main": "dist/app.js",
 	"bin": "dist/app.js",
@@ -12,7 +12,8 @@
 		"clean": "rimraf dist && rimraf test/**/*.js",
 		"build": "tsc",
 		"dev": "nodemon -e ts  --exec \"npm run start\"",
-		"start": "npm run lint && tsc --project tsconfig.json && node dist/app.js"
+		"start": "npm run lint && tsc --project tsconfig.json && node dist/app.js",
+		"release": "standard-version"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^8.1.0",
