@@ -1,4 +1,3 @@
-import * as mongoose from "mongoose";
 import { arrayProp, prop, Ref, Typegoose } from "typegoose";
 import { Track } from "./track.model";
 

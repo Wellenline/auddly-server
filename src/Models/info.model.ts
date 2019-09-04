@@ -1,5 +1,3 @@
-
-import * as mongoose from "mongoose";
 import { prop, Typegoose } from "typegoose";
 
 export class Info extends Typegoose {

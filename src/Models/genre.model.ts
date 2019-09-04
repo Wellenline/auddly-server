@@ -1,4 +1,3 @@
-import * as mongoose from "mongoose";
 import { prop, Typegoose } from "typegoose";
 
 export const genres = [
