@@ -11,7 +11,7 @@
 		"prebuild": "npm run clean",
 		"clean": "rimraf dist && rimraf test/**/*.js",
 		"build": "tsc",
-		"dev": "nodemon -e ts  --exec \"npm run start\"",
+		"dev": "ts-node-dev --respawn --transpileOnly --ignore-watch node_modules ./src/app.ts",
 		"start": "npm run lint && tsc --project tsconfig.json && node dist/app.js",
 		"release": "standard-version"
 	},
@@ -32,8 +32,9 @@
 		"rimraf": "^2.7.1",
 		"standard-version": "^7.0.0",
 		"supertest": "^3.0.0",
+		"ts-node-dev": "^1.0.0-pre.44",
 		"tslint": "^4.3.1",
-		"typescript": "^3.6.2"
+		"typescript": "^3.7.5"
 	},
 	"pkg": {
 		"scripts": "dist/**/*.js"
@@ -41,7 +42,7 @@
 	"author": "Mihkel Baranov",
 	"license": "MIT",
 	"dependencies": {
-		"@wellenline/via": "git+https://github.com/wellenline/via.git#rev2",
+		"@wellenline/via": "^2.0.2",
 		"axios": "^0.18.1",
 		"cors": "^2.8.1",
 		"dotenv": "^4.0.0",

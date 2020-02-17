@@ -54,6 +54,9 @@ export class Track extends Typegoose {
 	@prop()
 	public created_at: Date = new Date();
 
+	@prop()
+	public updated_at: Date = new Date();
+
 }
 
 export const TrackModel = new Track().getModelForClass(Track);

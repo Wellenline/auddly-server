@@ -83,6 +83,7 @@ export class Tracks {
 		}
 		track.plays = track.plays + 1;
 		track.last_play = new Date();
+
 		await track.save();
 		const audio = fs.readFileSync(track.path);
 		const stat = fs.statSync(track.path);
@@ -100,14 +101,14 @@ export class Tracks {
 	public async like(@Context("params") params: { id: string }) {
 		const track = await TrackModel.findById(params.id);
 		track.favourited = !track.favourited;
-
+		track.updated_at = new Date();
 		return await track.save();
 
 	}
 
 	@Get("/favourites")
 	public async favourites() {
-		return await TrackModel.find({ favourited: true }).populate("album genre artist");
+		return await TrackModel.find({ favourited: true }).populate("album genre artists");
 
 	}
 
