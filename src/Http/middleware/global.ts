@@ -34,6 +34,9 @@ export const bodyParser = async (context: IContext) => {
 			context.req.files = files;
 			context.req.body = fields;
 
+			context.files = files;
+			context.body = fields;
+
 			resolve(true);
 		});
 	});
