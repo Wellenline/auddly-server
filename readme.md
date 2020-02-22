@@ -1,7 +1,10 @@
 # Waveline Music Server
+<img src="https://preview.redd.it/3vujqpdulbi41.png?width=2756&format=png&auto=webp&s=2cd56216825a7e9d9145e6b1fb2eb7750bb079d3">
+
 <a href="https://play.google.com/store/apps/details?id=com.waveline.app" target="_blank">
 <img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" width="200">
 </a>
+
 
 
 ### Getting started
@@ -17,7 +20,7 @@ To display artist pictures you need to sign up for Spotify Developer Account and
 https://developer.spotify.com/dashboard/login
 
 
-### Sample docker-compose.yml
+### Using docker-compose
 ```docker
 version: "3"
 services:
@@ -32,12 +35,12 @@ services:
       - SPOTIFY_ID=YOUR_SPOTIFY_ID
       - SPOTIFY_SECRET=YOUR_SPOTIFY_SECRET
       - AUTH_ENABLED=true
-      - API_KEY=API_KEY_TO_USE_IF_AUTH_ENABLED
-	  - PORT=5000
-      - HOST=https://music.yourserver.com | http://192.168.1.88:5000
+      - API_KEY=12345 # replace it with something more secure
+      - PORT=5000
+      - HOST=http://127.0.0.1:5000
     volumes:
       - YOUR_MUSIC_PATH:/music
-      - ./.cache:/art
+      - .cache:/art
     ports:
       - "5000:5000"
     links:
@@ -59,7 +62,6 @@ services:
     command: mongod --auth --logpath=/dev/null
  ```
 
-### Using docker compose
 ```sh
 $ docker-compose up -d
 ```
@@ -84,6 +86,16 @@ $ yarn
 $ yarn build
 $ yarn start
 ```
+
+## Roadmap
+Waveline is a personal project and my current goals are
+
+* Offline mode
+* Improved Caching
+* Casting support
+* Desktop app
+* iOS version
+
 
 ## API
 #### System
@@ -124,6 +136,15 @@ $ yarn start
 |----------------|-------------------------------|
 |`GET /artists`| Get all artists |
 |`GET /artists/new`| Get new artists |
+
+#### Playlists
+|                |Description                    |
+|----------------|-------------------------------|
+|`GET /playlists`| Get all playlists |
+|`POST /playlists`| Create a new playlist `{name: string, tracks: []}` |
+|`PUT /playlists/:id`| Update playlist `{name: string, tracks: []}` |
+|`DELTE /playlists/:id`| Delete playlist |
+
 
 #### Art
 |                |Description                    |
