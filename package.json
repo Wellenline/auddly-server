@@ -12,7 +12,7 @@
 		"clean": "rimraf dist && rimraf test/**/*.js",
 		"build": "tsc",
 		"dev": "ts-node-dev --respawn --transpileOnly --ignore-watch node_modules ./src/app.ts",
-		"start": "npm run lint && tsc --project tsconfig.json && node dist/app.js",
+		"start": "yarn run lint && tsc --project tsconfig.json && node dist/app.js",
 		"release": "standard-version"
 	},
 	"devDependencies": {

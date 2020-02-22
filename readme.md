@@ -33,12 +33,13 @@ services:
       - SPOTIFY_SECRET=YOUR_SPOTIFY_SECRET
       - AUTH_ENABLED=true
       - API_KEY=API_KEY_TO_USE_IF_AUTH_ENABLED
-      - HOST=YOUR_DOCKER_HOST_IP
+	  - PORT=5000
+      - HOST=https://music.yourserver.com | http://192.168.1.88:5000
     volumes:
       - YOUR_MUSIC_PATH:/music
       - ./.cache:/art
     ports:
-      - "5002:5002"
+      - "5000:5000"
     links:
       - mongodb
     depends_on:
@@ -55,7 +56,7 @@ services:
       - ./data/mongo:/data
     ports:
       - 27018:27017
-    command: mongod --auth --smallfiles --logpath=/dev/null # --quiet
+    command: mongod --auth --logpath=/dev/null
  ```
 
 ### Using docker compose
@@ -65,13 +66,16 @@ $ docker-compose up -d
 
 ### Sample .env file
 ```env
-MUSIC_PATH=YOUR_MUSIC_PATH
+MUSIC_PATH=./demo
 ART_PATH=.art
-SPOTIFY_ID=YOUR_SPOTIFY_ID
-SPOTIFY_SECRET=YOUR_SPOTIFY_SECRET
-MONGO_URL=YOUR_MONGO_DB
-AUTH_ENABLED=true
-API_KEY=API_KEY_TO_USE_IF_AUTH_ENABLED
+SPOTIFY_ID=xxxxx
+SPOTIFY_SECRET=xxxxx
+MONGO_URL=mongodb://localhost/waveline-3
+AUTH_ENABLED=false
+API_KEY=059481784pcascaf4lawg
+PORT=5000
+HOST=http://192.168.1.120:5000
+
 
 ```
 ### Building from source
