@@ -13,6 +13,7 @@ services:
       - AUTH_ENABLED=true
       - API_KEY=API_KEY_TO_USE_IF_AUTH_ENABLED
       - HOST=YOUR_DOCKER_HOST_IP
+      - PORT=5002
     volumes:
       - YOUR_MUSIC_PATH:/music
       - ./.cache:/art
