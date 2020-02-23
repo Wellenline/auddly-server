@@ -100,7 +100,7 @@ export class LibraryService {
 			mkdirSync(process.env.ART_PATH || "art");
 		}
 
-		const files = await this.get_files(path).filter((file) => ext.some((e) => file.includes(e)));
+		const files = await this.get_files(path).filter((file) => ext.some((e) => file.split('.').pop().includes(e)));
 
 		const start = new Date();
 		await this.extractMetadata(files);
