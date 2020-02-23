@@ -1,13 +1,14 @@
-FROM node:11.9.0
+FROM node
 
 RUN mkdir -p /app
 WORKDIR /app
 
 COPY package.json /app
-COPY yarn.lock /app
+COPY package-lock.json /app
 
-RUN yarn
+RUN npm i
 
-COPY . /app
+COPY ./ /app
+RUN npm run build
 
-CMD [ "yarn", "start" ]
+CMD [ "npm", "start" ]

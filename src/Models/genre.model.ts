@@ -1,4 +1,4 @@
-import { prop, Typegoose } from "typegoose";
+import { prop, getModelForClass } from "@typegoose/typegoose";
 
 export const genres = [
 	"Aggrotech",
@@ -161,10 +161,10 @@ export const subgenres = [
 	"World",
 ];
 
-export class Genre extends Typegoose {
+export class Genre {
 	@prop()
 	public name: string;
 
 }
 
-export const GenreModel = new Genre().getModelForClass(Genre);
+export const GenreModel = getModelForClass(Genre);

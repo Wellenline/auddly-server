@@ -1,6 +1,6 @@
-import { prop, Typegoose } from "typegoose";
+import { prop, Typegoose, getModelForClass } from "@typegoose/typegoose";
 
-export class Info extends Typegoose {
+export class Info {
 	@prop()
 	public start: Date;
 
@@ -29,4 +29,4 @@ export class Info extends Typegoose {
 	public mount: string;
 }
 
-export const InfoModel = new Info().getModelForClass(Info);
+export const InfoModel = getModelForClass(Info);

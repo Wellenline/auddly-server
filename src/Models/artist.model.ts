@@ -1,10 +1,9 @@
 import { SpotifyService, KeyTypes, Types } from "../Services/spotify.service";
-import { prop, Typegoose, staticMethod, ModelType } from "typegoose";
+import { prop, Typegoose, ReturnModelType, getModelForClass } from "@typegoose/typegoose";
 import { capitalize } from "../utils/captialize";
 
-export class Artist extends Typegoose {
-	@staticMethod
-	public static async findOrCreate(this: ModelType<Artist> & typeof Artist, names: string[]) {
+export class Artist {
+	public static async findOrCreate(this: ReturnModelType<typeof Artist>, names: string[]) {
 		const artists: any[] = [];
 		for (let name of names.map((n) => capitalize(n).trim())) {
 			let artist = await this.findOne({ name });
@@ -33,4 +32,4 @@ export class Artist extends Typegoose {
 
 }
 
-export const ArtistModel = new Artist().getModelForClass(Artist);
+export const ArtistModel = getModelForClass(Artist);

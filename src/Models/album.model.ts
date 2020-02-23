@@ -1,4 +1,4 @@
-import { prop, Ref, Typegoose, ModelType, staticMethod, arrayProp, pre, post } from "typegoose";
+import { prop, Ref, Typegoose, arrayProp, pre, post, DocumentType, getModelForClass, ReturnModelType } from "@typegoose/typegoose";
 import { Artist } from "./artist.model";
 import { SpotifyService, KeyTypes, Types } from "../Services/spotify.service";
 import { createHash } from "crypto";
@@ -8,9 +8,8 @@ import { writeFileSync } from "fs";
 		album.picture = `${process.env.HOST}${album.picture}`;
 	}
 })
-export class Album extends Typegoose {
-	@staticMethod
-	public static async findOrCreate(this: ModelType<Album> & typeof Album, data: {
+export class Album {
+	public static async findOrCreate(this: ReturnModelType<typeof Album>, data: {
 		album: string, artist: { name: string, id: any }, artists: any[], year: number, picture: Buffer | false | string,
 	}) {
 		let album = await this.findOne({ name: data.album });
@@ -57,4 +56,4 @@ export class Album extends Typegoose {
 
 }
 
-export const AlbumModel = new Album().getModelForClass(Album);
+export const AlbumModel = getModelForClass(Album);
