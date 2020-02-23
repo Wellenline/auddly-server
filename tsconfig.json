@@ -2,7 +2,7 @@
 	"compileOnSave": true,
 	"compilerOptions": {
 		"baseUrl": ".",
-		"target": "es2017",
+		"target": "es2020",
 		"module": "commonjs",
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,

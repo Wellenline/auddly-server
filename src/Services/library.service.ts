@@ -1,6 +1,6 @@
 import { PathLike, createWriteStream, existsSync, mkdirSync, readdirSync, statSync } from "fs";
+import { extname, join } from "path";
 import * as mm from "music-metadata";
-import * as path from "path";
 import { ArtistModel } from "../Models/artist.model";
 import { GenreModel, Genre } from "../Models/genre.model";
 import { TrackModel } from "../Models/track.model";
@@ -100,7 +100,7 @@ export class LibraryService {
 			mkdirSync(process.env.ART_PATH || "art");
 		}
 
-		const files = this.get_files(path).filter((file) => ext.some((e) => file.split(".").pop().includes(e)));
+		const files = this.get_files(path).filter((file) => ext.includes(extname(file)));
 
 		const start = new Date();
 		await this.extractMetadata(files);
@@ -133,7 +133,7 @@ export class LibraryService {
 	 */
 	private get_files(dir: PathLike): string[] {
 		return readdirSync(dir).reduce((list, file) => {
-			const name = path.join(dir as string, file);
+			const name = join(dir as string, file);
 			const stats = statSync(name);
 			if (stats.isDirectory()) {
 				return list.concat(this.get_files(name));

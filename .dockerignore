@@ -1,3 +1,6 @@
 dist/
 node_modules/
 .art/
+demo
+Deep
+.art_cache
