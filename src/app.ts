@@ -1,12 +1,11 @@
-import { bootstrap, app } from "@wellenline/via";
 import * as dotenv from "dotenv";
 import * as ip from "ip";
-
-import { cors, bodyParser, auth } from "./Http/middleware/global";
+import * as qrcode from "qrcode";
 import * as mongoose from "mongoose";
+
+import { bootstrap, app } from "@wellenline/via";
+import { cors, bodyParser, auth } from "./Http/middleware/global";
 import { LibraryService } from "./Services/library.service";
-// tslint:disable-next-line:no-var-requires
-import qr = require("qrcode-terminal");
 import { Albums } from "./Http/albums";
 import { Artists } from "./Http/artists";
 import { Genres } from "./Http/genres";
@@ -35,12 +34,19 @@ export class App {
 
 		mongoose.connect(process.env.MONGO_URL, {
 			useNewUrlParser: true,
+			useUnifiedTopology: true,
 		}).then(() => {
 			LibraryService.instance.sync(process.env.MUSIC_PATH, [".mp3", ".flac", ".m4a"]);
 		});
 
+		mongoose.set("useFindAndModify", false);
+
 		const HOST = process.env.HOST || ip.address();
-		qr.generate(`${HOST}?key=${process.env.API_KEY}`);
+		qrcode.toString(`${HOST}?key=${process.env.API_KEY}`, { type: "terminal" }).then((code) => {
+			console.log(code);
+		}).catch((err) => {
+			console.error("Failed to generate QR code");
+		});
 
 		console.info(`[DEBUG] Server running: ${HOST}?key=${process.env.API_KEY}`);
 	}

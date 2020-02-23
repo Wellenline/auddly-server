@@ -1,7 +1,7 @@
-import { arrayProp, prop, Ref, Typegoose } from "typegoose";
 import { Track } from "./track.model";
+import { getModelForClass, prop, arrayProp, Ref } from "@typegoose/typegoose";
 
-export class Playlist extends Typegoose {
+export class Playlist {
 	@prop()
 	public name: string;
 
@@ -15,4 +15,4 @@ export class Playlist extends Typegoose {
 	public created_at: Date;
 }
 
-export const PlaylistModel = new Playlist().getModelForClass(Playlist);
+export const PlaylistModel = getModelForClass(Playlist);

@@ -46,7 +46,7 @@ export class SpotifyService {
 			this.ACCESS_TOKEN = await this.authorize();
 		}
 		// console.log(`https://api.spotify.com/v1/search?type=${type}&q=${query}`);
-		const response = await axios.get(`https://api.spotify.com/v1/search?type=${type}&q=${query}`, {
+		const response = await axios.get(`https://api.spotify.com/v1/search?type=${type}&q=${encodeURIComponent(query)}`, {
 			headers: {
 				Authorization: `Bearer ${this.ACCESS_TOKEN}`,
 			},

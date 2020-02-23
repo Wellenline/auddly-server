@@ -1,7 +1,7 @@
-import * as fs from "fs";
+import { getType } from "mime";
 import { TrackModel } from "../Models/track.model";
-import mime = require("mime");
 import { Context, IContext, Resource, Get } from "@wellenline/via";
+import { readFileSync, statSync } from "fs";
 @Resource("/tracks")
 export class Tracks {
 	@Get("/")
@@ -85,11 +85,11 @@ export class Tracks {
 		track.last_play = new Date();
 
 		await track.save();
-		const audio = fs.readFileSync(track.path);
-		const stat = fs.statSync(track.path);
+		const audio = readFileSync(track.path);
+		const stat = statSync(track.path);
 
 		context.headers = {
-			"Content-Type": mime.getType(track.path),
+			"Content-Type": getType(track.path),
 			"Accept-Ranges": "bytes",
 			"Content-Length": stat.size,
 		};

@@ -100,7 +100,7 @@ export class LibraryService {
 			mkdirSync(process.env.ART_PATH || "art");
 		}
 
-		const files = await this.get_files(path).filter((file) => ext.some((e) => file.includes(e)));
+		const files = this.get_files(path).filter((file) => ext.some((e) => file.split(".").pop().includes(e)));
 
 		const start = new Date();
 		await this.extractMetadata(files);
@@ -119,7 +119,7 @@ export class LibraryService {
 		};
 
 		console.log("Sync completed");
-		console.dir(data);
+		console.log(data);
 		return await InfoModel.findOneAndUpdate({ last_scan: { $ne: undefined } }, data, {
 			upsert: true,
 			new: true,

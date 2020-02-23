@@ -1,11 +1,10 @@
-import { prop, Ref, Typegoose, arrayProp, staticMethod, ModelType } from "typegoose";
+import { prop, Ref, arrayProp, ReturnModelType, getModelForClass } from "@typegoose/typegoose";
 import { Artist } from "./artist.model";
 import { Album } from "./album.model";
 import { Genre } from "./genre.model";
 
-export class Track extends Typegoose {
-	@staticMethod
-	public static async findOrCreate(this: ModelType<Track> & typeof Track, data: Track | any) {
+export class Track {
+	public static async findOrCreate(this: ReturnModelType<typeof Track>, data: Track | any) {
 		let track = await TrackModel.findOne({ name: data.name, album: data.album });
 
 		if (!track) {
@@ -59,4 +58,4 @@ export class Track extends Typegoose {
 
 }
 
-export const TrackModel = new Track().getModelForClass(Track);
+export const TrackModel = getModelForClass(Track);

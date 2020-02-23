@@ -82,9 +82,9 @@ HOST=http://192.168.1.120:5000
 ```
 ### Building from source
 ```sh
-$ yarn
-$ yarn build
-$ yarn start
+$ npm i
+$ npm run build
+$ npm start
 ```
 
 ## Roadmap
