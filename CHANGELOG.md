@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/MihkelBaranov/waveline-server/compare/v2.1.1...v2.2.0) (2020-03-10)
+
+
+### Features
+
+* new API endpoints & new dev apk ([5d334c2](https://github.com/MihkelBaranov/waveline-server/commit/5d334c296ac53e87b20dcce4786c4b65c8a00374))
+
 ### [2.1.1](https://github.com/MihkelBaranov/waveline-server/compare/v2.1.0...v2.1.1) (2020-02-23)
 
 ## [2.1.0](https://github.com/MihkelBaranov/waveline-server/compare/v2.0.3...v2.1.0) (2020-02-22)
