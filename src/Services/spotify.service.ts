@@ -30,6 +30,8 @@ export class SpotifyService {
 		try {
 			// console.log(type, key, query);
 			if (process.env.SPOTIFY_ID && process.env.SPOTIFY_SECRET) {
+				this.ACCESS_TOKEN = await this.authorize();
+
 				const response = await this.search(type, query);
 				// console.dir(response, response[key], key);
 				if (response && response[key] && response[key].items && response[key].items.length > 0) {
@@ -42,9 +44,6 @@ export class SpotifyService {
 	}
 
 	public async search(type: string, query: string) {
-		if (!this.ACCESS_TOKEN) {
-			this.ACCESS_TOKEN = await this.authorize();
-		}
 		// console.log(`https://api.spotify.com/v1/search?type=${type}&q=${query}`);
 		const response = await axios.get(`https://api.spotify.com/v1/search?type=${type}&q=${encodeURIComponent(query)}`, {
 			headers: {
