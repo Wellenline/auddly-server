@@ -6,7 +6,7 @@
 </a>
 
 or try the latest dev build from
-[here](https://github.com/Wellenline/waveline-server/app-release/app-release.apk)
+[here](https://github.com/Wellenline/waveline-server/blob/master/app-release/app-release.apk)
 
 
 ### Getting started
