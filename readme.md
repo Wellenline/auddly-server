@@ -1,5 +1,5 @@
 # Waveline Music Server
-<img src="https://preview.redd.it/3vujqpdulbi41.png?width=2756&format=png&auto=webp&s=2cd56216825a7e9d9145e6b1fb2eb7750bb079d3">
+<img width="500" src="https://preview.redd.it/3vujqpdulbi41.png?width=2756&format=png&auto=webp&s=2cd56216825a7e9d9145e6b1fb2eb7750bb079d3">
 
 <a href="https://play.google.com/store/apps/details?id=com.waveline.app" target="_blank">
 <img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" width="200">
