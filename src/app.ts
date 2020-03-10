@@ -3,7 +3,7 @@ import * as ip from "ip";
 import * as qrcode from "qrcode";
 import * as mongoose from "mongoose";
 import { bootstrap, app } from "@wellenline/via";
-import { cors, bodyParser, auth } from "./Http/middleware/global";
+import { cors, bodyParser, auth } from "./Middleware/global";
 import { LibraryService } from "./Services/library.service";
 import { Albums } from "./Http/albums";
 import { Artists } from "./Http/artists";
@@ -17,19 +17,13 @@ export class App {
 	constructor() {
 		dotenv.config();
 		(<any>mongoose).Promise = global.Promise;
+		mongoose.set("useFindAndModify", false);
+
 		bootstrap({
 			port: (process.env.PORT as number | string),
 			middleware: [cors, bodyParser, auth(["art", "play"])],
 			resources: [Albums, Artists, Genres, Playlists, Search, System, Tracks],
 		});
-
-		app.headers = {
-			"Content-Type": "application/json",
-			"Access-Control-Allow-Origin": "*",
-			"Access-Control-Allow-Methods": "OPTIONS, DELETE, PUT, PATCH, POST, GET",
-			"Access-Control-Max-Age": 2592000,
-			"Access-Control-Allow-Headers": "*",
-		};
 
 		mongoose.connect(process.env.MONGO_URL, {
 			useNewUrlParser: true,
@@ -37,8 +31,6 @@ export class App {
 		}).then(() => {
 			LibraryService.instance.sync(process.env.MUSIC_PATH, [".mp3", ".flac", ".m4a"]);
 		});
-
-		mongoose.set("useFindAndModify", false);
 
 		const HOST = process.env.HOST || ip.address();
 		qrcode.toString(`${HOST}?key=${process.env.API_KEY}`, { type: "terminal" }).then((code) => {

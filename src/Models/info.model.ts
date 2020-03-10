@@ -1,4 +1,4 @@
-import { prop, Typegoose, getModelForClass } from "@typegoose/typegoose";
+import { prop, getModelForClass } from "@typegoose/typegoose";
 
 export class Info {
 	@prop()

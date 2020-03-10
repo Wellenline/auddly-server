@@ -16,8 +16,19 @@ export class Artists {
 		};
 	}
 
-	@Get("/new")
-	public async new() {
-		return await ArtistModel.find().sort({ created_at: -1 }).limit(15);
+	@Get("/random")
+	public async random(@Context("query") query: { total: number }) {
+		return await ArtistModel.random(query.total);
 	}
+
+	@Get("/new")
+	public async recent(@Context("query") query: { limit: number }) {
+		return await ArtistModel.find().sort({ created_at: -1 }).limit(query.limit || 10);
+	}
+
+	@Get("/:id")
+	public async artist(@Context("params") params: { id: string }) {
+		return await ArtistModel.findById(params.id);
+	}
+
 }

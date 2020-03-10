@@ -36,23 +36,13 @@ export class Albums {
 	}
 
 	@Get("/random")
-	public async random() {
-
-		const albums = await AlbumModel.find().populate("artist");
-		const min = 0;
-		const n = [];
-
-		for (let i = 0; i < 10; i++) {
-			n.push(Math.floor(Math.random() * (albums.length - min + 1)) + min);
-		}
-
-		return n.map((i) => albums[i]);
-
+	public async random(@Context("query") query: { total: number }) {
+		return await AlbumModel.random(query.total);
 	}
 
 	@Get("/new")
-	public async recent() {
-		return await AlbumModel.find().populate("artist").sort({ created_at: -1 }).limit(10);
+	public async recent(@Context("query") query: { limit: number }) {
+		return await AlbumModel.find().sort({ created_at: -1 }).populate("artist").limit(query.limit || 10);
 	}
 
 	@Get("/:id")

@@ -113,70 +113,23 @@ export class Tracks {
 	}
 
 	@Get("/new")
-	public async recent() {
-
-		return await TrackModel.aggregate([{
-			$group: {
-				_id: "$album",
-				track_id: { $first: "$_id" },
-
-				plays: {
-					$first: "$plays",
-				},
-				favourited: {
-					$first: "$favourited",
-				},
-				title: {
-					$first: "$title",
-				},
-				artists: {
-					$first: "$artists",
-				},
-				album: {
-					$first: "$album",
-				},
-				art: {
-					$first: "$art",
-				},
-				duration: {
-					$first: "$duration",
-				},
-				path: {
-					$first: "$path",
-				},
-			},
+	public async recent(@Context("query") query: { limit: number }) {
+		return await TrackModel.find().sort({ created_at: -1 }).populate([{
+			path: "album",
+			populate: [{
+				path: "artist",
+			}],
 		}, {
-			$lookup:
-			{
-				from: "albums",
-				localField: "album",
-				foreignField: "_id",
-				as: "album",
-			},
+			path: "genre",
 		}, {
-			$lookup:
-			{
-				from: "artists",
-				localField: "artists",
-				foreignField: "_id",
-				as: "artists",
-			},
-		}, { $unwind: { path: "$album" } },
-		{
-			$project: {
-				_id: "$track_id",
-				plays: "$plays",
-				favourited: "$favourited",
-				title: "$title",
-				artists: "$artists",
-				album: "$album",
-				art: "$art",
-				duration: "$duration",
-				path: "$path",
-			},
-		},
-		{ $limit: 15 }, { $sort: { created_at: -1 } }]);
+			path: "artists",
 
+		}]).limit(query.limit || 10);
+	}
+
+	@Get("/random")
+	public async random(@Context("query") query: { total: number }) {
+		return await TrackModel.random(query.total);
 	}
 
 }

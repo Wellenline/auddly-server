@@ -5,6 +5,8 @@
 <img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" width="200">
 </a>
 
+or try the latest dev build from
+[here](https://github.com/Wellenline/waveline-server/app-release/app-release.apk)
 
 
 ### Getting started
@@ -66,6 +68,13 @@ services:
 $ docker-compose up -d
 ```
 
+### Building from source
+```sh
+$ npm i
+$ npm run build
+$ npm start
+```
+
 ### Sample .env file
 ```env
 MUSIC_PATH=./demo
@@ -80,19 +89,13 @@ HOST=http://192.168.1.120:5000
 
 
 ```
-### Building from source
-```sh
-$ npm i
-$ npm run build
-$ npm start
-```
 
 ## Roadmap
 Waveline is a personal project and my current goals are
 
 * Offline mode
 * Improved Caching
-* Casting support
+* Casting support (chromecast?)
 * Desktop app
 * iOS version
 
@@ -108,36 +111,36 @@ Waveline is a personal project and my current goals are
 #### Tracks
 |                |Description                    |
 |----------------|-------------------------------|
-|`GET /tracks`|All tracks (params: skip, limit, genre, favourties, artist, album)|
-|`GET /tracks/play/:id`|Stream track|
-|`GET /tracks/like/:id`| Toggle track favourite |
+|`GET /tracks`|All tracks (query: skip, limit, genre, favourties, artist, album)|
+|`GET /tracks/play/:id`|Stream audio|
+|`GET /tracks/like/:id`|Toggle track favourite |
+|`GET /tracks/random`| Get random tracks (query: limit) `new` |
 |`GET /tracks/new`|New Tracks|
 
 #### Search
 |                |Description                    |
 |----------------|-------------------------------|
-|`GET /search`| Search (params: q) |
+|`GET /search`| Search (query: q) |
 
 
 #### Albums
 |                |Description                    |
 |----------------|-------------------------------|
-|`GET /albums`| Get all albums (params: skip, limit) |
-|`GET /albums/random`| Get 10 random albums |
-|`GET /albums/new`| Get new albums |
+|`GET /albums`| Get all albums (query: skip, limit) |
+|`GET /albums/random`| Get random albums (query: limit) `new` |
+|`GET /albums/new`| Get new albums `new` |
+|`GET /albums/art/:id`|Get Album art |
 
-#### Genres
-|                |Description                    |
-|----------------|-------------------------------|
-|`GET /genres`| Get all genres |
 
 #### Artists
 |                |Description                    |
 |----------------|-------------------------------|
 |`GET /artists`| Get all artists |
-|`GET /artists/new`| Get new artists |
+|`GET /artists/random`| Get random artists (query: limit) `new` |
+|`GET /artists/new`| Get new artists `new` |
 
-#### Playlists
+
+#### Playlists (WIP)
 |                |Description                    |
 |----------------|-------------------------------|
 |`GET /playlists`| Get all playlists |
@@ -145,8 +148,7 @@ Waveline is a personal project and my current goals are
 |`PUT /playlists/:id`| Update playlist `{name: string, tracks: []}` |
 |`DELTE /playlists/:id`| Delete playlist |
 
-
-#### Art
+#### Genres
 |                |Description                    |
 |----------------|-------------------------------|
-|`GET /art/:id`| Album art |
+|`GET /genres`| Get all genres |
