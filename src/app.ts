@@ -25,6 +25,14 @@ export class App {
 			resources: [Albums, Artists, Genres, Playlists, Search, System, Tracks],
 		});
 
+		app.headers = {
+			"Content-Type": "application/json",
+			"Access-Control-Allow-Origin": "*",
+			"Access-Control-Allow-Methods": "OPTIONS, DELETE, PUT, PATCH, POST, GET",
+			"Access-Control-Max-Age": 2592000,
+			"Access-Control-Allow-Headers": "*",
+		};
+
 		mongoose.connect(process.env.MONGO_URL, {
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
