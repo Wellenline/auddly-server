@@ -10,6 +10,7 @@ export const cors = async (context: IContext) => {
 		"Access-Control-Allow-Origin": "*",
 		"Access-Control-Allow-Methods": "OPTIONS, DELETE, PUT, PATCH, POST, GET",
 		"Access-Control-Max-Age": 2592000,
+		"Access-Control-Allow-Headers": "*",
 	};
 
 	if (context.req.method === "OPTIONS") {
