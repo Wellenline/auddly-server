@@ -106,6 +106,55 @@ export class Tracks {
 
 	}
 
+	@Get("/popular")
+	public async poplar(@Context("query") query: { artist?: string, skip?: number, limit?: number, genre?: string, album?: string }) {
+		const lookup: { genre?: string, favourited?: boolean, artists?: string, album?: string, plays: any } = { plays: { $gt: 0 } };
+		query.skip = query.skip || 0;
+		query.limit = query.limit || 20;
+
+		if (query.genre) {
+			lookup.genre = query.genre;
+		}
+
+		if (query.artist) {
+			lookup.artists = query.artist;
+		}
+
+		if (query.album) {
+			lookup.album = query.album;
+		}
+
+		const model = TrackModel.find(lookup).populate([{
+			path: "album",
+			populate: [{
+				path: "artist",
+			}],
+		}, {
+			path: "genre",
+		}, {
+			path: "artists",
+
+		}]).sort("-plays");
+
+		const total = await TrackModel.countDocuments(lookup);
+
+		if (query.skip) {
+			model.skip(query.skip);
+		}
+
+		if (query.limit) {
+			model.limit(query.limit);
+		}
+
+		let tracks = await model.find();
+
+		return {
+			tracks,
+			query: lookup,
+			total,
+		};
+	}
+
 	@Get("/favourites")
 	public async favourites() {
 		return await TrackModel.find({ favourited: true }).populate("album genre artists");
