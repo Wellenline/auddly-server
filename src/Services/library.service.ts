@@ -1,14 +1,14 @@
+import axios from "axios";
 import { PathLike, createWriteStream, existsSync, mkdirSync, readdirSync, statSync } from "fs";
 import { extname, join } from "path";
 import * as mm from "music-metadata";
+import * as ProgressBar from "progress";
 import { ArtistModel } from "../Models/artist.model";
 import { GenreModel, Genre } from "../Models/genre.model";
 import { TrackModel } from "../Models/track.model";
 import { AlbumModel } from "../Models/album.model";
 import { InfoModel } from "../Models/info.model";
 import { capitalize } from "../utils/captialize";
-
-import axios from "axios";
 
 /**
  * Library Service
@@ -25,48 +25,60 @@ export class LibraryService {
 	}
 	private bytes = 0;
 
-	public async extractMetadata(files: any) {
+	public async extractMetadata(files: string[]) {
 		const tracks = [];
-		for (let file of files) {
+		const bar = new ProgressBar(":bar :current/:total ", {
+			index: 0,
+			total: files.length,
+		} as ProgressBar.ProgressBarOptions);
+
+		for (const file of files) {
+			bar.tick();
 			let genre: Genre | any;
 			const exists = await TrackModel.exists({ path: file });
 			if (!exists) {
-				const metadata = await mm.parseFile(file);
-				// console.log(metadata);
-				const artists = await ArtistModel.findOrCreate(metadata.common.artists.length > 1 ? metadata.common.artists : metadata.common.artist.split(/[&,]+/));
-
-				const album = await AlbumModel.findOrCreate({
-					album: metadata.common.album,
-					artist: {
-						name: metadata.common.artist,
-						id: artists[0]._id,
-					},
-					year: metadata.common.year,
-					artists,
-					picture: metadata.common.picture && metadata.common.picture.length > 0 ? metadata.common.picture[0].data : false,
+				const metadata: any = await mm.parseFile(file).catch((err) => {
+					console.log("Failed to parse", file, err);
 				});
 
-				if (metadata.common.genre) {
-					genre = await GenreModel.findOne({ name: metadata.common.genre[0] });
-					if (!genre) {
-						genre = await GenreModel.create({ name: metadata.common.genre[0] });
+				if (metadata) {
+					// console.log(metadata);
+					const artists = await ArtistModel.findOrCreate(metadata.common.artists.length > 1 ? metadata.common.artists : metadata.common.artist.split(/[&,]+/));
+
+					const album = await AlbumModel.findOrCreate({
+						album: metadata.common.album,
+						artist: {
+							name: metadata.common.artist,
+							id: artists[0]._id,
+						},
+						year: metadata.common.year,
+						artists,
+						picture: metadata.common.picture && metadata.common.picture.length > 0 ? metadata.common.picture[0].data : false,
+					});
+
+					if (metadata.common.genre) {
+						genre = await GenreModel.findOne({ name: metadata.common.genre[0] });
+						if (!genre) {
+							genre = await GenreModel.create({ name: metadata.common.genre[0] });
+						}
 					}
+
+					const track = await TrackModel.findOrCreate({
+						name: capitalize(metadata.common.title),
+						artists: artists.map((artist) => artist._id),
+						album: album._id,
+						artist: metadata.common.artist,
+						genre: genre ? genre._id : undefined,
+						duration: metadata.format.duration,
+						path: file,
+						lossless: metadata.format.lossless,
+						year: metadata.common.year || 0,
+						created_at: new Date(),
+					});
+
+					tracks.push(track);
+
 				}
-
-				const track = await TrackModel.findOrCreate({
-					name: capitalize(metadata.common.title),
-					artists: artists.map((artist) => artist._id),
-					album: album._id,
-					artist: metadata.common.artist,
-					genre: genre ? genre._id : undefined,
-					duration: metadata.format.duration,
-					path: file,
-					lossless: metadata.format.lossless,
-					year: metadata.common.year || 0,
-					created_at: new Date(),
-				});
-
-				tracks.push(track);
 			}
 		}
 

@@ -22,7 +22,7 @@ export class Artist {
 
 	public static async findOrCreate(this: ReturnModelType<typeof Artist>, names: string[]) {
 		const artists: any[] = [];
-		for (let name of names.map((n) => capitalize(n).trim())) {
+		for (const name of names.map((n) => capitalize(n).trim())) {
 			let artist = await this.findOne({ name });
 
 			if (!artist) {
