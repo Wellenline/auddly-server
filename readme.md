@@ -33,7 +33,7 @@ services:
     environment:
       - MONGO_URL=mongodb://YOUR_MONGO_USER:YOUR_MONGO_PASS@mongodb/waveline?authSource=admin
       - MUSIC_PATH=/music
-      - ART_PATH=/art
+      - ART_PATH=/album-art
       - SPOTIFY_ID=YOUR_SPOTIFY_ID
       - SPOTIFY_SECRET=YOUR_SPOTIFY_SECRET
       - AUTH_ENABLED=true
@@ -41,10 +41,10 @@ services:
       - PORT=5000
       - HOST=http://127.0.0.1:5000
     volumes:
-      - YOUR_MUSIC_PATH:/music
-      - .cache:/art
+      - YOUR_MUSIC_PATH:/music # Mount your music inside docker
+      - ./album-art:/album-art # Mount album art cache inside docker
     ports:
-      - "5000:5000"
+      - 5000:5000
     links:
       - mongodb
     depends_on:
@@ -78,12 +78,12 @@ $ npm start
 ### Sample .env file
 ```env
 MUSIC_PATH=./demo
-ART_PATH=.art
+ART_PATH=./album-art
 SPOTIFY_ID=xxxxx
 SPOTIFY_SECRET=xxxxx
-MONGO_URL=mongodb://localhost/waveline-3
+MONGO_URL=mongodb://localhost/waveline
 AUTH_ENABLED=false
-API_KEY=059481784pcascaf4lawg
+API_KEY=1234
 PORT=5000
 HOST=http://192.168.1.120:5000
 
