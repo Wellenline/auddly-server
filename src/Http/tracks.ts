@@ -146,7 +146,7 @@ export class Tracks {
 			model.limit(query.limit);
 		}
 
-		let tracks = await model.find();
+		const tracks = await model.find();
 
 		return {
 			tracks,
