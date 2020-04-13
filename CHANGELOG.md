@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0](https://github.com/MihkelBaranov/waveline-server/compare/v2.2.0...v2.3.0) (2020-04-13)
+
+
+### Features
+
+* **library:** include progress bar when scanning the library ([2d6df62](https://github.com/MihkelBaranov/waveline-server/commit/2d6df6291e704e8835de466468ada85ed76111aa))
+* **tracks:** endpoint for popular tracks(ordered by play count) ([dde3e05](https://github.com/MihkelBaranov/waveline-server/commit/dde3e05926d40ab6808f6ed11002ec7844e65ef4))
+* cors ([d62680a](https://github.com/MihkelBaranov/waveline-server/commit/d62680a75de397105eb943090a9867e2ebdda8e5))
+
+
+### Bug Fixes
+
+* **cors:** allow headers ([379378c](https://github.com/MihkelBaranov/waveline-server/commit/379378c0b1eff703031a61e9200903085e29c681))
+
 ## [2.2.0](https://github.com/MihkelBaranov/waveline-server/compare/v2.1.1...v2.2.0) (2020-03-10)
 
 
