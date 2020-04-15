@@ -115,6 +115,7 @@ Waveline is a personal project and my current goals are
 |`GET /tracks/play/:id`|Stream audio|
 |`GET /tracks/like/:id`|Toggle track favourite |
 |`GET /tracks/random`| Get random tracks (query: limit) `new` |
+|`GET /tracks/popular`|Get popular tracks (query: skip, limit, genre, artist, album) `new`|
 |`GET /tracks/new`|New Tracks|
 
 #### Search
@@ -140,7 +141,7 @@ Waveline is a personal project and my current goals are
 |`GET /artists/new`| Get new artists `new` |
 
 
-#### Playlists (WIP)
+#### Playlists ()
 |                |Description                    |
 |----------------|-------------------------------|
 |`GET /playlists`| Get all playlists |
