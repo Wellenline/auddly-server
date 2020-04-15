@@ -2,7 +2,7 @@ import * as dotenv from "dotenv";
 import * as ip from "ip";
 import * as qrcode from "qrcode";
 import * as mongoose from "mongoose";
-import { bootstrap, app } from "@wellenline/via";
+import { bootstrap } from "@wellenline/via";
 import { cors, bodyParser, auth } from "./Middleware/global";
 import { LibraryService } from "./Services/library.service";
 import { Albums } from "./Http/albums";
@@ -16,8 +16,18 @@ import { Tracks } from "./Http/tracks";
 export class App {
 	constructor() {
 		dotenv.config();
-		(<any>mongoose).Promise = global.Promise;
-		mongoose.set("useFindAndModify", false);
+	}
+
+	public async run() {
+
+		const REQUIRED_ENV_VARS = ["MUSIC_PATH", "ART_PATH", "MONGO_URL", "PORT", "HOST"];
+
+		for (const key of REQUIRED_ENV_VARS) {
+			if (!process.env[key]) {
+				console.error(`${key} env variable missing`);
+				process.exit(0);
+			}
+		}
 
 		bootstrap({
 			port: (process.env.PORT as number | string),
@@ -25,30 +35,28 @@ export class App {
 			resources: [Albums, Artists, Genres, Playlists, Search, System, Tracks],
 		});
 
-		app.headers = {
-			"Content-Type": "application/json",
-			"Access-Control-Allow-Origin": "*",
-			"Access-Control-Allow-Methods": "OPTIONS, DELETE, PUT, PATCH, POST, GET",
-			"Access-Control-Max-Age": 2592000,
-			"Access-Control-Allow-Headers": "*",
-		};
+		console.log("[DEBUG] Connecting to DB...");
 
-		mongoose.connect(process.env.MONGO_URL, {
+		await mongoose.connect(process.env.MONGO_URL, {
 			useNewUrlParser: true,
+			useFindAndModify: false,
 			useUnifiedTopology: true,
-		}).then(() => {
-			LibraryService.instance.sync(process.env.MUSIC_PATH, [".mp3", ".flac", ".m4a"]);
+		}).catch((err) => {
+			console.log(err);
+			process.exit(0);
 		});
 
 		const HOST = process.env.HOST || ip.address();
-		qrcode.toString(`${HOST}?key=${process.env.API_KEY}`, { type: "terminal" }).then((code) => {
-			console.log(code);
-		}).catch((err) => {
-			console.error("Failed to generate QR code");
+		const code = await qrcode.toString(`${HOST}?key=${process.env.API_KEY}`, { type: "terminal" }).catch((err) => {
+			console.error(err, "Failed to generate QR code");
 		});
 
-		console.info(`[DEBUG] Server running: ${HOST}?key=${process.env.API_KEY}`);
+		// Show QR code
+		console.log(code);
+
+		console.info(`[DEBUG] Server running: ${HOST}?key=${process.env.API_KEY}\n`);
+		LibraryService.instance.sync(process.env.MUSIC_PATH, [".mp3", ".flac", ".m4a"]);
 	}
 }
 
-export default new App();
+export default new App().run();
