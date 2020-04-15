@@ -4,3 +4,5 @@ node_modules/
 demo
 Deep
 .art_cache
+.env
+docker-compose.yml

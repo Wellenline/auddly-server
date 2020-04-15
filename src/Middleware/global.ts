@@ -7,6 +7,7 @@ import { IncomingForm } from "formidable";
  */
 export const cors = async (context: IContext) => {
 	const headers = {
+		"Content-Type": "application/json",
 		"Access-Control-Allow-Origin": "*",
 		"Access-Control-Allow-Methods": "OPTIONS, DELETE, PUT, PATCH, POST, GET",
 		"Access-Control-Max-Age": 2592000,
