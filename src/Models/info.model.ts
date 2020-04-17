@@ -2,31 +2,31 @@ import { prop, getModelForClass } from "@typegoose/typegoose";
 
 export class Info {
 	@prop()
-	public start: Date;
+	public start?: Date;
 
 	@prop()
-	public end: Date;
+	public end?: Date;
 
 	@prop()
-	public last_scan: Date;
+	public last_scan?: Date;
 
 	@prop()
-	public seconds: number;
+	public seconds?: number;
 
 	@prop()
-	public tracks: number;
+	public tracks?: number;
 
 	@prop()
-	public albums: number;
+	public albums?: number;
 
 	@prop()
-	public artists: number;
+	public artists?: number;
 
 	@prop()
-	public size: number;
+	public size?: number;
 
 	@prop()
-	public mount: string;
+	public mount?: string;
 }
 
 export const InfoModel = getModelForClass(Info);

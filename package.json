@@ -47,6 +47,7 @@
 		"@typegoose/typegoose": "^6.4.0",
 		"@wellenline/via": "^2.0.2",
 		"axios": "^0.18.1",
+		"chokidar": "^3.3.1",
 		"cors": "^2.8.1",
 		"dotenv": "^4.0.0",
 		"formidable": "^1.2.2",
@@ -55,7 +56,8 @@
 		"mongoose": "^5.9.7",
 		"music-metadata": "^2.6.1",
 		"progress": "^2.0.3",
-		"qrcode": "^1.4.4"
+		"qrcode": "^1.4.4",
+		"sox-stream": "^2.0.3"
 	},
 	"repository": "https://github.com/MihkelBaranov/waveline-server.git",
 	"commitlint": {
