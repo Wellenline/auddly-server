@@ -63,6 +63,7 @@ export class App {
 		console.log(code);
 
 		console.info(`[DEBUG] Server running: ${HOST}?key=${process.env.API_KEY}\n`);
+		LibraryService.instance.watch();
 		// LibraryService.instance.sync(process.env.MUSIC_PATH, [".mp3", ".flac", ".m4a"]);
 	}
 }
