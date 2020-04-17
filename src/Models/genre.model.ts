@@ -1,4 +1,4 @@
-import { prop, getModelForClass } from "@typegoose/typegoose";
+import { prop, getModelForClass, ReturnModelType } from "@typegoose/typegoose";
 
 export const genres = [
 	"Aggrotech",
@@ -162,6 +162,11 @@ export const subgenres = [
 ];
 
 export class Genre {
+	public static async findOrCreate(this: ReturnModelType<typeof Genre>, name: string) {
+		const genre = await GenreModel.findOne({ name });
+		return genre ? genre : await GenreModel.create({ name });
+	}
+
 	@prop()
 	public name: string;
 
