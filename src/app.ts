@@ -43,7 +43,7 @@ export class App {
 			"Access-Control-Allow-Headers": "*",
 		};
 
-		console.log("[DEBUG] Connecting to DB...");
+		console.log("[DEBUG] Establishing connection with database\n");
 
 		await mongoose.connect(process.env.MONGO_URL, {
 			useNewUrlParser: true,
@@ -63,7 +63,7 @@ export class App {
 		console.log(code);
 
 		console.info(`[DEBUG] Server running: ${HOST}?key=${process.env.API_KEY}\n`);
-		LibraryService.instance.sync(process.env.MUSIC_PATH, [".mp3", ".flac", ".m4a"]);
+		// LibraryService.instance.sync(process.env.MUSIC_PATH, [".mp3", ".flac", ".m4a"]);
 	}
 }
 
