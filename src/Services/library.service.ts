@@ -1,17 +1,23 @@
-import axios from "axios";
-import { PathLike, createWriteStream, existsSync, mkdirSync, readdirSync, statSync, createReadStream } from "fs";
-import { extname, join } from "path";
+import { createWriteStream, existsSync, mkdirSync, readdirSync, statSync, createReadStream } from "fs";
+import { extname } from "path";
 import * as mm from "music-metadata";
-import * as ProgressBar from "progress";
 import * as chokidar from "chokidar";
 import * as sox from "sox-stream";
 
 import { ArtistModel } from "../Models/artist.model";
-import { GenreModel, Genre } from "../Models/genre.model";
+import { GenreModel } from "../Models/genre.model";
 import { TrackModel, Track } from "../Models/track.model";
 import { AlbumModel } from "../Models/album.model";
 import { InfoModel, Info } from "../Models/info.model";
 import { capitalize } from "../utils/captialize";
+
+import * as readline from "readline";
+
+export const writeLog = (message: string | Buffer | Uint8Array) => {
+	readline.clearLine(process.stdout, 0);
+	readline.cursorTo(process.stdout, 0);
+	process.stdout.write(message);
+};
 
 /**
  * Library Service
@@ -58,11 +64,9 @@ export class LibraryService {
 	 */
 	public transcode(track: Track, options: sox.SoxOptions): Promise<string> {
 		return new Promise((resolve, reject) => {
-			console.log("Startin to transcode:", track.path);
 			const audioFile = `${process.env.TRANSCODE_PATH}/${(track as any)._id.toString()}.mp3`;
 
 			if (existsSync(audioFile)) {
-				console.log("Audio already transcoded");
 				return resolve(audioFile);
 			}
 
@@ -71,7 +75,6 @@ export class LibraryService {
 			const rstream = createReadStream(track.path, { autoClose: true }).pipe(sox(options)).pipe(wstream);
 
 			rstream.on("finish", () => {
-				console.log("finished transcoding");
 				resolve(audioFile);
 			});
 
@@ -95,13 +98,12 @@ export class LibraryService {
 			size: this._size,
 		};
 
-		const bar = new ProgressBar(":bar :current/:total ", {
-			index: 0,
-			total: files.length,
-		} as ProgressBar.ProgressBarOptions);
-
+		let index = 0;
 		for (const file of files) {
-			bar.tick();
+			// bar.tick();
+			index++;
+			writeLog(`[${index}/${files.length}] ${file}`);
+
 
 			const exists = await TrackModel.exists({ path: file });
 
@@ -158,7 +160,7 @@ export class LibraryService {
 		libraryInfo.albums = await AlbumModel.estimatedDocumentCount();
 		libraryInfo.artists = await ArtistModel.estimatedDocumentCount();
 
-		console.log("Library building completed");
+		writeLog("Library building completed");
 		console.log(libraryInfo);
 
 		return InfoModel.findOneAndUpdate({ last_scan: { $ne: undefined } }, libraryInfo, {
