@@ -1,7 +1,8 @@
 import { getType } from "mime";
 import { TrackModel } from "../Models/track.model";
 import { Context, IContext, Resource, Get } from "@wellenline/via";
-import { readFileSync, statSync } from "fs";
+import { readFileSync, statSync, createReadStream } from "fs";
+import { LibraryService } from "../Services/library.service";
 @Resource("/tracks")
 export class Tracks {
 	@Get("/")
@@ -85,7 +86,49 @@ export class Tracks {
 		track.last_play = new Date();
 
 		await track.save();
-		const audio = readFileSync(track.path);
+		// wait until audio has finished transcodig... probably not the best way of doing it
+		if (!track.path.toString().endsWith(".mp3")) {
+			track.path = await LibraryService.instance.transcode(track, {
+				output: { type: "mp3" }
+			});
+		}
+
+		const stat = statSync(track.path);
+
+		const total = stat.size;
+
+		if (context.req.headers.range) {
+			const range = context.req.headers.range;
+			const parts = range.replace(/bytes=/, "").split("-");
+			const partialstart = parseInt(parts[0], 10);
+			const partialend = parseInt(parts[1], 10);
+
+			const start = partialstart;
+			const end = partialend ? partialend : total - 1;
+			const chunksize = (end - start) + 1;
+
+
+			context.status = 206;
+			context.headers = {
+				"Content-Range": "bytes " + start + "-" + end + "/" + total,
+				"Accept-Ranges": "bytes", "Content-Length": chunksize,
+				"Content-Type": getType(track.path),
+			};
+
+			return createReadStream(track.path, { start, end });
+		} else {
+
+			context.headers = {
+				"Content-Type": getType(track.path),
+				"Accept-Ranges": "bytes",
+				"Content-Length": stat.size,
+			};
+
+			return createReadStream(track.path);
+		}
+
+
+		/*const audio = readFileSync(track.path);
 		const stat = statSync(track.path);
 
 		context.headers = {
@@ -94,7 +137,7 @@ export class Tracks {
 			"Content-Length": stat.size,
 		};
 
-		return audio;
+		return audio;*/
 	}
 
 	@Get("/like/:id")
