@@ -94,7 +94,7 @@ HOST=http://192.168.1.120:5000
 ```
 
 ### Transcoding
-Todo
+WIP
 
 ## Roadmap
 Waveline is a personal project and my current goals are
@@ -102,7 +102,7 @@ Waveline is a personal project and my current goals are
 * Offline mode
 * Improved Caching
 * Casting support (chromecast?)
-* Desktop app
+* <strike>Desktop app</strike>  [Wellenline/waveline-web](https://github.com/Wellenline/waveline-web)
 * iOS version
 
 
@@ -110,7 +110,6 @@ Waveline is a personal project and my current goals are
 #### System
 |                |Description                    |
 |----------------|-------------------------------|
-|`GET /system/sync`|Start a new music sync|
 |`GET /system/info`|Get music library details|
 
 
