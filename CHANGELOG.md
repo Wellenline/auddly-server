@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/MihkelBaranov/waveline-server/compare/v2.3.0...v3.0.0) (2020-04-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* **libraryservice:** LibraryService.instance.sync() and /system/sync endpoint got removed
+
+### Features
+
+* **docker:** use alpine image ([55e0968](https://github.com/MihkelBaranov/waveline-server/commit/55e09685bba96597b83461ab36cc47898c0c8621))
+* **genre.model:** add findOrCreate method for genre model ([accbe4f](https://github.com/MihkelBaranov/waveline-server/commit/accbe4f640b9965e9bec11f16885a7198e97aa23))
+* **libraryservice:** add transcoding support ([e449a06](https://github.com/MihkelBaranov/waveline-server/commit/e449a06e09bf03a22a6d0b00e1604eca34c82080))
+* **libraryservice:** remove progress module ([0ee7929](https://github.com/MihkelBaranov/waveline-server/commit/0ee79291988e1fc082b66d70dbb5a63599365c6f))
+* **system:** include os specific details in /system/info endpoint ([a8fc4c0](https://github.com/MihkelBaranov/waveline-server/commit/a8fc4c0725f000c54abd6962ffbc45e91e0d2347))
+* **tracks:** update /play endpoint to use range headers ([9eeec4f](https://github.com/MihkelBaranov/waveline-server/commit/9eeec4f08d2575beb6c48e530df1e1572c5648f2))
+
+
+### Bug Fixes
+
+* **app:** headers ([a7415d3](https://github.com/MihkelBaranov/waveline-server/commit/a7415d3db54ed268e9015f5aa82206620e2d0df5))
+* **dockerfile:** fix dockerfile ([493c114](https://github.com/MihkelBaranov/waveline-server/commit/493c1147980d15ccbde8c2426c1a90570bf8582e))
+
+
+* **libraryservice:** rewrite LibraryService to use chokidar ([5685275](https://github.com/MihkelBaranov/waveline-server/commit/56852757e719938c14d6c83b5252de9d3ac06b94))
+
 ## [2.3.0](https://github.com/MihkelBaranov/waveline-server/compare/v2.2.0...v2.3.0) (2020-04-13)
 
 
