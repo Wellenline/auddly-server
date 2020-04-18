@@ -20,7 +20,7 @@ export class App {
 
 	public async run() {
 
-		const REQUIRED_ENV_VARS = ["MUSIC_PATH", "ART_PATH", "MONGO_URL", "PORT", "HOST"];
+		const REQUIRED_ENV_VARS = ["MUSIC_PATH", "ART_PATH", "TRANSCODE_PATH", "MONGO_URL", "PORT", "HOST"];
 
 		for (const key of REQUIRED_ENV_VARS) {
 			if (!process.env[key]) {
