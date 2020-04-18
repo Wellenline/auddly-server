@@ -2,7 +2,7 @@ FROM node:alpine
 
 RUN mkdir -p /app
 
-RUN apt update && apt install sox
+RUN apk update && apk add sox && rm -rf /var/cache/apk/*
 
 WORKDIR /app
 

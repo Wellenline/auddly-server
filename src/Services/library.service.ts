@@ -160,7 +160,7 @@ export class LibraryService {
 		libraryInfo.albums = await AlbumModel.estimatedDocumentCount();
 		libraryInfo.artists = await ArtistModel.estimatedDocumentCount();
 
-		writeLog("Library building completed");
+		writeLog("Library building completed ");
 		console.log(libraryInfo);
 
 		return InfoModel.findOneAndUpdate({ last_scan: { $ne: undefined } }, libraryInfo, {
