@@ -11,3 +11,5 @@ docker-compose.yml
 demo
 Deep
 transcoded-audio
+.env-docker
+.album-art/

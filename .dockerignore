@@ -6,3 +6,5 @@ Deep
 .art_cache
 .env
 docker-compose.yml
+.env-docker
+.album-art/
