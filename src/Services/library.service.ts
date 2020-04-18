@@ -1,12 +1,14 @@
 import axios from "axios";
-import { PathLike, createWriteStream, existsSync, mkdirSync, readdirSync, statSync } from "fs";
+import { PathLike, createWriteStream, existsSync, mkdirSync, readdirSync, statSync, createReadStream } from "fs";
 import { extname, join } from "path";
 import * as mm from "music-metadata";
 import * as ProgressBar from "progress";
 import * as chokidar from "chokidar";
+import * as sox from "sox-stream";
+
 import { ArtistModel } from "../Models/artist.model";
 import { GenreModel, Genre } from "../Models/genre.model";
-import { TrackModel } from "../Models/track.model";
+import { TrackModel, Track } from "../Models/track.model";
 import { AlbumModel } from "../Models/album.model";
 import { InfoModel, Info } from "../Models/info.model";
 import { capitalize } from "../utils/captialize";
@@ -26,9 +28,9 @@ export class LibraryService {
 			mkdirSync(process.env.ART_PATH);
 		}
 
-		/*if (!existsSync(process.env.TRANSCODED_AUDIO)) {
-			mkdirSync(process.env.TRANSCODED_AUDIO);
-		}*/
+		if (!existsSync(process.env.TRANSCODE_PATH)) {
+			mkdirSync(process.env.TRANSCODE_PATH);
+		}
 
 		return LibraryService._instance;
 	}
@@ -48,6 +50,37 @@ export class LibraryService {
 			persistent: true,
 			// ignoreInitial: true,
 		}).on("add", this._onFileAdded.bind(this)).on("unlink", this._onFileRemoved.bind(this));
+	}
+
+	/**
+	 * Transcode audio
+	 * @param source track
+	 */
+	public transcode(track: Track, options: sox.SoxOptions): Promise<string> {
+		return new Promise((resolve, reject) => {
+
+			const audioFile = `${process.env.TRANSCODE_PATH}/${(track as any)._id.toString()}.mp3`;
+
+			if (existsSync(audioFile)) {
+				console.log("Audio already transcoded");
+				return resolve(audioFile);
+			}
+
+			const wstream = createWriteStream(audioFile);
+
+			const rstream = createReadStream(track.path, { autoClose: true }).pipe(sox(options)).pipe(wstream);
+
+			rstream.on("finish", () => {
+				console.log("finished transcoding");
+				resolve(audioFile);
+			});
+
+			rstream.on("error", (err) => {
+				console.log("Failed to transcode audio", err);
+				reject(err);
+			});
+
+		});
 	}
 
 	/**
@@ -160,25 +193,6 @@ export class LibraryService {
 	private _onFileRemoved(path: string) {
 		console.log(`TODO: delete records from db on file delete event`);
 		console.log(`File ${path} has been removed`);
-	}
-
-	/**
-	 * Get all files in folder
-	 * @param dir path to walk
-	 */
-	private getFiles(dir: PathLike): string[] {
-		return readdirSync(dir).reduce((list, file) => {
-			const name = join(dir as string, file);
-			const stats = statSync(name);
-			if (stats.isDirectory()) {
-				return list.concat(this.getFiles(name));
-			}
-
-			if (stats.isFile()) {
-				this._size += stats.size;
-			}
-			return list.concat([name]);
-		}, []);
 	}
 
 }

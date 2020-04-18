@@ -33,6 +33,7 @@ services:
     environment:
       - MONGO_URL=mongodb://YOUR_MONGO_USER:YOUR_MONGO_PASS@mongodb/waveline?authSource=admin
       - MUSIC_PATH=/music
+	  - TRANSCODE_PATH=/transcoded-audio
       - ART_PATH=/album-art
       - SPOTIFY_ID=YOUR_SPOTIFY_ID
       - SPOTIFY_SECRET=YOUR_SPOTIFY_SECRET
@@ -43,6 +44,7 @@ services:
     volumes:
       - YOUR_MUSIC_PATH:/music # Mount your music inside docker
       - ./album-art:/album-art # Mount album art cache inside docker
+	  - ./transcoded-audio:/transcoded-audio # Mount transcoded audio cache inside docker
     ports:
       - 5000:5000
     links:
@@ -79,6 +81,7 @@ $ npm start
 ```env
 MUSIC_PATH=./demo
 ART_PATH=./album-art
+TRANSCODE_PATH=./transcoded-audio
 SPOTIFY_ID=xxxxx
 SPOTIFY_SECRET=xxxxx
 MONGO_URL=mongodb://localhost/waveline
@@ -89,6 +92,9 @@ HOST=http://192.168.1.120:5000
 
 
 ```
+
+### Transcoding
+Todo
 
 ## Roadmap
 Waveline is a personal project and my current goals are
