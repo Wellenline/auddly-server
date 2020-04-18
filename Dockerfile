@@ -1,6 +1,9 @@
 FROM node:alpine
 
 RUN mkdir -p /app
+
+RUN apt update && apt install sox
+
 WORKDIR /app
 
 COPY package.json /app
