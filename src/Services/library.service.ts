@@ -58,7 +58,7 @@ export class LibraryService {
 	 */
 	public transcode(track: Track, options: sox.SoxOptions): Promise<string> {
 		return new Promise((resolve, reject) => {
-
+			console.log("Startin to transcode:", track.path);
 			const audioFile = `${process.env.TRANSCODE_PATH}/${(track as any)._id.toString()}.mp3`;
 
 			if (existsSync(audioFile)) {
@@ -175,6 +175,10 @@ export class LibraryService {
 	private _onFileAdded(path: string, stat) {
 		clearTimeout(this._timer);
 		if (this.ext.includes(extname(path))) {
+			if (!stat) {
+				stat = statSync(path);
+			}
+
 			this._size += stat.size;
 			this._files.push(path);
 		}
