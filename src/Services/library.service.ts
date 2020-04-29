@@ -119,8 +119,9 @@ export class LibraryService {
 			}
 
 			// Find or create new artist(s)
-			const artists = await ArtistModel.findOrCreate(metadata.common.artists.length > 1 ?
-				metadata.common.artists : metadata.common.artist.split(/[&,]+/));
+			const artists = await ArtistModel.findOrCreate(metadata.common
+				&& metadata.common.artists
+				&& metadata.common.artists.length > 1 ? metadata.common.artists : metadata.common.artist.split(/[&,]+/));
 
 			// Find or create a new album
 			const album = await AlbumModel.findOrCreate({
@@ -131,7 +132,7 @@ export class LibraryService {
 				},
 				year: metadata.common.year,
 				artists,
-				picture: metadata.common.picture && metadata.common.picture.length > 0 ? metadata.common.picture[0].data : undefined,
+				picture: metadata.common && metadata.common.picture && metadata.common.picture.length > 0 ? metadata.common.picture[0].data : undefined,
 			});
 
 			// Check if metadata contains genre data

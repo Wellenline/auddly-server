@@ -12,6 +12,7 @@ import { Playlists } from "./Http/playlists";
 import { Search } from "./Http/search";
 import { System } from "./Http/system";
 import { Tracks } from "./Http/tracks";
+import { Sync } from "./Http/sync";
 
 export class App {
 	constructor() {
@@ -32,7 +33,7 @@ export class App {
 		bootstrap({
 			port: (process.env.PORT as number | string),
 			middleware: [cors, bodyParser, auth(["art", "play"])],
-			resources: [Albums, Artists, Genres, Playlists, Search, System, Tracks],
+			resources: [Albums, Artists, Genres, Playlists, Search, System, Tracks, Sync],
 		});
 
 		app.headers = {
