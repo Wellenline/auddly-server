@@ -3,6 +3,7 @@ import { extname } from "path";
 import * as mm from "music-metadata";
 import * as chokidar from "chokidar";
 import * as sox from "sox-stream";
+import * as readline from "readline";
 
 import { ArtistModel } from "../Models/artist.model";
 import { GenreModel } from "../Models/genre.model";
@@ -10,8 +11,6 @@ import { TrackModel, Track } from "../Models/track.model";
 import { AlbumModel } from "../Models/album.model";
 import { InfoModel, Info } from "../Models/info.model";
 import { capitalize } from "../utils/captialize";
-
-import * as readline from "readline";
 
 export const writeLog = (message: string | Buffer | Uint8Array) => {
 	readline.clearLine(process.stdout, 0);
@@ -111,15 +110,9 @@ export class LibraryService {
 				continue;
 			}
 
-			let metadata: any = null;
-			try {
-				metadata = await mm.parseFile(file);
-			} catch (err) {
-				console.log("Failed to parse", file, err);
-				continue;
-			}
+			const metadata: any = await mm.parseFile(file).catch((err) => console.log("Failed to parse", file, err));
 
-			if (!metadata) {
+			if (!metadata || metadata.format.tagTypes.length === 0) {
 				console.log(`No metadata found for file: ${file}`);
 				continue;
 			}
