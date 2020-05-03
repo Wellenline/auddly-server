@@ -5,32 +5,19 @@
 <img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" width="200">
 </a>
 
-
-### Getting started
-
-Clone the repo
-```Sh
-$ git clone https://github.com/wellenline/waveline-server.git
-$ cd waveline-server
-```
-
-### Artist pictures from Spotify
-To display artist pictures you need to sign up for Spotify Developer Account and create a new application
-https://developer.spotify.com/dashboard/login
-
-
-### Using docker-compose
+### Using Docker-Compose
 ```docker
-version: "3"
+version: '3'
 services:
   app:
     container_name: waveline-api
     restart: always
-    build: ./
+    build:
+      context: https://github.com/Wellenline/waveline-server.git
     environment:
       - MONGO_URL=mongodb://YOUR_MONGO_USER:YOUR_MONGO_PASS@mongodb/waveline?authSource=admin
       - MUSIC_PATH=/music
-	  - TRANSCODE_PATH=/transcoded-audio
+      - TRANSCODE_PATH=/transcoded-audio
       - ART_PATH=/album-art
       - SPOTIFY_ID=YOUR_SPOTIFY_ID
       - SPOTIFY_SECRET=YOUR_SPOTIFY_SECRET
@@ -41,13 +28,14 @@ services:
     volumes:
       - YOUR_MUSIC_PATH:/music # Mount your music inside docker
       - ./album-art:/album-art # Mount album art cache inside docker
-	  - ./transcoded-audio:/transcoded-audio # Mount transcoded audio cache inside docker
+      - ./transcoded-audio:/transcoded-audio # Mount transcoded audio cache inside docker
     ports:
       - 5000:5000
     links:
       - mongodb
     depends_on:
       - mongodb
+
   mongodb:
     image: mongo:latest
     container_name: "mongodb"
@@ -59,22 +47,33 @@ services:
     volumes:
       - ./data/mongo:/data
     ports:
-      - 27018:27017
+      - 27017:27017
     command: mongod --auth --logpath=/dev/null
- ```
-
-```sh
-$ docker-compose up -d
 ```
 
-### Building from source
 ```sh
-$ npm i
-$ npm run build
-$ npm start
+docker-compose up -d
 ```
 
-### Sample .env file
+
+### Building From Source
+
+You'll need [NPM](https://www.npmjs.com/get-npm) installed before continuing.
+
+Clone the repo:
+```Sh
+git clone https://github.com/wellenline/waveline-server.git
+cd waveline-server
+```
+
+Initialize the build using NPM:
+```sh
+npm i
+npm run build
+npm start
+```
+
+Sample .env file:
 ```env
 MUSIC_PATH=./demo
 ART_PATH=./album-art
@@ -86,9 +85,12 @@ AUTH_ENABLED=false
 API_KEY=1234
 PORT=5000
 HOST=http://192.168.1.120:5000
-
-
 ```
+
+### Artist Pictures (Using Spotify)
+To display artist pictures you need to sign up for Spotify Developer Account and create a new application
+https://developer.spotify.com/dashboard/login
+
 
 ### Transcoding
 WIP
