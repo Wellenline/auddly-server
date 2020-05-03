@@ -5,9 +5,6 @@
 <img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" width="200">
 </a>
 
-or try the latest dev build from
-[here](https://github.com/Wellenline/waveline-server/blob/master/app-release/app-release.apk)
-
 
 ### Getting started
 
