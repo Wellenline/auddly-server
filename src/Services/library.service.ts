@@ -111,7 +111,13 @@ export class LibraryService {
 				continue;
 			}
 
-			const metadata: any = await mm.parseFile(file).catch((err) => console.log("Failed to parse", file, err));
+			let metadata: any = null;
+			try {
+				metadata = await mm.parseFile(file);
+			} catch (err) {
+				console.log("Failed to parse", file, err);
+				continue;
+			}
 
 			if (!metadata) {
 				console.log(`No metadata found for file: ${file}`);
