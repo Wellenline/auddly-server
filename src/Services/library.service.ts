@@ -4,6 +4,7 @@ import * as mm from "music-metadata";
 import * as chokidar from "chokidar";
 import * as sox from "sox-stream";
 import * as ProgressBar from "progress";
+
 import { format } from "util";
 import { ArtistModel } from "../Models/artist.model";
 import { GenreModel } from "../Models/genre.model";
@@ -12,13 +13,6 @@ import { AlbumModel } from "../Models/album.model";
 import { InfoModel, Info } from "../Models/info.model";
 import { capitalize } from "../utils/captialize";
 
-import * as readline from "readline";
-
-export const writeLog = (message: string | Buffer | Uint8Array) => {
-	readline.clearLine(process.stdout, 0);
-	readline.cursorTo(process.stdout, 0);
-	process.stdout.write(message);
-};
 /**
  * Library Service
  */
