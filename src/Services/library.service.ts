@@ -1,10 +1,10 @@
-import { createWriteStream, existsSync, mkdirSync, readdirSync, statSync, createReadStream } from "fs";
+import { createWriteStream, existsSync, appendFile, mkdirSync, readdirSync, statSync, createReadStream } from "fs";
 import { extname } from "path";
 import * as mm from "music-metadata";
 import * as chokidar from "chokidar";
 import * as sox from "sox-stream";
-import * as readline from "readline";
-
+import * as ProgressBar from "progress";
+import { format } from "util";
 import { ArtistModel } from "../Models/artist.model";
 import { GenreModel } from "../Models/genre.model";
 import { TrackModel, Track } from "../Models/track.model";
@@ -12,12 +12,13 @@ import { AlbumModel } from "../Models/album.model";
 import { InfoModel, Info } from "../Models/info.model";
 import { capitalize } from "../utils/captialize";
 
+import * as readline from "readline";
+
 export const writeLog = (message: string | Buffer | Uint8Array) => {
 	readline.clearLine(process.stdout, 0);
 	readline.cursorTo(process.stdout, 0);
 	process.stdout.write(message);
 };
-
 /**
  * Library Service
  */
@@ -40,7 +41,7 @@ export class LibraryService {
 		return LibraryService._instance;
 	}
 
-	public ext = [".mp3", ".flac", ".m4a"];
+	public ext = [".mp3", ".flac", ".m4a", ".mp5"];
 
 	private _files = [];
 	private _timer: NodeJS.Timeout;
@@ -97,62 +98,73 @@ export class LibraryService {
 			size: this._size,
 		};
 
-		let index = 0;
+		const bar = new ProgressBar(":bar :current/:total ", {
+			index: 0,
+			total: files.length,
+		} as ProgressBar.ProgressBarOptions);
+
+		const logStream = createWriteStream("error_log.txt", { flags: "a" });
+
+		console.log("Starting to build your music library");
 		for (const file of files) {
-			// bar.tick();
-			index++;
-			writeLog(`[${index}/${files.length}] ${file}`);
+			bar.tick();
+			try {
 
+				const exists = await TrackModel.exists({ path: file });
 
-			const exists = await TrackModel.exists({ path: file });
+				if (exists) {
+					continue;
+				}
 
-			if (exists) {
-				continue;
+				const metadata = await mm.parseFile(file);
+
+				if (!metadata || metadata.format.tagTypes.length === 0) {
+					throw new Error("Not metadata found");
+				}
+
+				// Find or create new artist(s)
+				const artists = await ArtistModel.findOrCreate(metadata.common
+					&& metadata.common.artists
+					&& metadata.common.artists.length > 1 ? metadata.common.artists : metadata.common.artist.split(/[&,]+/));
+
+				// Find or create a new album
+				const album = await AlbumModel.findOrCreate({
+					album: metadata.common.album,
+					artist: {
+						name: metadata.common.artist,
+						id: artists[0]._id,
+					},
+					year: metadata.common.year,
+					artists,
+					picture: metadata.common && metadata.common.picture && metadata.common.picture.length > 0 ? metadata.common.picture[0].data : undefined,
+				});
+
+				// Check if metadata contains genre data
+				let genre: any;
+				if (metadata.common.genre) {
+					genre = await GenreModel.findOrCreate(metadata.common.genre[0]);
+				}
+
+				await TrackModel.findOrCreate({
+					name: capitalize(metadata.common.title),
+					artists: artists.map((artist) => artist._id),
+					album: album._id,
+					artist: metadata.common.artist,
+					genre: genre ? genre._id : undefined,
+					duration: metadata.format.duration,
+					path: file,
+					lossless: metadata.format.lossless,
+					year: metadata.common.year || 0,
+					created_at: new Date(),
+				});
+
+			} catch (err) {
+				logStream.write(`${file}\n`);
+				logStream.write(`[ERROR]: ${format(err)}\n\n`);
 			}
-
-			const metadata: any = await mm.parseFile(file).catch((err) => console.log("Failed to parse", file, err));
-
-			if (!metadata || metadata.format.tagTypes.length === 0) {
-				console.log(`No metadata found for file: ${file}`);
-				continue;
-			}
-
-			// Find or create new artist(s)
-			const artists = await ArtistModel.findOrCreate(metadata.common
-				&& metadata.common.artists
-				&& metadata.common.artists.length > 1 ? metadata.common.artists : metadata.common.artist.split(/[&,]+/));
-
-			// Find or create a new album
-			const album = await AlbumModel.findOrCreate({
-				album: metadata.common.album,
-				artist: {
-					name: metadata.common.artist,
-					id: artists[0]._id,
-				},
-				year: metadata.common.year,
-				artists,
-				picture: metadata.common && metadata.common.picture && metadata.common.picture.length > 0 ? metadata.common.picture[0].data : undefined,
-			});
-
-			// Check if metadata contains genre data
-			let genre: any;
-			if (metadata.common.genre) {
-				genre = await GenreModel.findOrCreate(metadata.common.genre[0]);
-			}
-
-			await TrackModel.findOrCreate({
-				name: capitalize(metadata.common.title),
-				artists: artists.map((artist) => artist._id),
-				album: album._id,
-				artist: metadata.common.artist,
-				genre: genre ? genre._id : undefined,
-				duration: metadata.format.duration,
-				path: file,
-				lossless: metadata.format.lossless,
-				year: metadata.common.year || 0,
-				created_at: new Date(),
-			});
 		}
+
+		logStream.end();
 
 		libraryInfo.end = new Date();
 		libraryInfo.seconds = (libraryInfo.end.getTime() - libraryInfo.start.getTime()) / 1000;
@@ -160,7 +172,7 @@ export class LibraryService {
 		libraryInfo.albums = await AlbumModel.estimatedDocumentCount();
 		libraryInfo.artists = await ArtistModel.estimatedDocumentCount();
 
-		writeLog("Library building completed ");
+		console.log("Done building library");
 		console.log(libraryInfo);
 
 		return InfoModel.findOneAndUpdate({ last_scan: { $ne: undefined } }, libraryInfo, {
