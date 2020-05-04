@@ -35,7 +35,7 @@ export class LibraryService {
 		return LibraryService._instance;
 	}
 
-	public ext = [".mp3", ".flac", ".m4a", ".mp5"];
+	public ext = [".mp3", ".flac", ".m4a"];
 
 	private _files = [];
 	private _timer: NodeJS.Timeout;
