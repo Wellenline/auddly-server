@@ -2,7 +2,7 @@ import * as dotenv from "dotenv";
 import * as ip from "ip";
 import * as qrcode from "qrcode";
 import * as mongoose from "mongoose";
-import { bootstrap, app } from "@wellenline/via";
+import { bootstrap } from "@wellenline/via";
 import { cors, bodyParser, auth } from "./Middleware/global";
 import { LibraryService } from "./Services/library.service";
 import { Albums } from "./Http/albums";
@@ -36,13 +36,6 @@ export class App {
 			resources: [Albums, Artists, Genres, Playlists, Search, System, Tracks, Sync],
 		});
 
-		app.headers = {
-			"Content-Type": "application/json",
-			"Access-Control-Allow-Origin": "*",
-			"Access-Control-Allow-Methods": "OPTIONS, DELETE, PUT, PATCH, POST, GET",
-			"Access-Control-Max-Age": 2592000,
-			"Access-Control-Allow-Headers": "*",
-		};
 
 		console.log("[DEBUG] Establishing connection with database\n");
 
