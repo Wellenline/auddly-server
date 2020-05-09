@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.1.0](https://github.com/MihkelBaranov/waveline-server/compare/v3.0.0...v3.1.0) (2020-05-09)
+
+
+### Features
+
+* **app:** update env vars ([7035de8](https://github.com/MihkelBaranov/waveline-server/commit/7035de8950f534744bc8d1a26d4cfce8fd8ed9d3))
+* **library:** improve error handling ([f7bb122](https://github.com/MihkelBaranov/waveline-server/commit/f7bb1220a7e563bff359f789ff3068184b9885e9))
+* **sync:** remote sync ([85b962e](https://github.com/MihkelBaranov/waveline-server/commit/85b962e6cc8e938cf32d1855904e73dbbcc41c67))
+* **tracks:** make transcoding optional ([0447405](https://github.com/MihkelBaranov/waveline-server/commit/044740571a947d23d29584dea8436ebd13760743)), closes [#23](https://github.com/MihkelBaranov/waveline-server/issues/23)
+
+
+### Bug Fixes
+
+* **library:** remove test ext from ext array ([60ed8fb](https://github.com/MihkelBaranov/waveline-server/commit/60ed8fb993ee626fa9587b6609cb743196d12d9c))
+* **metadata:** use try/catch with async/await instead of chaining .catch ([a2d4db1](https://github.com/MihkelBaranov/waveline-server/commit/a2d4db186519301a97ffc571ccb53778fb881029))
+* **tracks:** transcode only flacs for now ([dae4aa3](https://github.com/MihkelBaranov/waveline-server/commit/dae4aa3e7199adc3d9d8fc55473170495e0a96f7))
+
 ## [3.0.0](https://github.com/MihkelBaranov/waveline-server/compare/v2.3.0...v3.0.0) (2020-04-18)
 
 
