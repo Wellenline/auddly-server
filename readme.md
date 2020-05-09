@@ -22,6 +22,7 @@ services:
       - SPOTIFY_ID=YOUR_SPOTIFY_ID
       - SPOTIFY_SECRET=YOUR_SPOTIFY_SECRET
       - AUTH_ENABLED=true
+	  - TRANSCODING=false # set to true to enable transcoding for flac files
       - API_KEY=12345 # replace it with something more secure
       - PORT=5000
       - HOST=http://127.0.0.1:5000
@@ -82,6 +83,7 @@ SPOTIFY_ID=xxxxx
 SPOTIFY_SECRET=xxxxx
 MONGO_URL=mongodb://localhost/waveline
 AUTH_ENABLED=false
+TRANSCODING=false
 API_KEY=1234
 PORT=5000
 HOST=http://192.168.1.120:5000
