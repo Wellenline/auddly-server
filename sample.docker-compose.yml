@@ -10,6 +10,7 @@ services:
       - SPOTIFY_ID=YOUR_SPOTIFY_ID
       - SPOTIFY_SECRET=YOUR_SPOTIFY_SECRET
       - AUTH_ENABLED=true
+      - TRANSCODING=false # set to true if you wish to enable transcoding
       - API_KEY=12345 # replace it with something more secure
       - PORT=5000
       - HOST=http://127.0.0.1:5000

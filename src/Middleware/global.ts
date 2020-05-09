@@ -6,7 +6,7 @@ import { IncomingForm } from "formidable";
  * @param context request
  */
 export const cors = async (context: IContext) => {
-	const headers = {
+	app.headers = {
 		"Content-Type": "application/json",
 		"Access-Control-Allow-Origin": "*",
 		"Access-Control-Allow-Methods": "OPTIONS, DELETE, PUT, PATCH, POST, GET",
@@ -15,7 +15,7 @@ export const cors = async (context: IContext) => {
 	};
 
 	if (context.req.method === "OPTIONS") {
-		context.res.writeHead(204, headers);
+		context.res.writeHead(204, app.headers);
 		return context.res.end();
 	}
 
