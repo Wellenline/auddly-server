@@ -3,6 +3,7 @@ import { TrackModel } from "../Models/track.model";
 import { Context, IContext, Resource, Get } from "@wellenline/via";
 import { readFileSync, statSync, createReadStream } from "fs";
 import { LibraryService } from "../Services/library.service";
+import { PlaylistModel } from "../Models/playlist.model";
 @Resource("/tracks")
 export class Tracks {
 	@Get("/")
@@ -14,8 +15,9 @@ export class Tracks {
 		favourites?: boolean,
 		artist?: string,
 		album?: string,
+		playlist?: string,
 	}) {
-		const lookup: { genre?: string, favourited?: boolean, artists?: string, album?: string } = {};
+		const lookup: { genre?: string, favourited?: boolean, artists?: string, album?: string, _id?: any, } = {};
 		query.skip = query.skip || 0;
 		query.limit = query.limit || 20;
 
@@ -34,6 +36,17 @@ export class Tracks {
 		if (query.album) {
 			lookup.album = query.album;
 		}
+
+		if (query.playlist) {
+			const data: any = await PlaylistModel.findById(query.playlist).select("tracks");
+
+			if (data && data.tracks && data.tracks.length > 0) {
+				lookup._id = {
+					$in: data.tracks.map((track) => track._id),
+				};
+			}
+		}
+
 		const model = TrackModel.find(lookup).populate([{
 			path: "album",
 			populate: [{
