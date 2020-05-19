@@ -44,6 +44,10 @@ export class Tracks {
 				lookup._id = {
 					$in: data.tracks.map((track) => track._id),
 				};
+			} else {
+				lookup._id = {
+					$in: [null],
+				};
 			}
 		}
 
