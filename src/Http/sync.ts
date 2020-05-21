@@ -9,7 +9,6 @@ export class Sync {
 		return await RemoteSyncService.instance._considerFilesForSync(context.body);
 	}
 
-
 	@Post("/upload")
 	public async upload(@Context() context: IContext) {
 		return await RemoteSyncService.instance._handleIncomingFile({ ...context.req.body, data: context.req.files.data });

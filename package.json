@@ -55,9 +55,12 @@
 		"mime": "^2.4.4",
 		"mongoose": "^5.9.9",
 		"music-metadata": "^2.6.1",
+		"pg": "^8.2.1",
 		"progress": "^2.0.3",
 		"qrcode": "^1.4.4",
-		"sox-stream": "^2.0.3"
+		"sox-stream": "^2.0.3",
+		"sqlite3": "^4.2.0",
+		"typeorm": "^0.2.25"
 	},
 	"repository": "https://github.com/MihkelBaranov/waveline-server.git",
 	"commitlint": {

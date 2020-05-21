@@ -4,98 +4,89 @@ import { Context, IContext, Resource, Get } from "@wellenline/via";
 import { readFileSync, statSync, createReadStream } from "fs";
 import { LibraryService } from "../Services/library.service";
 import { PlaylistModel } from "../Models/playlist.model";
+import { Track } from "../Entities/track";
+import { getManager } from "typeorm";
 @Resource("/tracks")
 export class Tracks {
-	@Get("/")
+	@Get("/v2")
 	public async tracks(@Context("query") query: {
 		skip?: number,
 		limit?: number,
-		shuffle?: boolean,
-		genre?: string,
-		favourites?: boolean,
-		artist?: string,
-		album?: string,
-		playlist?: string,
+		genre?: number,
+		liked?: boolean,
+		artist?: number,
+		album?: number,
+		playlist?: number,
 	}) {
-		const lookup: { genre?: string, favourited?: boolean, artists?: string, album?: string, _id?: any, } = {};
-		query.skip = query.skip || 0;
-		query.limit = query.limit || 20;
 
-		if (query.genre) {
-			lookup.genre = query.genre;
-		}
+		const skip = query.skip || 0;
+		const limit = query.limit || 20;
+
+		// have to use querybuilder cuz im too dumb to figure out how to make it work with typeorm find-options
+		// for reference https://github.com/typeorm/typeorm/issues/6036
+		// https://stackoverflow.com/questions/52246722/how-to-query-a-many-to-many-relation-with-typeorm
+		const queryBuilder = getManager().createQueryBuilder(Track, "track");
 
 		if (query.artist) {
-			lookup.artists = query.artist;
+			queryBuilder.innerJoinAndSelect("track.artists", "artist", "artist.id = :id", { id: query.artist });
 		}
 
-		if (query.favourites) {
-			lookup.favourited = true;
+		if (query.genre) {
+			queryBuilder.where("track.genre = :genre", {
+				genre: query.genre,
+			});
+		}
+
+		if (query.liked) {
+			queryBuilder.where("track.liked = :liked", {
+				liked: query.liked,
+			});
 		}
 
 		if (query.album) {
-			lookup.album = query.album;
+			queryBuilder.where("track.album = :album", {
+				album: query.album,
+			});
 		}
 
-		if (query.playlist) {
-			const data: any = await PlaylistModel.findById(query.playlist).select("tracks");
+		queryBuilder.leftJoinAndSelect("track.artists", "artists");
+		queryBuilder.leftJoinAndSelect("track.playlists", "playlists");
+		queryBuilder.leftJoinAndSelect("track.album", "album");
+		queryBuilder.leftJoinAndSelect("track.genre", "genre");
 
-			if (data && data.tracks && data.tracks.length > 0) {
-				lookup._id = {
-					$in: data.tracks.map((track) => track._id),
-				};
-			} else {
-				lookup._id = {
-					$in: [null],
-				};
-			}
-		}
+		queryBuilder.skip(skip);
+		queryBuilder.limit(limit);
 
-		const model = TrackModel.find(lookup).populate([{
-			path: "album",
-			populate: [{
-				path: "artist",
-			}],
-		}, {
-			path: "genre",
-		}, {
-			path: "artists",
-
-		}]).sort("-created_at");
-
-		const total = await TrackModel.countDocuments(lookup);
-
-		if (query.skip && !query.shuffle) {
-			model.skip(query.skip);
-		}
-
-		if (query.limit && !query.shuffle) {
-			model.limit(query.limit);
-		}
-
-		let tracks = await model;
-
-		if (query.shuffle) {
-			const min = 0;
-			const n = [];
-
-			for (let i = 0; i < query.limit; i++) {
-				n.push(Math.floor(Math.random() * (tracks.length - min + 1)) + min);
-			}
-
-			tracks = n.map((i) => tracks[i]).filter((s) => s !== null);
-		}
+		const total = await queryBuilder.getCount();
+		const tracks = await queryBuilder.getMany();
+		/*const tracks = await Track.find({
+			join: {
+				alias: "track",
+				leftJoinAndSelect: {
+					artists: "track.artists",
+					album: "track.album",
+					genre: "track.genre",
+				}
+			},
+			where,
+			skip,
+			take: limit,
+		});*/
 		return {
 			tracks,
-			query,
+			query: {
+				...query,
+				skip,
+				limit,
+			},
 			total,
 		};
-
 	}
+
 
 	@Get("/play/:id")
 	public async stream(@Context() context: IContext) {
-		const track = await TrackModel.findById(context.params.id);
+		const track = await Track.findOne(context.params.id);
 		if (!track) {
 			throw new Error("Failed to load track metadata");
 		}
@@ -105,7 +96,7 @@ export class Tracks {
 		await track.save();
 		// wait until audio has finished transcodig... probably not the best way of doing it
 		if (track.path.toString().endsWith(".flac") && process.env.TRANSCODING === "true") {
-			track.path = await LibraryService.instance.transcode(track, {
+			track.path = await LibraryService.instance.transcode(track as any, {
 				output: { type: "mp3" }
 			});
 		}
@@ -159,86 +150,16 @@ export class Tracks {
 
 	@Get("/like/:id")
 	public async like(@Context("params") params: { id: string }) {
-		const track = await TrackModel.findById(params.id);
-		track.favourited = !track.favourited;
+		const track = await Track.findOne(params.id);
+		track.liked = !track.liked;
 		track.updated_at = new Date();
 		return await track.save();
 
 	}
 
-	@Get("/popular")
-	public async poplar(@Context("query") query: { artist?: string, skip?: number, limit?: number, genre?: string, album?: string }) {
-		const lookup: { genre?: string, favourited?: boolean, artists?: string, album?: string, plays: any } = { plays: { $gt: 0 } };
-		query.skip = query.skip || 0;
-		query.limit = query.limit || 20;
-
-		if (query.genre) {
-			lookup.genre = query.genre;
-		}
-
-		if (query.artist) {
-			lookup.artists = query.artist;
-		}
-
-		if (query.album) {
-			lookup.album = query.album;
-		}
-
-		const model = TrackModel.find(lookup).populate([{
-			path: "album",
-			populate: [{
-				path: "artist",
-			}],
-		}, {
-			path: "genre",
-		}, {
-			path: "artists",
-
-		}]).sort("-plays");
-
-		const total = await TrackModel.countDocuments(lookup);
-
-		if (query.skip) {
-			model.skip(query.skip);
-		}
-
-		if (query.limit) {
-			model.limit(query.limit);
-		}
-
-		const tracks = await model.find();
-
-		return {
-			tracks,
-			query: lookup,
-			total,
-		};
-	}
-
-	@Get("/favourites")
-	public async favourites() {
-		return await TrackModel.find({ favourited: true }).populate("album genre artists");
-
-	}
-
-	@Get("/new")
-	public async recent(@Context("query") query: { limit: number }) {
-		return await TrackModel.find().sort({ created_at: -1 }).populate([{
-			path: "album",
-			populate: [{
-				path: "artist",
-			}],
-		}, {
-			path: "genre",
-		}, {
-			path: "artists",
-
-		}]).limit(query.limit || 10);
-	}
-
 	@Get("/random")
 	public async random(@Context("query") query: { total: number }) {
-		return await TrackModel.random(query.total);
+		return await Track.random(query.total);
 	}
 
 }

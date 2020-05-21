@@ -8,10 +8,14 @@ import * as ProgressBar from "progress";
 import { format } from "util";
 import { ArtistModel } from "../Models/artist.model";
 import { GenreModel } from "../Models/genre.model";
-import { TrackModel, Track } from "../Models/track.model";
 import { AlbumModel } from "../Models/album.model";
 import { InfoModel, Info } from "../Models/info.model";
 import { capitalize } from "../utils/captialize";
+import { Artist } from "../Entities/artist";
+import { Track } from "../Entities/track";
+import { Album } from "../Entities/album";
+import { Genre } from "../Entities/genre";
+import { Server } from "../Entities/server";
 
 /**
  * Library Service
@@ -104,7 +108,7 @@ export class LibraryService {
 			bar.tick();
 			try {
 
-				const exists = await TrackModel.exists({ path: file });
+				const exists = await Track.findOne({ path: file });
 
 				if (exists) {
 					continue;
@@ -117,40 +121,36 @@ export class LibraryService {
 				}
 
 				// Find or create new artist(s)
-				const artists = await ArtistModel.findOrCreate(metadata.common
+				const artists = await Artist.findOrCreate(metadata.common
 					&& metadata.common.artists
 					&& metadata.common.artists.length > 1 ? metadata.common.artists : metadata.common.artist.split(/[&,]+/));
 
 				// Find or create a new album
-				const album = await AlbumModel.findOrCreate({
+				const album = await Album.findOrCreate({
 					album: metadata.common.album,
-					artist: {
-						name: metadata.common.artist,
-						id: artists[0]._id,
-					},
+					artist: artists[0],
 					year: metadata.common.year,
-					artists,
 					picture: metadata.common && metadata.common.picture && metadata.common.picture.length > 0 ? metadata.common.picture[0].data : undefined,
 				});
 
 				// Check if metadata contains genre data
-				let genre: any;
-				if (metadata.common.genre) {
-					genre = await GenreModel.findOrCreate(metadata.common.genre[0]);
+				let genre: any = null;
+				if (metadata.common.genre && metadata.common.genre[0]) {
+					genre = await Genre.findOrCreate(metadata.common.genre[0]);
 				}
 
-				await TrackModel.findOrCreate({
+				await Track.findOrCreate({
 					name: capitalize(metadata.common.title),
-					artists: artists.map((artist) => artist._id),
-					album: album._id,
+					artists,
+					album: album.id,
 					artist: metadata.common.artist,
-					genre: genre ? genre._id : undefined,
+					genre,
 					duration: metadata.format.duration,
 					path: file,
 					lossless: metadata.format.lossless,
 					year: metadata.common.year || 0,
 					created_at: new Date(),
-				});
+				} as any);
 
 			} catch (err) {
 				logStream.write(`${file}\n`);
@@ -162,17 +162,14 @@ export class LibraryService {
 
 		libraryInfo.end = new Date();
 		libraryInfo.seconds = (libraryInfo.end.getTime() - libraryInfo.start.getTime()) / 1000;
-		libraryInfo.tracks = await TrackModel.estimatedDocumentCount();
-		libraryInfo.albums = await AlbumModel.estimatedDocumentCount();
-		libraryInfo.artists = await ArtistModel.estimatedDocumentCount();
+		libraryInfo.tracks = await Track.count();
+		libraryInfo.albums = await Album.count();
+		libraryInfo.artists = await Artist.count();
 
 		console.log("Done building library");
 		console.log(libraryInfo);
 
-		return InfoModel.findOneAndUpdate({ last_scan: { $ne: undefined } }, libraryInfo, {
-			upsert: true,
-			new: true,
-		});
+		return Server.create(libraryInfo).save();
 
 	}
 

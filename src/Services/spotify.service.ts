@@ -29,7 +29,7 @@ export class SpotifyService {
 	public async picture(type: string, key: KeyTypes, query: string) {
 		try {
 			// console.log(type, key, query);
-			if (process.env.SPOTIFY_ID && process.env.SPOTIFY_SECRET) {
+			/*if (process.env.SPOTIFY_ID && process.env.SPOTIFY_SECRET) {
 				this.ACCESS_TOKEN = await this.authorize();
 
 				const response = await this.search(type, query);
@@ -37,7 +37,8 @@ export class SpotifyService {
 				if (response && response[key] && response[key].items && response[key].items.length > 0) {
 					return response[key].items[0].images[0] ? response[key].items[0].images[0].url : "";
 				}
-			}
+			}*/
+			return "DEMO_IMAGE";
 		} catch (e) {
 			console.info(e);
 		}

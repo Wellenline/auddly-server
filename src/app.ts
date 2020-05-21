@@ -13,6 +13,13 @@ import { Search } from "./Http/search";
 import { System } from "./Http/system";
 import { Tracks } from "./Http/tracks";
 import { Sync } from "./Http/sync";
+import { createConnection } from "typeorm";
+import { Album } from "./Entities/album";
+import { Artist } from "./Entities/artist";
+import { Genre } from "./Entities/genre";
+import { Playlist } from "./Entities/playlist";
+import { Server } from "./Entities/server";
+import { Track } from "./Entities/track";
 
 export class App {
 	constructor() {
@@ -38,6 +45,16 @@ export class App {
 
 
 		console.log("[DEBUG] Establishing connection with database\n");
+
+		createConnection({
+			type: "postgres",
+			database: "waveline",
+			synchronize: true,
+			logging: false,
+			entities: [Album, Artist, Genre, Playlist, Server, Track],
+		}).catch((err) => {
+			console.log(err);
+		});
 
 		await mongoose.connect(process.env.MONGO_URL, {
 			useNewUrlParser: true,

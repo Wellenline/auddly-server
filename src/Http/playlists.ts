@@ -2,6 +2,9 @@ import { GenreModel } from "../Models/genre.model";
 import { Resource, Get, Post, Context, IContext, Put, HttpException, HttpStatus, Delete } from "@wellenline/via";
 import { PlaylistModel } from "../Models/playlist.model";
 import { TrackModel } from "../Models/track.model";
+/**
+ * This is a mess
+ */
 @Resource("/playlists")
 export class Playlists {
 	@Get("/")

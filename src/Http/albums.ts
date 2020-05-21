@@ -1,6 +1,7 @@
 import { Resource, Get, Context, IContext } from "@wellenline/via";
 import { AlbumModel } from "../Models/album.model";
 import { existsSync, readFileSync } from "fs";
+import { Album } from "../Entities/album";
 
 @Resource("/albums")
 export class Albums {
@@ -17,37 +18,54 @@ export class Albums {
 	}
 
 	@Get("/")
-	public async index(@Context("query") query: { skip?: number, limit?: number }) {
+	public async index(@Context("query") query: { skip?: number, limit?: number, artist?: number, sort?: number }) {
 		const skip = query.skip || 0;
 		const limit = query.limit || 20;
+		const where = query.artist ? {
+			artist: query.artist
+		} : {};
 		return {
-			albums: await AlbumModel.find().populate("artist").skip(skip).limit(limit).sort({ created_at: -1 }),
-			total: await AlbumModel.countDocuments(),
+			albums: await Album.find({
+				join: {
+					alias: "album",
+					leftJoinAndSelect: {
+						artist: "album.artist",
+					}
+				},
+				where,
+				order: {
+					created_at: query.sort > -1 ? "ASC" : "DESC",
+				},
+				skip,
+				take: limit,
+			}),
+			total: await Album.count({
+				where,
+			}),
 			query: {
+				...query,
 				skip,
 				limit,
 			},
 		};
 	}
 
-	@Get("/artists/:id")
-	public async artist(@Context("params") params: { id: string }) {
-		return await AlbumModel.find({ artist: params.id }).populate("artist");
-	}
-
 	@Get("/random")
 	public async random(@Context("query") query: { total: number }) {
-		return await AlbumModel.random(query.total);
-	}
-
-	@Get("/new")
-	public async recent(@Context("query") query: { limit: number }) {
-		return await AlbumModel.find().sort({ created_at: -1 }).populate("artist").limit(query.limit || 10);
+		return await Album.random(query.total);
 	}
 
 	@Get("/:id")
 	public async album(@Context("params") params: { id: string }) {
-		return await AlbumModel.findById(params.id).populate("artist");
+		return await Album.findOne({
+			join: {
+				alias: "album",
+				leftJoinAndSelect: {
+					artist: "album.artist",
+				}
+			},
+			where: { id: params.id },
+		});
 	}
 
 }

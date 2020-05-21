@@ -1,15 +1,23 @@
 import { ArtistModel } from "../Models/artist.model";
 import { Resource, Get, Context } from "@wellenline/via";
+import { Artist } from "../Entities/artist";
 @Resource("/artists")
 export class Artists {
 	@Get("/")
-	public async index(@Context("query") query: { skip?: number, limit?: number }) {
+	public async index(@Context("query") query: { skip?: number, limit?: number, sort?: number, }) {
 		const skip = query.skip || 0;
 		const limit = query.limit || 20;
 		return {
-			artists: await ArtistModel.find().sort({ created_at: -1 }).skip(skip).limit(limit),
-			total: await ArtistModel.countDocuments(),
+			artists: await Artist.find({
+				order: {
+					created_at: query.sort > -1 ? "ASC" : "DESC",
+				},
+				skip,
+				take: limit,
+			}),
+			total: await Artist.count(),
 			query: {
+				...query,
 				skip,
 				limit,
 			},
@@ -21,14 +29,9 @@ export class Artists {
 		return await ArtistModel.random(query.total);
 	}
 
-	@Get("/new")
-	public async recent(@Context("query") query: { limit: number }) {
-		return await ArtistModel.find().sort({ created_at: -1 }).limit(query.limit || 10);
-	}
-
 	@Get("/:id")
 	public async artist(@Context("params") params: { id: string }) {
-		return await ArtistModel.findById(params.id);
+		return await Artist.findOne(params.id);
 	}
 
 }

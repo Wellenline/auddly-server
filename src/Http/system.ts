@@ -3,6 +3,7 @@ import * as os from "os";
 import { LibraryService } from "../Services/library.service";
 import { InfoModel } from "../Models/info.model";
 import { Resource, Get } from "@wellenline/via";
+import { Server } from "../Entities/server";
 
 @Resource("/system")
 export class System {
@@ -15,7 +16,11 @@ export class System {
 
 	@Get("/info")
 	public async info() {
-		const info = await InfoModel.findOne().lean();
+		const info = await Server.findOne({}, {
+			order: {
+				end: "DESC",
+			}
+		});
 		return {
 			version: process.env.npm_package_version,
 			arch: os.arch(),
