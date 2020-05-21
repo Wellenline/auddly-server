@@ -8,7 +8,7 @@ import { Track } from "../Entities/track";
 import { getManager } from "typeorm";
 @Resource("/tracks")
 export class Tracks {
-	@Get("/v2")
+	@Get("/")
 	public async tracks(@Context("query") query: {
 		skip?: number,
 		limit?: number,
@@ -17,6 +17,7 @@ export class Tracks {
 		artist?: number,
 		album?: number,
 		playlist?: number,
+		popular?: boolean,
 	}) {
 
 		const skip = query.skip || 0;
@@ -53,7 +54,12 @@ export class Tracks {
 		queryBuilder.leftJoinAndSelect("track.playlists", "playlists");
 		queryBuilder.leftJoinAndSelect("track.album", "album");
 		queryBuilder.leftJoinAndSelect("track.genre", "genre");
+		if (query.popular) {
+			queryBuilder.orderBy("plays", "DESC");
+		} else {
+			queryBuilder.orderBy("track.created_at", "ASC");
 
+		}
 		queryBuilder.skip(skip);
 		queryBuilder.limit(limit);
 
@@ -90,7 +96,7 @@ export class Tracks {
 		if (!track) {
 			throw new Error("Failed to load track metadata");
 		}
-		track.plays = track.plays + 1;
+		track.plays = parseInt(track.plays as any, 10) + 1;
 		track.last_play = new Date();
 
 		await track.save();

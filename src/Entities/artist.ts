@@ -14,6 +14,12 @@ export class Artist extends BaseEntity {
 	@Column()
 	public picture: string;
 
+	@Column("simple-array", { nullable: true })
+	public tags: string[];
+
+	@Column({ nullable: true })
+	public bio: string;
+
 	@CreateDateColumn()
 	public created_at: Date;
 

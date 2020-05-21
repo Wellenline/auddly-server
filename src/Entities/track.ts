@@ -19,7 +19,6 @@ export class Track extends BaseEntity {
 	@JoinTable()
 	public artists: Artist[];
 
-
 	@ManyToMany(type => Playlist)
 	@JoinTable()
 	public playlists: Playlist[];
@@ -40,6 +39,9 @@ export class Track extends BaseEntity {
 
 	@Column({ default: 0 })
 	public plays: number;
+
+	@Column({ type: "float" })
+	public duration: number;
 
 	@Column({ default: false })
 	public liked: boolean;
