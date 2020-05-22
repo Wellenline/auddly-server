@@ -41,12 +41,10 @@ export class Playlists {
 
 	@Get("/:id")
 	public async playlist(@Context() context: IContext) {
-
 		return await PlaylistModel.findById(context.params.id).populate([{
 			path: "tracks",
 			populate: "album artists",
 		}]);
-
 	}
 
 	@Post("/")

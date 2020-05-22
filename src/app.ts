@@ -48,6 +48,7 @@ export class App {
 
 		createConnection({
 			type: "postgres",
+			// type: "sqlite",
 			database: "waveline",
 			synchronize: true,
 			logging: false,
