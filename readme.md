@@ -5,6 +5,7 @@
 <img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" width="200">
 </a>
 
+
 ### Using Docker-Compose
 ```docker
 version: '3'
@@ -15,12 +16,14 @@ services:
     build:
       context: https://github.com/Wellenline/waveline-server.git
     environment:
+	  - DB_DRIVER=postgres #  mysql, cockroachdb, mariadb, sqlite, mssql,
       - MONGO_URL=mongodb://YOUR_MONGO_USER:YOUR_MONGO_PASS@mongodb/waveline?authSource=admin
       - MUSIC_PATH=/music
       - TRANSCODE_PATH=/transcoded-audio
       - ART_PATH=/album-art
       - SPOTIFY_ID=YOUR_SPOTIFY_ID
       - SPOTIFY_SECRET=YOUR_SPOTIFY_SECRET
+      - LAST_FM_KEY=YOUR_LAST_FM_API_KEY
       - AUTH_ENABLED=true
       - TRANSCODING=false # set to true to enable transcoding for flac files
       - API_KEY=12345 # replace it with something more secure
@@ -81,6 +84,7 @@ ART_PATH=./album-art
 TRANSCODE_PATH=./transcoded-audio
 SPOTIFY_ID=xxxxx
 SPOTIFY_SECRET=xxxxx
+LAST_FM_KEY=xxxxx
 MONGO_URL=mongodb://localhost/waveline
 AUTH_ENABLED=false
 TRANSCODING=false
@@ -93,6 +97,11 @@ HOST=http://192.168.1.120:5000
 To display artist pictures you need to sign up for Spotify Developer Account and create a new application
 https://developer.spotify.com/dashboard/login
 
+### Artist Bio, similar artists and tags (Using Lastfm)
+To display artist bio, get similar artists and tags you need to create a new Lastfm application
+https://www.last.fm/api/
+https://www.last.fm/api/account/create
+
 
 ### Transcoding
 WIP
@@ -103,9 +112,14 @@ Waveline is a personal project and my current goals are
 * Offline mode
 * Improved Caching
 * Casting support (chromecast?)
-* <strike>Desktop app</strike>  [Wellenline/waveline-web](https://github.com/Wellenline/waveline-web)
+* <s>Desktop app</s>  [Wellenline/waveline-web](https://github.com/Wellenline/waveline-web)
 * iOS version
 
+
+## Join our discord
+![Discord](https://img.shields.io/discord/712899309242286090)
+
+https://discord.gg/hqxATH
 
 ## API
 #### System

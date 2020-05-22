@@ -1,7 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BaseEntity, ManyToMany } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BaseEntity, ManyToMany, AfterLoad } from "typeorm";
 import { SpotifyService, Types, KeyTypes } from "../Services/spotify.service";
 import { capitalize } from "../utils/captialize";
 import { Track } from "./track";
+import { LastfmService } from "../Services/lastfm.service";
 
 @Entity()
 export class Artist extends BaseEntity {
@@ -16,6 +17,9 @@ export class Artist extends BaseEntity {
 
 	@Column("simple-array", { nullable: true })
 	public tags: string[];
+
+	@Column("simple-array", { nullable: true })
+	public similar: string[];
 
 	@Column({ nullable: true })
 	public bio: string;
@@ -36,6 +40,12 @@ export class Artist extends BaseEntity {
 				artist = new Artist();
 				artist.name = name;
 				artist.picture = await SpotifyService.instance.picture(Types.ARTIST, KeyTypes.ARTISTS, name);
+
+				const { bio, tags, similar } = await LastfmService.instance.artist(name);
+				artist.bio = bio;
+				artist.tags = tags;
+				artist.similar = similar;
+
 				await artist.save();
 			}
 

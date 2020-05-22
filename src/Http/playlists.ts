@@ -13,8 +13,21 @@ export class Playlists {
 	 * @returns Playlist[]
 	 */
 	@Get("/")
-	public async index() {
-		return await Playlist.find();
+	public async index(@Context("query") query: { skip?: number, limit?: number }) {
+		const skip = query.skip || 0;
+		const limit = query.limit || 20;
+		return {
+			playlists: await Playlist.find({
+				skip,
+				take: limit,
+			}),
+			total: await Playlist.count(),
+			query: {
+				...query,
+				skip,
+				limit,
+			},
+		};
 	}
 
 	/**

@@ -51,12 +51,14 @@ export class Album extends BaseEntity {
 				writeFileSync(`${process.env.ART_PATH}/${id}.png`, data.picture);
 				data.picture = `/albums/art/${id}.png`;
 			} else {
-				data.picture = await SpotifyService.instance.picture(Types.ALBUM, KeyTypes.ALBUMS, `album:${data.album} artist:${data.artist.name}`);
+				data.picture = await SpotifyService.instance.picture(Types.ALBUM, KeyTypes.ALBUMS, `album:${data.album} artist:${data.artist.name}`) as string;
 			}
 
 			album = new Album();
 			album.artist = data.artist;
-			album.picture = data.picture;
+			if (data.picture) {
+				album.picture = data.picture;
+			}
 			album.name = data.album;
 			album.year = data.year;
 
