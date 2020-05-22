@@ -10,7 +10,7 @@ export class Playlist extends BaseEntity {
 	@Column({ nullable: false })
 	public name: string;
 
-	@Column()
+	@Column({ nullable: true })
 	public picture: string;
 
 	@CreateDateColumn()

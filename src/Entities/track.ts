@@ -19,7 +19,7 @@ export class Track extends BaseEntity {
 	@JoinTable()
 	public artists: Artist[];
 
-	@ManyToMany(type => Playlist)
+	@ManyToMany(type => Playlist, { cascade: true })
 	@JoinTable()
 	public playlists: Playlist[];
 
