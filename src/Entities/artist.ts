@@ -60,6 +60,8 @@ export class Artist extends BaseEntity {
 
 		const data = [];
 
+
+
 		for (let i = 0; i < limit; i++) {
 			const skip = Math.floor(Math.random() * (total - min + 1)) + min;
 			const doc = await this.find({

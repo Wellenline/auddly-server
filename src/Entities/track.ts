@@ -78,7 +78,6 @@ export class Track extends BaseEntity {
 
 	public static async random(limit: number = 10, min: number = 0) {
 		const total = await this.count();
-
 		const data = [];
 
 		for (let i = 0; i < limit; i++) {
@@ -89,6 +88,7 @@ export class Track extends BaseEntity {
 					leftJoinAndSelect: {
 						artists: "track.artists",
 						album: "track.album",
+						albumArtist: "album.artist",
 						genre: "track.genre",
 					}
 				},

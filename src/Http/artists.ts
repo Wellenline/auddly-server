@@ -26,7 +26,7 @@ export class Artists {
 
 	@Get("/random")
 	public async random(@Context("query") query: { total: number }) {
-		return await ArtistModel.random(query.total);
+		return await Artist.random(query.total);
 	}
 
 	@Get("/:id")
