@@ -62,6 +62,7 @@ export class Tracks {
 		queryBuilder.leftJoinAndSelect("track.genre", "genre");
 		if (query.popular) {
 			queryBuilder.orderBy("plays", "DESC");
+			queryBuilder.where("track.plays >= :plays", { plays: 1 });
 		} else {
 			queryBuilder.orderBy("track.created_at", "ASC");
 
