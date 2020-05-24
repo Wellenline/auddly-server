@@ -22,7 +22,9 @@ export class Search {
 			.orWhere("LOWER(track.name) LIKE :q", { q: `%${query.q.toLowerCase()}%` })
 			.leftJoinAndSelect("track.artists", "artists")
 			.leftJoinAndSelect("track.playlists", "playlists")
+
 			.leftJoinAndSelect("track.album", "album")
+			.leftJoinAndSelect("album.artist", "albumArtist")
 			.leftJoinAndSelect("track.genre", "genre")
 			.getMany();
 

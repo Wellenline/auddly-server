@@ -32,6 +32,10 @@ export class Tracks {
 			queryBuilder.innerJoinAndSelect("track.artists", "artist", "artist.id = :id", { id: query.artist });
 		}
 
+		if (query.playlist) {
+			queryBuilder.innerJoinAndSelect("track.playlists", "playlist", "playlist.id = :id", { id: query.playlist });
+		}
+
 		if (query.genre) {
 			queryBuilder.where("track.genre = :genre", {
 				genre: query.genre,
@@ -53,6 +57,8 @@ export class Tracks {
 		queryBuilder.leftJoinAndSelect("track.artists", "artists");
 		queryBuilder.leftJoinAndSelect("track.playlists", "playlists");
 		queryBuilder.leftJoinAndSelect("track.album", "album");
+		queryBuilder.leftJoinAndSelect("album.artist", "albumArtist");
+
 		queryBuilder.leftJoinAndSelect("track.genre", "genre");
 		if (query.popular) {
 			queryBuilder.orderBy("plays", "DESC");

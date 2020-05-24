@@ -23,6 +23,10 @@ export class Track extends BaseEntity {
 	@JoinTable()
 	public playlists: Playlist[];
 
+	/*@ManyToOne(type => Artist, artist => artist.id)
+	@JoinTable()
+	public artist: Artist;
+	*/
 	@Column()
 	public artist: string;
 
