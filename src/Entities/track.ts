@@ -56,6 +56,9 @@ export class Track extends BaseEntity {
 	@Column({ nullable: true })
 	public year: number;
 
+	@Column({ nullable: true })
+	public number: number;
+
 	@Column({ default: false })
 	public lossless: boolean;
 

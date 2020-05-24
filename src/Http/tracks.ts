@@ -52,6 +52,8 @@ export class Tracks {
 			queryBuilder.where("track.album = :album", {
 				album: query.album,
 			});
+			queryBuilder.orderBy("track.number", "ASC");
+
 		}
 
 		queryBuilder.leftJoinAndSelect("track.artists", "artists");
@@ -64,7 +66,7 @@ export class Tracks {
 			queryBuilder.orderBy("plays", "DESC");
 			queryBuilder.where("track.plays >= :plays", { plays: 1 });
 		} else {
-			queryBuilder.orderBy("track.created_at", "ASC");
+			// queryBuilder.orderBy("track.created_at", "ASC");
 
 		}
 		queryBuilder.skip(skip);

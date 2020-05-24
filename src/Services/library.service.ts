@@ -1,4 +1,4 @@
-import { createWriteStream, existsSync, appendFile, mkdirSync, readdirSync, statSync, createReadStream } from "fs";
+import { createWriteStream, existsSync, appendFile, mkdirSync, readdirSync, statSync, createReadStream, writeFileSync } from "fs";
 import { extname } from "path";
 import * as mm from "music-metadata";
 import * as chokidar from "chokidar";
@@ -52,6 +52,7 @@ export class LibraryService {
 
 		chokidar.watch(process.env.MUSIC_PATH, {
 			persistent: true,
+			//  alwaysStat: true,
 			// ignoreInitial: true,
 		}).on("add", this._onFileAdded.bind(this)).on("unlink", this._onFileRemoved.bind(this));
 	}
@@ -107,6 +108,7 @@ export class LibraryService {
 		for (const file of files) {
 			bar.tick();
 			try {
+				// console.log(metadata.common.track.no);
 
 				const exists = await Track.findOne({ path: file });
 
@@ -145,6 +147,7 @@ export class LibraryService {
 					album: album.id,
 					artist: metadata.common.artist,
 					genre,
+					number: metadata.common.track.no,
 					duration: metadata.format.duration,
 					path: file,
 					lossless: metadata.format.lossless,
@@ -185,12 +188,13 @@ export class LibraryService {
 			}
 
 			this._size += stat.size;
-			this._files.push(path);
+			this._files.push({ path, stat });
 		}
 
 		this._timer = setTimeout(() => {
+			this._files = this._files.sort((a, b) => b.stat.ctime - a.stat.ctime).map((file) => file.path).reverse();
 			this._build(this._files);
-			this._files = [];
+			// this._files = [];
 
 		}, 3000);
 	}
