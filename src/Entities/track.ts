@@ -44,7 +44,7 @@ export class Track extends BaseEntity {
 	@Column({ default: 0 })
 	public plays: number;
 
-	@Column({ type: "float" })
+	@Column({ type: "float", default: 0 })
 	public duration: number;
 
 	@Column({ default: false })

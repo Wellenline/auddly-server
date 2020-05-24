@@ -26,7 +26,7 @@ export class Server extends BaseEntity {
 	@Column()
 	public artists: number;
 
-	@Column()
+	@Column({ type: "bigint" })
 	public size: number;
 
 	@Column()

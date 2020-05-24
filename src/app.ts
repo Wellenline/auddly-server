@@ -49,7 +49,7 @@ export class App {
 		createConnection({
 			type: "postgres",
 			// type: "sqlite",
-			database: "waveline",
+			database: "waveline-large",
 			synchronize: true,
 			logging: false,
 			entities: [Album, Artist, Genre, Playlist, Server, Track],

@@ -12,7 +12,7 @@ export class Artist extends BaseEntity {
 	@Column({ nullable: false })
 	public name: string;
 
-	@Column()
+	@Column({ nullable: true })
 	public picture: string;
 
 	@Column("simple-array", { nullable: true })
@@ -59,8 +59,6 @@ export class Artist extends BaseEntity {
 		const total = await this.count();
 
 		const data = [];
-
-
 
 		for (let i = 0; i < limit; i++) {
 			const skip = Math.floor(Math.random() * (total - min + 1)) + min;

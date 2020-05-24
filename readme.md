@@ -6,7 +6,7 @@
 </a>
 
 
-### Using Docker-Compose
+## Using Docker-Compose
 ```docker
 version: '3'
 services:
@@ -60,7 +60,7 @@ docker-compose up -d
 ```
 
 
-### Building From Source
+## Building From Source
 
 You'll need [NPM](https://www.npmjs.com/get-npm) installed before continuing.
 
@@ -93,17 +93,17 @@ PORT=5000
 HOST=http://192.168.1.120:5000
 ```
 
-### Artist Pictures (Using Spotify)
+## Artist Pictures (Using Spotify)
 To display artist pictures you need to sign up for Spotify Developer Account and create a new application
 https://developer.spotify.com/dashboard/login
 
-### Artist Bio, similar artists and tags (Using Lastfm)
+## Artist Bio, similar artists and tags (Using Lastfm)
 To display artist bio, get similar artists and tags you need to create a new Lastfm application
 https://www.last.fm/api/
 https://www.last.fm/api/account/create
 
 
-### Transcoding
+## Transcoding
 WIP
 
 ## Roadmap
