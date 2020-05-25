@@ -5,8 +5,8 @@
 <img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" width="200">
 </a>
 
-## Database
-Waveline works following databases: `postgres, mysql, cockroachdb, mariadb, sqlite, mssql,`
+## Database Driver
+Waveline works with following databases: `postgres, mysql, cockroachdb, mariadb, sqlite, mssql`
 
 ## Using Docker-Compose
 ```docker
@@ -45,13 +45,12 @@ services:
 docker-compose up -d
 ```
 
-## Artist Pictures (Using Spotify)
+## Artist Pictures (from Spotify)
 To display artist pictures you need to sign up for Spotify Developer Account and create a new application
 https://developer.spotify.com/dashboard/login
 
-## Artist Bio, similar artists and tags (Using Lastfm)
+## Artist Bio, similar artists and tags (from Lastfm)
 To display artist bio, get similar artists and tags you need to create a new Lastfm application
-https://www.last.fm/api/
 https://www.last.fm/api/account/create
 
 
