@@ -1,6 +1,4 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BaseEntity, ManyToMany, JoinTable, JoinColumn, ManyToOne } from "typeorm";
-import { SpotifyService, Types, KeyTypes } from "src/Services/spotify.service";
-import { capitalize } from "src/utils/captialize";
 import { Artist } from "./artist";
 import { Album } from "./album";
 import { Genre } from "./genre";

@@ -1,20 +1,24 @@
-version: '3'
+version: "3"
 services:
   app:
     container_name: waveline-api
     restart: always
     build:
-      context: https://github.com/Wellenline/waveline-server.git
+      image: wellenline/waveline-server
     environment:
-      - MONGO_URL=mongodb://YOUR_MONGO_USER:YOUR_MONGO_PASS@mongodb/waveline?authSource=admin
+      - DB_DRIVER=postgres #  mysql, cockroachdb, mariadb, sqlite, mssql,
+      - DB_HOST=DATABASE_HOST
+      - DB_PORT=DATABASE_PORT
+      - DB_USERNAME=DATABASE_USERNAME
+      - DB_PASSWORD=DATABASE_PASSWORD
+      - DB_NAME=DATABASE_NAME
       - MUSIC_PATH=/music
       - TRANSCODE_PATH=/transcoded-audio
       - ART_PATH=/album-art
       - SPOTIFY_ID=YOUR_SPOTIFY_ID
       - SPOTIFY_SECRET=YOUR_SPOTIFY_SECRET
-      - AUTH_ENABLED=true
-      - TRANSCODING=false # set to true if you wish to enable transcoding
-      - API_KEY=12345 # replace it with something more secure
+      - LAST_FM_KEY=YOUR_LAST_FM_API_KEY
+      - API_KEY=12345 # remove if you wish to disable auth
       - PORT=5000
       - HOST=http://127.0.0.1:5000
     volumes:
@@ -23,21 +27,3 @@ services:
       - ./transcoded-audio:/transcoded-audio # Mount transcoded audio cache inside docker
     ports:
       - 5000:5000
-    links:
-      - mongodb
-    depends_on:
-      - mongodb
-
-  mongodb:
-    image: mongo:latest
-    container_name: "mongodb"
-    environment:
-      - MONGO_DATA_DIR=/data
-      - MONGO_LOG_DIR=/dev/null
-      - MONGO_INITDB_ROOT_USERNAME=YOUR_MONGO_USER
-      - MONGO_INITDB_ROOT_PASSWORD=YOUR_MONGO_PASS
-    volumes:
-      - ./data/mongo:/data
-    ports:
-      - 27017:27017
-    command: mongod --auth --logpath=/dev/null
