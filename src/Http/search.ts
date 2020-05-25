@@ -8,6 +8,14 @@ import { Album } from "../Entities/album";
 import { Artist } from "../Entities/artist";
 @Resource("/search")
 export class Search {
+	/**
+	 * @api {get} /search?q=:SEARCH_QUERY Search
+	 * @apiDescription Search tracks, artists and albums
+	 * @apiGroup Search
+	 * @apiName search.index
+	 * @apiVersion 3.0.0
+	 * @returns { albums: [], artists: [], tracks: []}
+	 */
 	@Get("/")
 	public async index(@Context("query") query: { q: string }) {
 		const results = {
@@ -15,7 +23,6 @@ export class Search {
 			artists: [],
 			tracks: [],
 		};
-		// Mongo is much cleaner ...
 		results.tracks = await getManager().createQueryBuilder(Track, "track")
 			.select()
 			.where("LOWER(track.artist) LIKE :q", { q: `%${query.q.toString().toLowerCase()}%` })

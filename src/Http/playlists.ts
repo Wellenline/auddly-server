@@ -35,6 +35,7 @@ export class Playlists {
 	 * @apiDescription Get playlist
 	 * @apiGroup Playlists
 	 * @apiName playlists.view
+	 * @apiParam {id} playlist id
 	 * @apiVersion 3.0.0
 	 * @returns Playlist
 	 */
@@ -63,6 +64,7 @@ export class Playlists {
 	 * @apiDescription Add track to playlist
 	 * @apiGroup Playlists
 	 * @apiName playlists.upload
+	 * @apiParam {playlistId} playlist id
 	 * @apiParam {string} track track id to add to playlist
 	 * @apiVersion 3.0.0
 	 * @returns Track
@@ -98,6 +100,9 @@ export class Playlists {
 	 * @apiDescription Update playlist
 	 * @apiGroup Playlists
 	 * @apiName playlists.update
+	 * @apiParam {playlistId} playlist id
+	 * @apiParam {name} playlist name
+	 * @apiParam {picture} playlist picture (optional)
 	 * @apiVersion 3.0.0
 	 * @returns Playlist<Result>
 	 */
@@ -114,6 +119,7 @@ export class Playlists {
 	 * @apiDescription Delete playlist
 	 * @apiGroup Playlists
 	 * @apiName playlists.delete
+	 * @apiParam {id} playlist id
 	 * @apiVersion 3.0.0
 	 * @returns DeleteResult
 	 */
@@ -127,6 +133,8 @@ export class Playlists {
 	 * @apiDescription Remove track from playlist
 	 * @apiGroup Playlists
 	 * @apiName playlists.removeFromPlaylist
+	 * @apiParam {playlistId} playlist id
+	 * @apiParam {trackId} track id
 	 * @apiVersion 3.0.0
 	 * @returns Track
 	 */

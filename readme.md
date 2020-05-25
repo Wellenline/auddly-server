@@ -5,6 +5,8 @@
 <img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" width="200">
 </a>
 
+## Database
+Waveline works following databases: `postgres, mysql, cockroachdb, mariadb, sqlite, mssql,`
 
 ## Using Docker-Compose
 ```docker
@@ -16,16 +18,19 @@ services:
     build:
       context: https://github.com/Wellenline/waveline-server.git
     environment:
-	  - DB_DRIVER=postgres #  mysql, cockroachdb, mariadb, sqlite, mssql,
-      - MONGO_URL=mongodb://YOUR_MONGO_USER:YOUR_MONGO_PASS@mongodb/waveline?authSource=admin
+      - DB_DRIVER=postgres #  mysql, cockroachdb, mariadb, sqlite, mssql,
+      - DB_HOST=DATABASE_HOST
+      - DB_PORT=DATABASE_PORT
+      - DB_USERNAME=DATABASE_USERNAME
+      - DB_PASSWORD=DATABASE_PASSWORD
+      - DB_NAME=DATABASE_NAME
       - MUSIC_PATH=/music
       - TRANSCODE_PATH=/transcoded-audio
       - ART_PATH=/album-art
       - SPOTIFY_ID=YOUR_SPOTIFY_ID
       - SPOTIFY_SECRET=YOUR_SPOTIFY_SECRET
       - LAST_FM_KEY=YOUR_LAST_FM_API_KEY
-      - AUTH_ENABLED=true
-      - API_KEY=12345 # replace it with something more secure
+      - API_KEY=12345 # remove if you wish to disable auth
       - PORT=5000
       - HOST=http://127.0.0.1:5000
     volumes:
@@ -34,61 +39,10 @@ services:
       - ./transcoded-audio:/transcoded-audio # Mount transcoded audio cache inside docker
     ports:
       - 5000:5000
-    links:
-      - mongodb
-    depends_on:
-      - mongodb
-
-  mongodb:
-    image: mongo:latest
-    container_name: "mongodb"
-    environment:
-      - MONGO_DATA_DIR=/data
-      - MONGO_LOG_DIR=/dev/null
-      - MONGO_INITDB_ROOT_USERNAME=YOUR_MONGO_USER
-      - MONGO_INITDB_ROOT_PASSWORD=YOUR_MONGO_PASS
-    volumes:
-      - ./data/mongo:/data
-    ports:
-      - 27017:27017
-    command: mongod --auth --logpath=/dev/null
 ```
 
 ```sh
 docker-compose up -d
-```
-
-
-## Building From Source
-
-You'll need [NPM](https://www.npmjs.com/get-npm) installed before continuing.
-
-Clone the repo:
-```Sh
-git clone https://github.com/wellenline/waveline-server.git
-cd waveline-server
-```
-
-Initialize the build using NPM:
-```sh
-npm i
-npm run build
-npm start
-```
-
-Sample .env file:
-```env
-MUSIC_PATH=./demo
-ART_PATH=./album-art
-TRANSCODE_PATH=./transcoded-audio
-SPOTIFY_ID=xxxxx
-SPOTIFY_SECRET=xxxxx
-LAST_FM_KEY=xxxxx
-MONGO_URL=mongodb://localhost/waveline
-AUTH_ENABLED=false
-API_KEY=1234
-PORT=5000
-HOST=http://192.168.1.120:5000
 ```
 
 ## Artist Pictures (Using Spotify)
@@ -129,12 +83,10 @@ https://discord.gg/hqxATH
 #### Tracks
 |                |Description                    |
 |----------------|-------------------------------|
-|`GET /tracks`|All tracks (query: skip, limit, genre, favourties, artist, album)|
+|`GET /tracks`|All tracks (query: skip, limit, genre, popular, liked, artist, album)|
 |`GET /tracks/play/:id`|Stream audio|
 |`GET /tracks/like/:id`|Toggle track favourite |
 |`GET /tracks/random`| Get random tracks (query: limit) `new` |
-|`GET /tracks/popular`|Get popular tracks (query: skip, limit, genre, artist, album) `new`|
-|`GET /tracks/new`|New Tracks|
 
 #### Search
 |                |Description                    |
@@ -145,27 +97,29 @@ https://discord.gg/hqxATH
 #### Albums
 |                |Description                    |
 |----------------|-------------------------------|
-|`GET /albums`| Get all albums (query: skip, limit) |
+|`GET /albums`| Get all albums (query: skip, limit, artist) |
+|`GET /albums/:if`| Get all album |
 |`GET /albums/random`| Get random albums (query: limit) `new` |
-|`GET /albums/new`| Get new albums `new` |
 |`GET /albums/art/:id`|Get Album art |
 
 
 #### Artists
 |                |Description                    |
 |----------------|-------------------------------|
-|`GET /artists`| Get all artists |
+|`GET /artists`| Get all artists (query: skip, limit) |
 |`GET /artists/random`| Get random artists (query: limit) `new` |
-|`GET /artists/new`| Get new artists `new` |
 
 
 #### Playlists ()
 |                |Description                    |
 |----------------|-------------------------------|
-|`GET /playlists`| Get all playlists |
-|`POST /playlists`| Create a new playlist `{name: string, tracks: []}` |
-|`PUT /playlists/:id`| Update playlist `{name: string, tracks: []}` |
-|`DELTE /playlists/:id`| Delete playlist |
+|`GET /playlists`| Get all playlists (query: skip, limit) |
+|`POST /playlists`| Create a new playlist `{ name: string, picture?: string }` |
+|`POST /playlists/:id`| Add track to playlist `{ track: number }` |
+|`PUT /playlists/:id`| Update playlist `{ name: string, tracks: [] }` |
+|`DELETE /playlists/:id`| Delete playlist |
+|`DELETE /playlists/:id/:track`| Delete track from playlist |
+
 
 #### Genres
 |                |Description                    |
