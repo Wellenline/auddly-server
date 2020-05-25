@@ -18,7 +18,7 @@ export class LastfmService {
 				if (data.artist) {
 					return {
 						tags: data.artist.tags.tag.map((tag) => tag.name),
-						bio: data.artist.bio.content,
+						bio: data.artist.bio.summary.replace(/(&nbsp;|<([^>]+)>)/ig, ""),
 						similar: data.artist.similar.artist.map((a) => a.name),
 					};
 				}
