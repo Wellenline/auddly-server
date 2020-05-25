@@ -110,7 +110,7 @@ export class Tracks {
 
 		await track.save();
 		// wait until audio has finished transcodig... probably not the best way of doing it
-		if (track.path.toString().endsWith(".flac") && process.env.TRANSCODING === "true") {
+		if (track.path.toString().endsWith(".flac") && context.query.transcode) {
 			track.path = await LibraryService.instance.transcode(track as any, {
 				output: { type: "mp3" }
 			});
