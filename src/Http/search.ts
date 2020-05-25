@@ -18,8 +18,8 @@ export class Search {
 		// Mongo is much cleaner ...
 		results.tracks = await getManager().createQueryBuilder(Track, "track")
 			.select()
-			.where("LOWER(track.artist) LIKE :q", { q: `%${query.q.toLowerCase()}%` })
-			.orWhere("LOWER(track.name) LIKE :q", { q: `%${query.q.toLowerCase()}%` })
+			.where("LOWER(track.artist) LIKE :q", { q: `%${query.q.toString().toLowerCase()}%` })
+			.orWhere("LOWER(track.name) LIKE :q", { q: `%${query.q.toString().toLowerCase()}%` })
 			.leftJoinAndSelect("track.artists", "artists")
 			.leftJoinAndSelect("track.playlists", "playlists")
 
@@ -30,13 +30,13 @@ export class Search {
 
 		results.albums = await getManager().createQueryBuilder(Album, "album")
 			.select()
-			.where("LOWER(album.name) LIKE :q", { q: `%${query.q.toLowerCase()}%` })
+			.where("LOWER(album.name) LIKE :q", { q: `%${query.q.toString().toLowerCase()}%` })
 			.leftJoinAndSelect("album.artist", "artist")
 			.getMany();
 
 		results.artists = await getManager().createQueryBuilder(Artist, "artist")
 			.select()
-			.where("LOWER(name) LIKE :q", { q: `%${query.q.toLowerCase()}%` })
+			.where("LOWER(name) LIKE :q", { q: `%${query.q.toString().toLowerCase()}%` })
 			.getMany();
 
 		return results;
