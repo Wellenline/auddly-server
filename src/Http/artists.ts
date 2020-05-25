@@ -1,4 +1,3 @@
-import { ArtistModel } from "../Models/artist.model";
 import { Resource, Get, Context } from "@wellenline/via";
 import { Artist } from "../Entities/artist";
 @Resource("/artists")

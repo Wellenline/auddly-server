@@ -1,7 +1,4 @@
 import * as os from "os";
-
-import { LibraryService } from "../Services/library.service";
-import { InfoModel } from "../Models/info.model";
 import { Resource, Get } from "@wellenline/via";
 import { Server } from "../Entities/server";
 

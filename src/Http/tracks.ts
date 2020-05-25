@@ -1,9 +1,7 @@
 import { getType } from "mime";
-import { TrackModel } from "../Models/track.model";
 import { Context, IContext, Resource, Get } from "@wellenline/via";
 import { readFileSync, statSync, createReadStream } from "fs";
 import { LibraryService } from "../Services/library.service";
-import { PlaylistModel } from "../Models/playlist.model";
 import { Track } from "../Entities/track";
 import { getManager } from "typeorm";
 @Resource("/tracks")

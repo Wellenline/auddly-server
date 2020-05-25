@@ -1,6 +1,3 @@
-import { AlbumModel } from "../Models/album.model";
-import { TrackModel } from "../Models/track.model";
-import { ArtistModel } from "../Models/artist.model";
 import { Resource, Get, Context } from "@wellenline/via";
 import { Track } from "../Entities/track";
 import { Like, Raw, getManager } from "typeorm";

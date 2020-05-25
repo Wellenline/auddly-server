@@ -1,6 +1,7 @@
-import { TrackModel } from "../Models/track.model";
 import { existsSync, mkdirSync, createReadStream, createWriteStream } from "fs";
 import { HttpException, HttpStatus } from "@wellenline/via";
+import { Track } from "../Entities/track";
+import { getManager } from "typeorm";
 export enum Events {
 	FILE = "file",
 	CONSIDER_FILES = "sync:consider",
@@ -44,12 +45,15 @@ export class RemoteSyncService {
 			const parts: string[] = file.split(separator);
 			const name = parts[parts.length - 1].replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-			const track = await TrackModel.exists({
-				path: {
-					$regex: name,
-					$options: "i"
+			/*const track = await Track.findOne({
+				where: {
+					name,
 				}
-			});
+			});*/
+
+			const track = await getManager().createQueryBuilder(Track, "track")
+				.select()
+				.where("LOWER(track.path) LIKE :path", { q: `%${name.toString().toLowerCase()}%` }).getOne();
 
 			return !track ? file : false;
 

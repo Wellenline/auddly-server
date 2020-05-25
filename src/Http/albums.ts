@@ -1,5 +1,4 @@
 import { Resource, Get, Context, IContext } from "@wellenline/via";
-import { AlbumModel } from "../Models/album.model";
 import { existsSync, readFileSync } from "fs";
 import { Album } from "../Entities/album";
 

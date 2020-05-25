@@ -6,10 +6,6 @@ import * as sox from "sox-stream";
 import * as ProgressBar from "progress";
 
 import { format } from "util";
-import { ArtistModel } from "../Models/artist.model";
-import { GenreModel } from "../Models/genre.model";
-import { AlbumModel } from "../Models/album.model";
-import { InfoModel, Info } from "../Models/info.model";
 import { capitalize } from "../utils/captialize";
 import { Artist } from "../Entities/artist";
 import { Track } from "../Entities/track";
@@ -90,7 +86,7 @@ export class LibraryService {
 	 * @param files array of file paths
 	 */
 	private async _build(files: string[]) {
-		const libraryInfo: Info = {
+		const libraryInfo: any = {
 			start: new Date(),
 			mount: process.env.MUSIC_PATH,
 			last_scan: new Date(),
@@ -172,7 +168,7 @@ export class LibraryService {
 		console.log("Done building library");
 		console.log(libraryInfo);
 
-		return Server.create(libraryInfo).save();
+		return Server.create(libraryInfo as Server).save();
 
 	}
 
