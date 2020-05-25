@@ -1,7 +1,6 @@
 import * as dotenv from "dotenv";
 import * as ip from "ip";
 import * as qrcode from "qrcode";
-import * as mongoose from "mongoose";
 import { bootstrap } from "@wellenline/via";
 import { cors, bodyParser, auth } from "./Middleware/global";
 import { LibraryService } from "./Services/library.service";
