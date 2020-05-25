@@ -28,7 +28,7 @@ export class App {
 
 	public async run() {
 
-		const REQUIRED_ENV_VARS = ["MUSIC_PATH", "ART_PATH", "TRANSCODE_PATH", "MONGO_URL", "PORT", "HOST"];
+		const REQUIRED_ENV_VARS = ["MUSIC_PATH", "ART_PATH", "TRANSCODE_PATH", "DB_DRIVER", "DB_NAME", "PORT", "HOST"];
 
 		for (const key of REQUIRED_ENV_VARS) {
 			if (!process.env[key]) {
@@ -59,15 +59,6 @@ export class App {
 			console.log(err);
 			process.exit(0);
 
-		});
-
-		await mongoose.connect(process.env.MONGO_URL, {
-			useNewUrlParser: true,
-			useFindAndModify: false,
-			useUnifiedTopology: true,
-		}).catch((err) => {
-			console.log(err);
-			process.exit(0);
 		});
 
 		const HOST = `${process.env.HOST || ip.address()}${process.env.API_KEY
