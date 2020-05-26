@@ -190,7 +190,7 @@ export class LibraryService {
 		this._timer = setTimeout(() => {
 			this._files = this._files.sort((a, b) => b.stat.ctime - a.stat.ctime).map((file) => file.path).reverse();
 			this._build(this._files);
-			// this._files = [];
+			this._files = [];
 
 		}, 3000);
 	}

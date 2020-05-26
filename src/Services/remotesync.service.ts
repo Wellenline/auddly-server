@@ -38,6 +38,7 @@ export class RemoteSyncService {
 	}
 
 	public async _considerFilesForSync(payload: IFilesForSync) {
+		console.log("consider files for syn");
 		const { files, separator, root } = payload;
 
 		const syncFiles = (await Promise.all(files.map(async (file: any) => {
@@ -53,7 +54,7 @@ export class RemoteSyncService {
 
 			const track = await getManager().createQueryBuilder(Track, "track")
 				.select()
-				.where("LOWER(track.path) LIKE :path", { q: `%${name.toString().toLowerCase()}%` }).getOne();
+				.where("LOWER(track.path) LIKE :path", { path: `%${name.toString().toLowerCase()}%` }).getOne();
 
 			return !track ? file : false;
 
