@@ -5,6 +5,8 @@
 <img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" width="200">
 </a>
 
+```Use the 3.1.0 branch if you wish to keep using the mongodb version```
+
 ## Database Driver
 Waveline works with following databases: `postgres, mysql, cockroachdb, mariadb, sqlite, mssql`
 
@@ -18,7 +20,7 @@ services:
     build:
       context: https://github.com/Wellenline/waveline-server.git
     environment:
-      - DB_DRIVER=postgres #  mysql, cockroachdb, mariadb, sqlite, mssql,
+      - DB_DRIVER=sqlite # postgres,  mysql, cockroachdb, mariadb, sqlite, mssql,
       - DB_HOST=DATABASE_HOST
       - DB_PORT=DATABASE_PORT
       - DB_USERNAME=DATABASE_USERNAME
