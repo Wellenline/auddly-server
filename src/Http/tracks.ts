@@ -42,7 +42,7 @@ export class Tracks {
 
 		if (query.liked) {
 			queryBuilder.where("track.liked = :liked", {
-				liked: query.liked,
+				liked: true,
 			});
 		}
 
