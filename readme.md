@@ -1,4 +1,5 @@
 # Waveline Music Server
+[![Discord](https://img.shields.io/discord/712899309242286090?logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/mJQm8SJ)
 <img src="https://preview.redd.it/3vujqpdulbi41.png?width=2756&format=png&auto=webp&s=2cd56216825a7e9d9145e6b1fb2eb7750bb079d3">
 
 <a href="https://play.google.com/store/apps/details?id=com.waveline.app" target="_blank">
