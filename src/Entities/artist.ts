@@ -42,7 +42,7 @@ export class Artist extends BaseEntity {
 				artist.picture = await SpotifyService.instance.picture(Types.ARTIST, KeyTypes.ARTISTS, name);
 
 				const { bio, tags, similar } = await LastfmService.instance.artist(name);
-				artist.bio = bio;
+				artist.bio = bio || null;
 				artist.tags = tags;
 				artist.similar = similar;
 
