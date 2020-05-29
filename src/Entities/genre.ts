@@ -1,4 +1,4 @@
-import { prop, getModelForClass, ReturnModelType } from "@typegoose/typegoose";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BaseEntity } from "typeorm";
 
 export const genres = [
 	"Aggrotech",
@@ -160,16 +160,22 @@ export const subgenres = [
 	"West Coast",
 	"World",
 ];
+@Entity()
+export class Genre extends BaseEntity {
+	@PrimaryGeneratedColumn()
+	public id: number;
 
-export class Genre {
-	public static async findOrCreate(this: ReturnModelType<typeof Genre>, name: string) {
-		const genre = await GenreModel.findOne({ name });
-		return genre ? genre : await GenreModel.create({ name });
-	}
-
-	@prop()
+	@Column({ nullable: false })
 	public name: string;
 
-}
+	@CreateDateColumn()
+	public created_at: Date;
 
-export const GenreModel = getModelForClass(Genre);
+	@UpdateDateColumn()
+	public updated_at: Date;
+
+	public static async findOrCreate(name: string) {
+		const genre = await this.findOne({ name });
+		return genre ? genre : await this.create({ name }).save();
+	}
+}

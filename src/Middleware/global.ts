@@ -47,7 +47,7 @@ export const bodyParser = async (context: IContext) => {
 
 export const auth = (whitelist: string[]) => {
 	return (context: IContext) => {
-		if (process.env.AUTH_ENABLED === "true") {
+		if (process.env.API_KEY && process.env.API_KEY.length > 0) {
 			if (whitelist.some((v) => context.req.parsed.path.indexOf(v) > -1)) {
 				return true;
 			}
@@ -57,7 +57,7 @@ export const auth = (whitelist: string[]) => {
 				throw new HttpException("API key missing", HttpStatus.UNAUTHORIZED);
 			}
 
-			if (process.env.API_KEY !== api_key) {
+			if (process.env.API_KEY !== api_key.toString()) {
 				throw new HttpException("Invalid API key", HttpStatus.UNAUTHORIZED);
 			}
 

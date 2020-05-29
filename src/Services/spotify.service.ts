@@ -38,6 +38,7 @@ export class SpotifyService {
 					return response[key].items[0].images[0] ? response[key].items[0].images[0].url : "";
 				}
 			}
+			// return "DEMO_IMAGE";
 		} catch (e) {
 			console.info(e);
 		}
