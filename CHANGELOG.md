@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.2.0](https://github.com/MihkelBaranov/waveline-server/compare/v3.1.0...v3.2.0) (2020-05-29)
+
+
+### Features
+
+* **album:** include artist data ([6c8f5ea](https://github.com/MihkelBaranov/waveline-server/commit/6c8f5eae8169d64edaaefdaabab6b95ba7996645))
+* **app:** remove mongo ([e10e860](https://github.com/MihkelBaranov/waveline-server/commit/e10e8604ff78eab88efaae9b4522b9ca8a811a4c))
+* **artist:** include artist bio, tags and similar artists from lastfm ([53b1116](https://github.com/MihkelBaranov/waveline-server/commit/53b111677ea52baaf28a10abf5f46eaeba7a85e8))
+* **database:** switch from mongo to postgres ([5d97245](https://github.com/MihkelBaranov/waveline-server/commit/5d972455533eefe784c877fe8c7123cc11c36d4f))
+* **db:** remove db ([c6f7f48](https://github.com/MihkelBaranov/waveline-server/commit/c6f7f48335c0b5c0328330bc041f1a3ef7355c74))
+* **lastfm:** remove html tags from artist summary ([50ef036](https://github.com/MihkelBaranov/waveline-server/commit/50ef0366efdf4b041f9fa74453e540ef7fb43479))
+* **playlists:** update playlist endpoints to use new db engine ([a85577c](https://github.com/MihkelBaranov/waveline-server/commit/a85577c935de15488b52f6b63499d2912fdace88))
+* **search:** update search to use psql ([212117d](https://github.com/MihkelBaranov/waveline-server/commit/212117d5cdded7bb0818f1e3e102dd0b1c7a6672))
+* **tracks:** conditional transcoding ([1567871](https://github.com/MihkelBaranov/waveline-server/commit/1567871a9979998d633cfaccfdc0f3ca2c9ec5eb))
+* **tracks:** include artist details on album object ([278629c](https://github.com/MihkelBaranov/waveline-server/commit/278629ca40986fd9b56bfd7fab9eb506b60e7395))
+* **tracks:** return playlist tracks from /tracks endpoint ([d0b7f4a](https://github.com/MihkelBaranov/waveline-server/commit/d0b7f4a8077b89c9e53a64791a2aae9866f8907c))
+* **tracks:** store track no ([79f17f8](https://github.com/MihkelBaranov/waveline-server/commit/79f17f8a9f4fd5be2fe0aa6b91be3298b760d28e))
+
+
+### Bug Fixes
+
+* **app:** remove mongo import ([ab8a971](https://github.com/MihkelBaranov/waveline-server/commit/ab8a9711ec3bc8a0b1bb5a7e312d5d61b7d1fca1))
+* **artist:** check if lastfm responds with data ([740c404](https://github.com/MihkelBaranov/waveline-server/commit/740c4048455f23778459f8de771aec03c2ea10dd))
+* **artist:** fix saving track when artist bio returns undefined ([94dfeda](https://github.com/MihkelBaranov/waveline-server/commit/94dfeda5be401d8514d9d26b6c2800d9863d9d39))
+* **artist:** fix some tracks failing to save ([bf042f8](https://github.com/MihkelBaranov/waveline-server/commit/bf042f81583194ead0a3fcd3804726041b62a1b5))
+* **enities:** make duration, picture etc fields nullable ([9f1ae23](https://github.com/MihkelBaranov/waveline-server/commit/9f1ae23efba9627adb26e8215ed663f9a526811a))
+* **search:** convery query to string ([971c1d5](https://github.com/MihkelBaranov/waveline-server/commit/971c1d51abb6205b124461ad7755e5cb06f4c774))
+* **sync:** fix sync ([3ce84cc](https://github.com/MihkelBaranov/waveline-server/commit/3ce84cc3a0e99db372714e9ed53890c7e4972846))
+* **track:** include audio duration ([d5646c8](https://github.com/MihkelBaranov/waveline-server/commit/d5646c87e89c534e1c5f8e6a8fe082d168b3f5d3))
+* **tracks:** fix popular tracks ([7e99b7f](https://github.com/MihkelBaranov/waveline-server/commit/7e99b7fd79a5ff86e340cea911fcb4b6e53a3076))
+* **tracks:** respect query params ([4be25d0](https://github.com/MihkelBaranov/waveline-server/commit/4be25d004a6090c7bcbb9b489d00409c9e1543ca))
+* **tracks:** update liked query ([b46d853](https://github.com/MihkelBaranov/waveline-server/commit/b46d85363c2b2fe6820886b183ffe168e868ce3f))
+
 ## [3.1.0](https://github.com/MihkelBaranov/waveline-server/compare/v3.0.0...v3.1.0) (2020-05-09)
 
 
