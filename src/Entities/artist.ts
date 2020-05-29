@@ -44,7 +44,6 @@ export class Artist extends BaseEntity {
 				const response = await LastfmService.instance.artist(name);
 				if (response) {
 
-
 					if (response.bio) {
 						artist.bio = response.bio;
 					}
