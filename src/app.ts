@@ -38,7 +38,7 @@ export class App {
 
 		bootstrap({
 			port: (process.env.PORT as number | string),
-			middleware: [cors, bodyParser, auth(["art", "play"])],
+			middleware: [cors, bodyParser, auth(["art", "play", "waveform"])],
 			resources: [Albums, Artists, Genres, Playlists, Search, System, Tracks, Sync],
 		});
 
