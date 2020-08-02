@@ -1,9 +1,10 @@
 import { getType } from "mime";
 import { Context, IContext, Resource, Get } from "@wellenline/via";
-import { readFileSync, statSync, createReadStream } from "fs";
+import { readFileSync, statSync, createReadStream, writeFileSync, existsSync } from "fs";
 import { LibraryService } from "../Services/library.service";
 import { Track } from "../Entities/track";
 import { getManager } from "typeorm";
+import { WaveformService } from "../Services/waveform.service";
 @Resource("/tracks")
 export class Tracks {
 	@Get("/")
@@ -86,7 +87,14 @@ export class Tracks {
 			take: limit,
 		});*/
 		return {
-			tracks,
+			tracks: tracks.map((track: any) => {
+				track.waveform = {
+					highlight: process.env.HOST + "/tracks/waveform/" + track.id + "?color=3c91ff",
+					base: process.env.HOST + "/tracks/waveform/" + track.id,
+				};
+
+				return track;
+			}),
 			query: {
 				...query,
 				skip,
@@ -173,6 +181,16 @@ export class Tracks {
 	@Get("/random")
 	public async random(@Context("query") query: { total: number }) {
 		return await Track.random(query.total);
+	}
+
+	@Get("/waveform/:id")
+	public async waveform(@Context() context: IContext) {
+		context.headers = {
+			"Content-type": "image/png",
+		};
+		const track = await Track.findOne(context.params.id);
+
+		return await WaveformService.instance.load(track, context.query.color);
 	}
 
 }

@@ -45,6 +45,7 @@
 	"dependencies": {
 		"@wellenline/via": "^2.0.4",
 		"axios": "^0.18.1",
+		"canvas": "^2.6.1",
 		"chokidar": "^3.4.0",
 		"cors": "^2.8.1",
 		"dotenv": "^4.0.0",

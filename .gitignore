@@ -14,3 +14,4 @@ transcoded-audio
 .env-docker
 .album-art/
 error_log.txt
+waveforms
