@@ -88,10 +88,7 @@ export class Tracks {
 		});*/
 		return {
 			tracks: tracks.map((track: any) => {
-				track.waveform = {
-					highlight: process.env.HOST + "/tracks/waveform/" + track.id + "?color=3c91ff",
-					base: process.env.HOST + "/tracks/waveform/" + track.id,
-				};
+				track.waveform = process.env.HOST + "/tracks/waveform/" + track.id;
 
 				return track;
 			}),
@@ -190,7 +187,7 @@ export class Tracks {
 		};
 		const track = await Track.findOne(context.params.id);
 
-		return await WaveformService.instance.load(track, context.query.color);
+		return await WaveformService.instance.load(track);
 	}
 
 }

@@ -30,19 +30,16 @@ export class WaveformService {
 	public async load(track: Track, color?: string) {
 		const options: IWaveformOptions = {};
 
-		if (color) {
-			options.waveColor = `#${color}`;
-		}
 
-		/*const file = `./waveforms/${track.id}-${options.waveColor ? "highlight" : "base"}.png`;
+		const file = `./waveforms/${track.id}.png`;
 
 		if (existsSync(file)) {
 			return readFileSync(file);
 		}
 
 		const buffer = await this.create(track.path, options);
-		writeFile(file, buffer, (err) => console.error(err));*/
-		const buffer = await this.create(track.path, options);
+		writeFile(file, buffer, (err) => console.error(err));
+		// const buffer = await this.create(track.path, options);
 
 		return buffer;
 	}
@@ -52,13 +49,13 @@ export class WaveformService {
 
 		const defaults: IWaveformOptions = {
 			width: 1240,
-			height: 150,
+			height: 100,
 			barWidth: 15,
 			barGap: 0.5,
 			waveColor: "gray",
 			waveAlpha: 1,
 			backgroundColor: "transparent",
-			baseline: 75,
+			baseline: 50,
 			padding: 10,
 			baselineWidth: 0,
 			baselineColor: "white"
