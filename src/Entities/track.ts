@@ -60,6 +60,9 @@ export class Track extends BaseEntity {
 	@Column({ default: false })
 	public lossless: boolean;
 
+	@Column({ nullable: true })
+	public waveform: string;
+
 	@CreateDateColumn()
 	public created_at: Date;
 

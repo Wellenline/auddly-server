@@ -1,9 +1,10 @@
-import { createWriteStream, existsSync, appendFile, mkdirSync, readdirSync, statSync, createReadStream, writeFileSync } from "fs";
+import { createWriteStream, existsSync, appendFile, mkdirSync, readdirSync, statSync, createReadStream, writeFileSync, fstat } from "fs";
 import { extname } from "path";
 import * as mm from "music-metadata";
 import * as chokidar from "chokidar";
 import * as sox from "sox-stream";
 import * as ProgressBar from "progress";
+import { createHash } from "crypto";
 
 import { format } from "util";
 import { capitalize } from "../utils/captialize";
@@ -12,6 +13,7 @@ import { Track } from "../Entities/track";
 import { Album } from "../Entities/album";
 import { Genre } from "../Entities/genre";
 import { Server } from "../Entities/server";
+import { WaveformService } from "./waveform.service";
 
 /**
  * Library Service
@@ -30,6 +32,10 @@ export class LibraryService {
 
 		if (!existsSync(process.env.TRANSCODE_PATH)) {
 			mkdirSync(process.env.TRANSCODE_PATH);
+		}
+
+		if (!existsSync(process.env.WAVEFORM_PATH)) {
+			mkdirSync(process.env.WAVEFORM_PATH);
 		}
 
 		return LibraryService._instance;
@@ -109,6 +115,11 @@ export class LibraryService {
 				const exists = await Track.findOne({ path: file });
 
 				if (exists) {
+					if (!exists.waveform) {
+						exists.waveform = await this._generateWaveForm(file);
+						await exists.save();
+					}
+					// generate waveform
 					continue;
 				}
 
@@ -147,6 +158,7 @@ export class LibraryService {
 					duration: metadata.format.duration,
 					path: file,
 					lossless: metadata.format.lossless,
+					waveform: await this._generateWaveForm(file),
 					year: metadata.common.year || 0,
 					created_at: new Date(),
 				} as any);
@@ -170,6 +182,22 @@ export class LibraryService {
 
 		return Server.create(libraryInfo as Server).save();
 
+	}
+
+	private async _generateWaveForm(file: string) {
+		console.log("Generate waveform for file", file);
+		const stat = statSync(file);
+		if ((stat.size / 1000000.0) >= 100) {
+			console.log("filesize too large");
+			return "";
+		}
+
+		const filePath = `${process.env.WAVEFORM_PATH}/${createHash("md5").update(file.replace(process.env.MUSIC_PATH, "")).digest("hex")}.png`;
+		const writeStream = createWriteStream(filePath);
+		const pngStream = await WaveformService.instance.create(file);
+		pngStream.pipe(writeStream);
+
+		return filePath;
 	}
 
 	/**

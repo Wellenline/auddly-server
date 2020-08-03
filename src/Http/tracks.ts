@@ -87,11 +87,7 @@ export class Tracks {
 			take: limit,
 		});*/
 		return {
-			tracks: tracks.map((track: any) => {
-				track.waveform = process.env.HOST + "/tracks/waveform/" + track.id;
-
-				return track;
-			}),
+			tracks,
 			query: {
 				...query,
 				skip,
@@ -187,7 +183,7 @@ export class Tracks {
 		};
 		const track = await Track.findOne(context.params.id);
 
-		return await WaveformService.instance.load(track);
+		return createReadStream(track.waveform);
 	}
 
 }
