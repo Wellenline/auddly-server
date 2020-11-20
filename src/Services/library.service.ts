@@ -154,7 +154,7 @@ export class LibraryService {
 					duration: metadata.format.duration,
 					path: file,
 					lossless: metadata.format.lossless,
-					waveform: await this._generateWaveForm(file),
+					// waveform: await this._generateWaveForm(file),
 					year: metadata.common.year || 0,
 					created_at: new Date(),
 				} as any);

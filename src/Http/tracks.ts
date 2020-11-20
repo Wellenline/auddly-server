@@ -68,7 +68,7 @@ export class Tracks {
 			// queryBuilder.orderBy("track.created_at", "ASC");
 
 		}
-		queryBuilder.skip(skip);
+		queryBuilder.offset(skip);
 		queryBuilder.limit(limit);
 
 		const total = await queryBuilder.getCount();
