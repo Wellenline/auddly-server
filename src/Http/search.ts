@@ -1,8 +1,7 @@
 import { Resource, Get, Context } from "@wellenline/via";
 import { Track } from "../Entities/track";
 import { Like, Raw, getManager } from "typeorm";
-import { Album } from "../Entities/album";
-import { Artist } from "../Entities/artist";
+import { Artist, Playlist, Album } from "../Entities";
 @Resource("/search")
 export class Search {
 	/**
@@ -19,6 +18,7 @@ export class Search {
 			albums: [],
 			artists: [],
 			tracks: [],
+			playlists: [],
 		};
 		results.tracks = await getManager().createQueryBuilder(Track, "track")
 			.select()
@@ -42,6 +42,13 @@ export class Search {
 			.select()
 			.where("LOWER(name) LIKE :q", { q: `%${query.q.toString().toLowerCase()}%` })
 			.getMany();
+
+
+		results.playlists = await getManager().createQueryBuilder(Playlist, "playlist")
+			.select()
+			.where("LOWER(name) LIKE :q", { q: `%${query.q.toString().toLowerCase()}%` })
+			.getMany();
+
 
 		return results;
 	}

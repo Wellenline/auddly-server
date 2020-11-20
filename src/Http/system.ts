@@ -1,6 +1,6 @@
 import * as os from "os";
 import { Resource, Get } from "@wellenline/via";
-import { Server } from "../Entities/server";
+import { Server } from "../Entities";
 
 @Resource("/system")
 export class System {

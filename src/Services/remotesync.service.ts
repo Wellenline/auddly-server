@@ -38,7 +38,7 @@ export class RemoteSyncService {
 	}
 
 	public async _considerFilesForSync(payload: IFilesForSync) {
-		console.log("consider files for syn");
+		console.log("consider files for sync");
 		const { files, separator, root } = payload;
 
 		const syncFiles = (await Promise.all(files.map(async (file: any) => {

@@ -1,6 +1,5 @@
 import { Resource, Get, Post, Context, IContext, Put, HttpException, HttpStatus, Delete } from "@wellenline/via";
-import { Playlist } from "../Entities/playlist";
-import { Track } from "../Entities/track";
+import { Playlist, Track } from "../Entities";
 @Resource("/playlists")
 export class Playlists {
 

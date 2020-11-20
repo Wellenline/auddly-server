@@ -1,6 +1,6 @@
 import { Resource, Get, Context, IContext } from "@wellenline/via";
 import { existsSync, readFileSync } from "fs";
-import { Album } from "../Entities/album";
+import { Album } from "../Entities";
 
 @Resource("/albums")
 export class Albums {
@@ -10,10 +10,9 @@ export class Albums {
 		context.headers = {
 			"Content-type": "image/png",
 		};
-		const id = context.params.id;
-		const image = existsSync(`${process.env.ART_PATH}/${id}`) ?
-			readFileSync(`${process.env.ART_PATH}/${id}`) : readFileSync(`./assets/placeholder.png`);
-		return image;
+
+		return existsSync(`${process.env.ART_PATH}/${context.params.id}`) ?
+			readFileSync(`${process.env.ART_PATH}/${context.params.id}`) : readFileSync(`./assets/placeholder.png`);
 	}
 
 	@Get("/")

@@ -1,24 +1,12 @@
 import * as dotenv from "dotenv";
 import * as ip from "ip";
 import * as qrcode from "qrcode";
+import { createConnection } from "typeorm";
 import { bootstrap } from "@wellenline/via";
 import { cors, bodyParser, auth } from "./Middleware/global";
 import { LibraryService } from "./Services/library.service";
-import { Albums } from "./Http/albums";
-import { Artists } from "./Http/artists";
-import { Genres } from "./Http/genres";
-import { Playlists } from "./Http/playlists";
-import { Search } from "./Http/search";
-import { System } from "./Http/system";
-import { Tracks } from "./Http/tracks";
-import { Sync } from "./Http/sync";
-import { createConnection, DatabaseType } from "typeorm";
-import { Album } from "./Entities/album";
-import { Artist } from "./Entities/artist";
-import { Genre } from "./Entities/genre";
-import { Playlist } from "./Entities/playlist";
-import { Server } from "./Entities/server";
-import { Track } from "./Entities/track";
+import { Sync, Albums, Artists, Genres, Playlists, Search, System, Tracks } from "./Http";
+import { Album, Artist, Genre, Playlist, Server, Track } from "./Entities";
 
 export class App {
 	constructor() {
@@ -27,7 +15,7 @@ export class App {
 
 	public async run() {
 
-		const REQUIRED_ENV_VARS = ["MUSIC_PATH", "ART_PATH", "TRANSCODE_PATH", "DB_DRIVER", "DB_NAME", "PORT", "HOST"];
+		const REQUIRED_ENV_VARS = ["MUSIC_PATH", "ART_PATH", "TRANSCODE_PATH", "WAVEFORM_PATH", "DB_DRIVER", "DB_NAME", "PORT", "HOST"];
 
 		for (const key of REQUIRED_ENV_VARS) {
 			if (!process.env[key]) {

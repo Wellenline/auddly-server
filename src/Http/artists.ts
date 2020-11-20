@@ -1,5 +1,5 @@
 import { Resource, Get, Context } from "@wellenline/via";
-import { Artist } from "../Entities/artist";
+import { Artist } from "../Entities";
 @Resource("/artists")
 export class Artists {
 	@Get("/")

@@ -1,5 +1,5 @@
 import { Resource, Get } from "@wellenline/via";
-import { Genre } from "../Entities/genre";
+import { Genre } from "../Entities";
 @Resource("/genres")
 export class Genres {
 	@Get("/")

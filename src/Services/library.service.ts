@@ -8,11 +8,7 @@ import { createHash } from "crypto";
 
 import { format } from "util";
 import { capitalize } from "../utils/captialize";
-import { Artist } from "../Entities/artist";
-import { Track } from "../Entities/track";
-import { Album } from "../Entities/album";
-import { Genre } from "../Entities/genre";
-import { Server } from "../Entities/server";
+import { Artist, Track, Album, Genre, Server } from "../Entities";
 import { WaveformService } from "./waveform.service";
 
 /**
@@ -115,10 +111,10 @@ export class LibraryService {
 				const exists = await Track.findOne({ path: file });
 
 				if (exists) {
-					if (!exists.waveform) {
+					/*if (!exists.waveform) {
 						exists.waveform = await this._generateWaveForm(file);
 						await exists.save();
-					}
+					}*/
 					// generate waveform
 					continue;
 				}
