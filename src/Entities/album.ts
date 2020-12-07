@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, BaseEntity, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable, ManyToOne, AfterLoad } from "typeorm";
 import { createHash } from "crypto";
 import { writeFileSync } from "fs";
-import { SpotifyService, Types, KeyTypes } from "../Services/spotify.service";
+import { SpotifyService, Types, KeyTypes } from "../Services/spotify";
 import { Artist } from "./artist";
 
 export interface IAlbumData {

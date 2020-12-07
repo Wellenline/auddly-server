@@ -1,8 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BaseEntity, ManyToMany, AfterLoad } from "typeorm";
-import { SpotifyService, Types, KeyTypes } from "../Services/spotify.service";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BaseEntity } from "typeorm";
+import { SpotifyService, Types, KeyTypes } from "../Services/spotify";
 import { capitalize } from "../utils/captialize";
-import { Track } from "./track";
-import { LastfmService } from "../Services/lastfm.service";
+import { LastfmService } from "../Services/lastfm";
 
 @Entity()
 export class Artist extends BaseEntity {

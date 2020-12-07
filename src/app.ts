@@ -4,7 +4,7 @@ import * as qrcode from "qrcode";
 import { createConnection } from "typeorm";
 import { bootstrap } from "@wellenline/via";
 import { cors, bodyParser, auth } from "./Middleware/global";
-import { LibraryService } from "./Services/library.service";
+import { LibraryService } from "./Services/library";
 import { Sync, Albums, Artists, Genres, Playlists, Search, System, Tracks } from "./Http";
 import { Album, Artist, Genre, Playlist, Server, Track } from "./Entities";
 

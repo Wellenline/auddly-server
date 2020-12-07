@@ -9,7 +9,7 @@ import { createHash } from "crypto";
 import { format } from "util";
 import { capitalize } from "../utils/captialize";
 import { Artist, Track, Album, Genre, Server } from "../Entities";
-import { WaveformService } from "./waveform.service";
+import { WaveformService } from "./waveform";
 
 /**
  * Library Service

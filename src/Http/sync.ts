@@ -1,6 +1,6 @@
 
 import { Resource, Post, Context, IContext } from "@wellenline/via";
-import { RemoteSyncService } from "../Services/remotesync.service";
+import { RemoteSyncService } from "../Services/remotesync";
 
 @Resource("/sync")
 export class Sync {

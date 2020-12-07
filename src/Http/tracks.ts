@@ -1,10 +1,9 @@
 import { getType } from "mime";
 import { Context, IContext, Resource, Get } from "@wellenline/via";
-import { readFileSync, statSync, createReadStream, writeFileSync, existsSync } from "fs";
-import { LibraryService } from "../Services/library.service";
+import { statSync, createReadStream, } from "fs";
+import { LibraryService } from "../Services/library";
 import { Track } from "../Entities/track";
 import { getManager } from "typeorm";
-import { WaveformService } from "../Services/waveform.service";
 @Resource("/tracks")
 export class Tracks {
 	@Get("/")
