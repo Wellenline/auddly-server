@@ -125,7 +125,7 @@ export class LibraryService {
 
 				// Find or create a new album
 				const album = await Album.findOrCreate({
-					album: metadata.common.album,
+					album: metadata.common.album ? metadata.common.album : 'default',
 					artist: artists[0],
 					year: metadata.common.year,
 					picture: metadata.common && metadata.common.picture && metadata.common.picture.length > 0 ? metadata.common.picture[0].data : undefined,
