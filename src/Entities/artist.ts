@@ -21,7 +21,7 @@ export class Artist extends BaseEntity {
 	@Column("simple-array", { nullable: true })
 	public similar: string[];
 
-	@Column({ nullable: true })
+	@Column("text", { nullable: true })
 	public bio: string;
 
 	@CreateDateColumn()
