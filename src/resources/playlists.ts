@@ -1,6 +1,6 @@
+import { Playlist } from "@src/Entities/playlist";
+import { Track } from "@src/Entities/track";
 import { Resource, Get, Post, Context, IContext, Put, HttpException, HttpStatus, Delete } from "@wellenline/via";
-import { Playlist } from "../Entities/playlist";
-import { Track } from "../Entities/track";
 @Resource("/playlists")
 export class Playlists {
 
@@ -148,6 +148,11 @@ export class Playlists {
 				}
 			}
 		});
+
+		if (!track) {
+			throw new HttpException("Invalid track", HttpStatus.NOT_FOUND);
+		}
+
 		track.playlists = track.playlists.filter((playlist) => context.params.id !== playlist.id);
 
 		return await track.save();

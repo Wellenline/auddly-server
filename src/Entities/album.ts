@@ -1,14 +1,14 @@
 import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, BaseEntity, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable, ManyToOne, AfterLoad } from "typeorm";
 import { createHash } from "crypto";
 import { writeFileSync } from "fs";
-import { SpotifyService, Types, KeyTypes } from "../Services/spotify.service";
 import { Artist } from "./artist";
+import { getPicture, KeyType, Type } from "@src/providers/spotify";
 
 export interface IAlbumData {
 	album: string;
 	artist: Artist;
 	year: number;
-	picture: Buffer | false | string;
+	picture: Buffer | boolean | string;
 }
 
 @Entity()
@@ -46,12 +46,12 @@ export class Album extends BaseEntity {
 		let album = await this.findOne({ name: data.album });
 
 		if (!album) {
-			if (data.picture) {
+			if (data.picture && typeof data.picture === "object") {
 				const id = createHash("md5").update(`${data.artist.id}-${data.album}`).digest("hex");
 				writeFileSync(`${process.env.ART_PATH}/${id}.png`, data.picture);
 				data.picture = `/albums/art/${id}.png`;
 			} else {
-				data.picture = await SpotifyService.instance.picture(Types.ALBUM, KeyTypes.ALBUMS, `album:${data.album} artist:${data.artist.name}`) as string;
+				data.picture = await getPicture(Type.ALBUM, KeyType.ALBUMS, `album:${data.album} artist:${data.artist.name}`) as string;
 			}
 
 			album = new Album();
@@ -73,7 +73,7 @@ export class Album extends BaseEntity {
 	public static async random(limit: number = 10, min: number = 0) {
 		const total = await this.count();
 
-		const data = [];
+		const data: Album[] = [];
 
 		for (let i = 0; i < limit; i++) {
 			const skip = Math.floor(Math.random() * (total - min + 1)) + min;

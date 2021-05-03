@@ -1,24 +1,24 @@
 import * as dotenv from "dotenv";
 import * as ip from "ip";
-import * as qrcode from "qrcode";
 import { bootstrap } from "@wellenline/via";
-import { cors, bodyParser, auth } from "./Middleware/global";
-import { LibraryService } from "./Services/library.service";
-import { Albums } from "./Http/albums";
-import { Artists } from "./Http/artists";
-import { Genres } from "./Http/genres";
-import { Playlists } from "./Http/playlists";
-import { Search } from "./Http/search";
-import { System } from "./Http/system";
-import { Tracks } from "./Http/tracks";
-import { Sync } from "./Http/sync";
+import { cors, bodyParser, auth } from "./middleware/global";
+import { Albums } from "./resources/albums";
 import { createConnection, DatabaseType } from "typeorm";
-import { Album } from "./Entities/album";
-import { Artist } from "./Entities/artist";
-import { Genre } from "./Entities/genre";
-import { Playlist } from "./Entities/playlist";
-import { Server } from "./Entities/server";
-import { Track } from "./Entities/track";
+import { Album } from "@src/Entities/album";
+import { Artist } from "@src/Entities/artist";
+import { Genre } from "@src/Entities/genre";
+import { Playlist } from "@src/Entities/playlist";
+import { Server } from "@src/Entities/server";
+import { Track } from "@src/Entities/track";
+import { Genres } from "@src/resources/genres";
+import { Artists } from "@src/resources/artists";
+import { Playlists } from "@src/resources/playlists";
+import { Search } from "@src/resources/search";
+import { Sync } from "@src/resources/sync";
+import { System } from "@src/resources/system";
+import { Tracks } from "@src/resources/tracks";
+import { watch } from "./common/library";
+import { Lyric } from "./Entities/lyric";
 
 export class App {
 	constructor() {
@@ -47,13 +47,13 @@ export class App {
 		createConnection({
 			type: process.env.DB_DRIVER as any,
 			host: process.env.DB_HOST,
-			port: parseInt(process.env.DB_PORT, 10),
+			port: parseInt(process.env.DB_PORT as string, 10),
 			database: process.env.DB_NAME,
 			password: process.env.DB_PASSWORD,
 			username: process.env.DB_USERNAME,
 			synchronize: true,
 			logging: false,
-			entities: [Album, Artist, Genre, Playlist, Server, Track],
+			entities: [Album, Artist, Genre, Playlist, Server, Track, Lyric],
 		}).catch((err) => {
 			console.log(err);
 			process.exit(0);
@@ -62,15 +62,11 @@ export class App {
 
 		const HOST = `${process.env.HOST || ip.address()}${process.env.API_KEY
 			&& process.env.API_KEY.length > 0 ? "?key=" + process.env.API_KEY : ""}`;
-		const code = await qrcode.toString(HOST, { type: "terminal" }).catch((err) => {
-			console.error(err, "Failed to generate QR code");
-		});
 
-		// Show QR code
-		console.log(code);
 
 		console.info(`[DEBUG] Server running: ${HOST}\n`);
-		LibraryService.instance.watch();
+
+		watch();
 		// LibraryService.instance.sync(process.env.MUSIC_PATH, [".mp3", ".flac", ".m4a"]);
 	}
 }

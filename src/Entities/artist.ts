@@ -1,8 +1,6 @@
+import { getArtistMetadata } from "@src/providers/lastfm";
+import { getPicture, KeyType, Type } from "@src/providers/spotify";
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BaseEntity, ManyToMany, AfterLoad } from "typeorm";
-import { SpotifyService, Types, KeyTypes } from "../Services/spotify.service";
-import { capitalize } from "../utils/captialize";
-import { Track } from "./track";
-import { LastfmService } from "../Services/lastfm.service";
 
 @Entity()
 export class Artist extends BaseEntity {
@@ -32,16 +30,16 @@ export class Artist extends BaseEntity {
 
 	public static async findOrCreate(names: string[]) {
 		const artists: Artist[] = [];
-		for (const name of names.map((n) => capitalize(n).trim())) {
+		for (const name of names.map((n) => n.trim())) {
 			let artist = await this.findOne({ name });
 
 			if (!artist) {
 
 				artist = new Artist();
 				artist.name = name;
-				artist.picture = await SpotifyService.instance.picture(Types.ARTIST, KeyTypes.ARTISTS, name);
+				artist.picture = await getPicture(Type.ARTIST, KeyType.ARTISTS, name);
 
-				const response = await LastfmService.instance.artist(name);
+				const response = await getArtistMetadata(name);
 				if (response) {
 
 					if (response.bio) {
@@ -69,7 +67,7 @@ export class Artist extends BaseEntity {
 	public static async random(limit: number = 10, min: number = 0) {
 		const total = await this.count();
 
-		const data = [];
+		const data: Artist[] = [];
 
 		for (let i = 0; i < limit; i++) {
 			const skip = Math.floor(Math.random() * (total - min + 1)) + min;

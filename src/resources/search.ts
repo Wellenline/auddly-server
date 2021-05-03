@@ -15,7 +15,7 @@ export class Search {
 	 */
 	@Get("/")
 	public async index(@Context("query") query: { q: string }) {
-		const results = {
+		const results: { albums: Album[], artists: Artist[], tracks: Track[] } = {
 			albums: [],
 			artists: [],
 			tracks: [],

@@ -1,6 +1,6 @@
+import { Album } from "@src/Entities/album";
 import { Resource, Get, Context, IContext } from "@wellenline/via";
 import { existsSync, readFileSync } from "fs";
-import { Album } from "../Entities/album";
 
 @Resource("/albums")
 export class Albums {
@@ -33,7 +33,7 @@ export class Albums {
 				},
 				where,
 				order: {
-					created_at: query.sort > -1 ? "ASC" : "DESC",
+					created_at: query.sort && query.sort > -1 ? "ASC" : "DESC",
 				},
 				skip,
 				take: limit,
@@ -50,12 +50,12 @@ export class Albums {
 	}
 
 	@Get("/random")
-	public async random(@Context("query") query: { total: number }) {
-		return await Album.random(query.total);
+	public async random(@Context() context: IContext) {
+		return await Album.random(context.query.total);
 	}
 
 	@Get("/:id")
-	public async album(@Context("params") params: { id: string }) {
+	public async album(@Context() context: IContext) {
 		return await Album.findOne({
 			join: {
 				alias: "album",
@@ -63,7 +63,7 @@ export class Albums {
 					artist: "album.artist",
 				}
 			},
-			where: { id: params.id },
+			where: { id: context.params.id },
 		});
 	}
 

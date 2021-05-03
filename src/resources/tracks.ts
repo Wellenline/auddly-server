@@ -1,9 +1,10 @@
 import { getType } from "mime";
-import { Context, IContext, Resource, Get } from "@wellenline/via";
+import { Context, IContext, Resource, Get, HttpException } from "@wellenline/via";
 import { readFileSync, statSync, createReadStream } from "fs";
-import { LibraryService } from "../Services/library.service";
 import { Track } from "../Entities/track";
 import { getManager } from "typeorm";
+import { transcode } from "@src/common/library";
+import { Lyric } from "@src/Entities/lyric";
 @Resource("/tracks")
 export class Tracks {
 	@Get("/")
@@ -12,6 +13,7 @@ export class Tracks {
 		limit?: number,
 		genre?: number,
 		liked?: boolean,
+		sort?: boolean,
 		artist?: number,
 		album?: number,
 		playlist?: number,
@@ -57,6 +59,7 @@ export class Tracks {
 		queryBuilder.leftJoinAndSelect("track.artists", "artists");
 		queryBuilder.leftJoinAndSelect("track.playlists", "playlists");
 		queryBuilder.leftJoinAndSelect("track.album", "album");
+
 		queryBuilder.leftJoinAndSelect("album.artist", "albumArtist");
 
 		queryBuilder.leftJoinAndSelect("track.genre", "genre");
@@ -65,6 +68,13 @@ export class Tracks {
 			queryBuilder.where("track.plays >= :plays", { plays: 1 });
 		} else {
 			// queryBuilder.orderBy("track.created_at", "ASC");
+
+		}
+
+		if (query.sort) {
+			queryBuilder.orderBy("track.created_at", "DESC");
+		} else {
+			queryBuilder.orderBy("track.created_at", "ASC");
 
 		}
 		queryBuilder.skip(skip);
@@ -109,7 +119,7 @@ export class Tracks {
 		await track.save();
 		// wait until audio has finished transcodig... probably not the best way of doing it
 		if (track.path.toString().endsWith(".flac") && context.query.transcode) {
-			track.path = await LibraryService.instance.transcode(track as any, {
+			track.path = await transcode(track as any, {
 				output: { type: "mp3" }
 			});
 		}
@@ -133,14 +143,14 @@ export class Tracks {
 			context.headers = {
 				"Content-Range": "bytes " + start + "-" + end + "/" + total,
 				"Accept-Ranges": "bytes", "Content-Length": chunksize,
-				"Content-Type": getType(track.path),
+				"Content-Type": getType(track.path) || "audio/mp3",
 			};
 
 			return createReadStream(track.path, { start, end });
 		} else {
 
 			context.headers = {
-				"Content-Type": getType(track.path),
+				"Content-Type": getType(track.path) || "audio/mp3",
 				"Accept-Ranges": "bytes",
 				"Content-Length": stat.size,
 			};
@@ -164,10 +174,24 @@ export class Tracks {
 	@Get("/like/:id")
 	public async like(@Context("params") params: { id: string }) {
 		const track = await Track.findOne(params.id);
+
+		if (!track) {
+			throw new HttpException("Invalid track");
+		}
+
 		track.liked = !track.liked;
 		track.updated_at = new Date();
 		return await track.save();
 
+	}
+
+	@Get("/lyrics/:id")
+	public async lyrics(@Context("params") params: { id: string }) {
+		return await Lyric.findOne({
+			where: {
+				track: params.id
+			}
+		});
 	}
 
 	@Get("/random")
