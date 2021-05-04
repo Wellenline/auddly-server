@@ -2,7 +2,7 @@ FROM node:13.14.0-alpine3.10
 
 RUN mkdir -p /app
 
-RUN apk update && apk add sox && rm -rf /var/cache/apk/*
+RUN apk update && apk add sox python make g++ && rm -rf /var/cache/apk/*
 
 WORKDIR /app
 
