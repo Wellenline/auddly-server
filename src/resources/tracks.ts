@@ -8,17 +8,19 @@ import { Lyric } from "@src/Entities/lyric";
 @Resource("/tracks")
 export class Tracks {
 	@Get("/")
-	public async tracks(@Context("query") query: {
-		skip?: number,
-		limit?: number,
-		genre?: number,
-		liked?: boolean,
-		sort?: boolean,
-		artist?: number,
-		album?: number,
-		playlist?: number,
-		popular?: boolean,
-	}) {
+	public async tracks(@Context() context: IContext) {
+
+		const query: {
+			skip?: number,
+			limit?: number,
+			genre?: number,
+			liked?: boolean,
+			sort?: boolean,
+			artist?: number,
+			album?: number,
+			playlist?: number,
+			popular?: boolean,
+		} = context.query;
 
 		const skip = query.skip || 0;
 		const limit = query.limit || 20;
