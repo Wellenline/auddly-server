@@ -11,7 +11,7 @@
 		"clean": "rimraf dist && rimraf test/**/*.js",
 		"build": "npm run lint && tsc --project tsconfig.json",
 		"dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --ignore-watch node_modules ./src/index.ts",
-		"start": "ts-node-transpile-only -r tsconfig-paths/register src/index.ts ",
+		"start": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules ./src/index.ts",
 		"build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./src",
 		"release": "standard-version"
 	},
