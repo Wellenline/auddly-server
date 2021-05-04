@@ -9,7 +9,7 @@ export class Artists {
 		return {
 			artists: await Artist.find({
 				order: {
-					created_at: query.sort !== undefined && query?.sort > -1 ? "ASC" : "DESC",
+					created_at: query.sort !== undefined && query.sort > -1 ? "ASC" : "DESC",
 				},
 				skip,
 				take: limit,
