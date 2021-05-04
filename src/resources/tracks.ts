@@ -80,7 +80,7 @@ export class Tracks {
 
 		}
 		queryBuilder.skip(skip);
-		queryBuilder.limit(limit);
+		queryBuilder.take(limit);
 
 		const total = await queryBuilder.getCount();
 		const tracks = await queryBuilder.getMany();
