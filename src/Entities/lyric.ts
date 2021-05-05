@@ -20,22 +20,22 @@ export class Lyric extends BaseEntity {
 
 	public static async findOrCreate(data: { track?: any, name: string, artist: string }) {
 		// ok
+		try {
+			const track = await Track.findOne(data.track);
 
-		const track = await Track.findOne(data.track);
-
-		if (!track) {
-			return false;
-		}
-
-		console.log("Find lyrics", data);
-		const lyrics = await getLyrics(data.name, data.artist);
-
-		if (lyrics) {
-			const lyric = await this.create({
-				text: lyrics,
-			}).save();
-			track.lyrics = lyric;
-			return await track.save();
+			if (!track || track.lyrics) {
+				return false;
+			}
+			const lyrics = await getLyrics(data.name, data.artist);
+			if (lyrics) {
+				const lyric = await this.create({
+					text: lyrics,
+				}).save();
+				track.lyrics = lyric;
+				return await track.save();
+			}
+		} catch (err) {
+			console.log("Failed to fetch lyrics");
 		}
 
 	}
