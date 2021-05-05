@@ -1,11 +1,17 @@
 import axios from "axios";
 import geniusApi from "genius-lyrics-api";
+
+let ACCESS_TOKEN: string;
+
 export async function getLyrics(title: string, artist: string): Promise<string | undefined> {
 
 	try {
 		if (process.env.GENIUS_CLIENT && process.env.GENIUS_SECRET) {
 			console.log(title, artist);
-			const ACCESS_TOKEN = await getAccessToken();
+			if (!ACCESS_TOKEN) {
+				ACCESS_TOKEN = await getAccessToken();
+
+			}
 
 			console.log(ACCESS_TOKEN);
 
