@@ -13,9 +13,9 @@ export class Playlists {
 	 * @returns Playlist[]
 	 */
 	@Get("/")
-	public async index(@Context("query") query: { skip?: number, limit?: number }) {
-		const skip = query.skip || 0;
-		const limit = query.limit || 20;
+	public async index(@Context() context: IContext) {
+		const skip = context.query.skip || 0;
+		const limit = context.query.limit || 20;
 		return {
 			playlists: await Playlist.find({
 				skip,
@@ -23,7 +23,7 @@ export class Playlists {
 			}),
 			total: await Playlist.count(),
 			query: {
-				...query,
+				...context.query,
 				skip,
 				limit,
 			},
@@ -65,12 +65,13 @@ export class Playlists {
 	 * @apiGroup Playlists
 	 * @apiName playlists.upload
 	 * @apiParam {playlistId} playlist id
-	 * @apiParam {string} track track id to add to playlist
+	 * @apiParam {string[]} tracks track ids to add to playlist
 	 * @apiVersion 3.0.0
 	 * @returns Track
 	 */
 	@Post("/:id")
 	public async add(@Context() context: IContext) {
+
 		const playlist = await Playlist.findOne(context.params.id);
 
 		if (!playlist) {
@@ -93,6 +94,7 @@ export class Playlists {
 		track.playlists = (track.playlists || []).concat([playlist]);
 
 		return await track.save();
+
 	}
 
 	/**
@@ -108,9 +110,10 @@ export class Playlists {
 	 */
 	@Put("/:id")
 	public async update(@Context() context: IContext) {
+		const { name, picture } = context.body;
 		return await Playlist.update(context.params.id, {
-			name: context.body.name,
-			picture: context.body.picture,
+			name,
+			picture,
 		});
 	}
 

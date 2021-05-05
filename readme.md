@@ -22,6 +22,8 @@ docker run -d --name="Waveline-Server" \
   -e ART_PATH=/album-art \
   -e SPOTIFY_ID=YOUR_SPOTIFY_ID \
   -e SPOTIFY_SECRET=YOUR_SPOTIFY_SECRET \
+  -e GENIUS_CLIENT=YOUR_GENIUS_CLIENT_ID \
+  -e GENIUS_SECRET=YOUR_GENIUS_SECRET \
   -e LAST_FM_KEY=YOUR_LAST_FM_KEY \
   -e AUTH_ENABLED=true \
   -e API_KEY=12345 \
@@ -56,6 +58,8 @@ services:
       - ART_PATH=/album-art
       - SPOTIFY_ID=YOUR_SPOTIFY_ID
       - SPOTIFY_SECRET=YOUR_SPOTIFY_SECRET
+      - GENIUS_CLIENT=YOUR_GENIUS_CLIENT_ID
+      - GENIUS_SECRET=YOUR_GENIUS_SECRET
       - LAST_FM_KEY=YOUR_LAST_FM_API_KEY
       - API_KEY=12345 # remove if you wish to disable auth
       - PORT=5000
@@ -103,6 +107,8 @@ TRANSCODE_PATH=./transcoded-audio
 ART_PATH=./album-art
 SPOTIFY_ID=YOUR_SPOTIFY_ID
 SPOTIFY_SECRET=YOUR_SPOTIFY_SECRET
+GENIUS_CLIENT=YOUR_GENIUS_CLIENT_ID
+GENIUS_SECRET=YOUR_GENIUS_SECRET
 LAST_FM_KEY=YOUR_LAST_FM_API_KEY
 API_KEY=xxxxxxxxxxxx # replace it with something more secure
 PORT=5000
@@ -116,6 +122,10 @@ https://developer.spotify.com/dashboard/login
 ## Artist Bio, similar artists and tags (from Lastfm)
 To display artist bio, get similar artists and tags you need to create a new Lastfm application
 https://www.last.fm/api/account/create
+
+## Lyrics (from Genius)
+If you wish to include lyrics with the song metadata you can use Genius API for that
+https://genius.com/developers
 
 ## Roadmap
 Waveline is a personal project and my current goals are

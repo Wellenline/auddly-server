@@ -25,6 +25,13 @@ let timer: NodeJS.Timeout;
 let tracks: any[] = [];
 let size = 0;
 
+export function capitalize(string: string) {
+	return string ? string.toLowerCase()
+		.split(" ")
+		.map((s: string) => s.charAt(0).toUpperCase() + s.substring(1))
+		.join(" ") : string;
+}
+
 export function watch(ext?: string[]) {
 	if (ext && ext.length > 0) {
 		library.ext = ext;
@@ -131,7 +138,7 @@ export async function build(files: string[]) {
 			}
 
 			const track = await Track.findOrCreate({
-				name: metadata.common.title || "",
+				name: capitalize(metadata.common.title || ""),
 				artists,
 				album: album.id,
 				artist: names.join(", "),

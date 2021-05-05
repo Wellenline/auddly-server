@@ -1,3 +1,4 @@
+import { capitalize } from "@src/common/library";
 import { getArtistMetadata } from "@src/providers/lastfm";
 import { getPicture, KeyType, Type } from "@src/providers/spotify";
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BaseEntity, ManyToMany, AfterLoad } from "typeorm";
@@ -30,7 +31,7 @@ export class Artist extends BaseEntity {
 
 	public static async findOrCreate(names: string[]) {
 		const artists: Artist[] = [];
-		for (const name of names.map((n) => n.trim())) {
+		for (const name of names.map((n) => capitalize(n).trim())) {
 			let artist = await this.findOne({ name });
 
 			if (!artist) {

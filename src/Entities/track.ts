@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BaseEntity, ManyToMany, JoinTable, JoinColumn, ManyToOne } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BaseEntity, ManyToMany, JoinTable, JoinColumn, ManyToOne, OneToOne } from "typeorm";
 import { Artist } from "./artist";
 import { Album } from "./album";
 import { Genre } from "./genre";
@@ -36,6 +36,10 @@ export class Track extends BaseEntity {
 	@ManyToOne(type => Genre, genre => genre.id)
 	@JoinColumn()
 	public genre: Genre;
+
+	@OneToOne(type => Lyric, lyric => lyric.id)
+	@JoinColumn()
+	public lyrics: Lyric;
 
 	@Column()
 	public path: string;

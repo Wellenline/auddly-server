@@ -39,19 +39,19 @@ export class Tracks {
 		}
 
 		if (query.genre) {
-			queryBuilder.where("track.genre = :genre", {
+			queryBuilder.andWhere("track.genre = :genre", {
 				genre: query.genre,
 			});
 		}
 
 		if (query.liked) {
-			queryBuilder.where("track.liked = :liked", {
+			queryBuilder.andWhere("track.liked = :liked", {
 				liked: true,
 			});
 		}
 
 		if (query.album) {
-			queryBuilder.where("track.album = :album", {
+			queryBuilder.andWhere("track.album = :album", {
 				album: query.album,
 			});
 			queryBuilder.orderBy("track.number", "ASC");
@@ -62,12 +62,15 @@ export class Tracks {
 		queryBuilder.leftJoinAndSelect("track.playlists", "playlists");
 		queryBuilder.leftJoinAndSelect("track.album", "album");
 
+
+		queryBuilder.leftJoinAndSelect("track.lyrics", "lyrics");
+
 		queryBuilder.leftJoinAndSelect("album.artist", "albumArtist");
 
 		queryBuilder.leftJoinAndSelect("track.genre", "genre");
 		if (query.popular) {
 			queryBuilder.orderBy("plays", "DESC");
-			queryBuilder.where("track.plays >= :plays", { plays: 1 });
+			queryBuilder.andWhere("track.plays >= :plays", { plays: 1 });
 		} else {
 			// queryBuilder.orderBy("track.created_at", "ASC");
 

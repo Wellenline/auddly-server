@@ -8,12 +8,9 @@ export class Lyric extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	public id: number;
 
-	@ManyToOne(type => Track, track => track.id)
-	@JoinColumn()
-	public track: Track;
 
 	@Column({ type: "text", nullable: true })
-	public lyrics: string;
+	public text: string;
 
 	@CreateDateColumn()
 	public created_at: Date;
@@ -24,21 +21,22 @@ export class Lyric extends BaseEntity {
 	public static async findOrCreate(data: { track?: any, name: string, artist: string }) {
 		// ok
 
-		console.log("Find lyrics", data);
-		let exists = await this.findOne({ track: data.track });
+		const track = await Track.findOne(data.track);
 
-		if (!exists) {
-			const lyrics = await getLyrics(data.name, data.artist);
-
-			if (lyrics) {
-				exists = await this.create({
-					track: data.track,
-					lyrics,
-				}).save();
-			}
-
+		if (!track) {
+			return false;
 		}
 
-		return exists;
+		console.log("Find lyrics", data);
+		const lyrics = await getLyrics(data.name, data.artist);
+
+		if (lyrics) {
+			const lyric = await this.create({
+				text: lyrics,
+			}).save();
+			track.lyrics = lyric;
+			return await track.save();
+		}
+
 	}
 }
