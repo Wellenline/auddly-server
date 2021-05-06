@@ -2,16 +2,9 @@ import * as os from "os";
 import { Resource, Get } from "@wellenline/via";
 import { Server } from "../Entities/server";
 
-@Resource("/system")
-export class System {
-	@Get("/sync")
-	public async sync() {
-		return {
-			status: true,
-		};
-	}
-
-	@Get("/info")
+@Resource("/info")
+export class Info {
+	@Get("/")
 	public async info() {
 		const info = await Server.findOne({}, {
 			order: {
@@ -25,7 +18,7 @@ export class System {
 			num_cpus: os.cpus().length,
 			uptime: process.uptime(),
 			free_mem: os.freemem(),
-
+			auth: process.env.API_KEY ? true : false,
 			...info
 		};
 	}

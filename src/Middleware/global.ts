@@ -48,7 +48,7 @@ export const bodyParser = async (context: IContext) => {
 export const auth = (whitelist: string[]) => {
 	return (context: IContext) => {
 		if (process.env.API_KEY && process.env.API_KEY.length > 0) {
-			if (whitelist.some((v) => context.req.parsed.path.indexOf(v) > -1)) {
+			if (whitelist.some((v) => context.req.parsed.path.startsWith(v))) {
 				return true;
 			}
 

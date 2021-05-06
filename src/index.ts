@@ -15,10 +15,11 @@ import { Artists } from "@src/resources/artists";
 import { Playlists } from "@src/resources/playlists";
 import { Search } from "@src/resources/search";
 import { Sync } from "@src/resources/sync";
-import { System } from "@src/resources/system";
+import { Info } from "@src/resources/info";
 import { Tracks } from "@src/resources/tracks";
 import { watch } from "./common/library";
 import { Lyric } from "./Entities/lyric";
+import { Connect } from "./resources/connect";
 
 export class App {
 	constructor() {
@@ -38,8 +39,8 @@ export class App {
 
 		bootstrap({
 			port: (process.env.PORT as number | string),
-			middleware: [cors, bodyParser, auth(["art", "play"])],
-			resources: [Albums, Artists, Genres, Playlists, Search, System, Tracks, Sync],
+			middleware: [cors, bodyParser, auth(["/albums/art", "/tracks/play", "/connect"])],
+			resources: [Albums, Connect, Artists, Genres, Playlists, Search, Info, Tracks, Sync],
 		});
 
 
