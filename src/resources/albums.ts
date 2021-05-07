@@ -1,4 +1,4 @@
-import { Album } from "@src/Entities/album";
+import { Album } from "@src/entities/album";
 import { Resource, Get, Context, IContext } from "@wellenline/via";
 import { existsSync, readFileSync } from "fs";
 

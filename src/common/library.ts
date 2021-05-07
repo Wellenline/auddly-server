@@ -1,9 +1,9 @@
-import { Album } from "@src/Entities/album";
-import { Artist } from "@src/Entities/artist";
-import { Genre } from "@src/Entities/genre";
-import { Lyric } from "@src/Entities/lyric";
-import { Server } from "@src/Entities/server";
-import { Track } from "@src/Entities/track";
+import { Album } from "@src/entities/album";
+import { Artist } from "@src/entities/artist";
+import { Genre } from "@src/entities/genre";
+import { Lyric } from "@src/entities/lyric";
+import { Server } from "@src/entities/server";
+import { Track } from "@src/entities/track";
 import { watch as dirWatch } from "chokidar";
 import { createReadStream, createWriteStream, existsSync, mkdirSync, Stats, statSync } from "fs";
 import { parseFile } from "music-metadata";

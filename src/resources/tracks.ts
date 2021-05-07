@@ -1,10 +1,10 @@
 import { getType } from "mime";
 import { Context, IContext, Resource, Get, HttpException } from "@wellenline/via";
 import { readFileSync, statSync, createReadStream } from "fs";
-import { Track } from "../Entities/track";
+import { Track } from "../entities/track";
 import { getManager } from "typeorm";
 import { transcode } from "@src/common/library";
-import { Lyric } from "@src/Entities/lyric";
+import { Lyric } from "@src/entities/lyric";
 @Resource("/tracks")
 export class Tracks {
 	@Get("/")

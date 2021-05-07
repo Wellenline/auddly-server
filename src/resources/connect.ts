@@ -1,6 +1,5 @@
 import * as os from "os";
 import { Resource, Get, Post, Context, IContext, HttpException } from "@wellenline/via";
-import { Server } from "../Entities/server";
 
 @Resource("/connect")
 export class Connect {

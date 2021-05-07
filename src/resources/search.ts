@@ -1,8 +1,8 @@
 import { Resource, Get, Context } from "@wellenline/via";
-import { Track } from "../Entities/track";
+import { Track } from "../entities/track";
 import { Like, Raw, getManager } from "typeorm";
-import { Album } from "../Entities/album";
-import { Artist } from "../Entities/artist";
+import { Album } from "../entities/album";
+import { Artist } from "../entities/artist";
 @Resource("/search")
 export class Search {
 	/**

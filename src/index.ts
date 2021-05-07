@@ -4,12 +4,12 @@ import { bootstrap } from "@wellenline/via";
 import { cors, bodyParser, auth } from "./middleware/global";
 import { Albums } from "./resources/albums";
 import { createConnection, DatabaseType } from "typeorm";
-import { Album } from "@src/Entities/album";
-import { Artist } from "@src/Entities/artist";
-import { Genre } from "@src/Entities/genre";
-import { Playlist } from "@src/Entities/playlist";
-import { Server } from "@src/Entities/server";
-import { Track } from "@src/Entities/track";
+import { Album } from "@src/entities/album";
+import { Artist } from "@src/entities/artist";
+import { Genre } from "@src/entities/genre";
+import { Playlist } from "@src/entities/playlist";
+import { Server } from "@src/entities/server";
+import { Track } from "@src/entities/track";
 import { Genres } from "@src/resources/genres";
 import { Artists } from "@src/resources/artists";
 import { Playlists } from "@src/resources/playlists";
@@ -18,7 +18,7 @@ import { Sync } from "@src/resources/sync";
 import { Info } from "@src/resources/info";
 import { Tracks } from "@src/resources/tracks";
 import { watch } from "./common/library";
-import { Lyric } from "./Entities/lyric";
+import { Lyric } from "./entities/lyric";
 import { Connect } from "./resources/connect";
 
 export class App {

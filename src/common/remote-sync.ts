@@ -1,4 +1,4 @@
-import { Track } from "@src/Entities/track";
+import { Track } from "@src/entities/track";
 import { HttpException, HttpStatus } from "@wellenline/via";
 import { existsSync, mkdirSync, createReadStream, createWriteStream } from "fs";
 import { getManager } from "typeorm";
