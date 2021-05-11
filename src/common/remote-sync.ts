@@ -21,21 +21,22 @@ export interface IFileIncoming {
 export async function _considerFilesForSync(payload: IFilesForSync) {
 	console.log("consider files for syn");
 	const { files, separator, root } = payload;
-
+	console.log(files);
 	const syncFiles = (await Promise.all(files.map(async (file: any) => {
 
 		const parts: string[] = file.split(separator);
-		const name = parts[parts.length - 1].replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+		const name = parts[parts.length - 1]; /*.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");*/
 
+		console.log(name);
 		/*const track = await Track.findOne({
 			where: {
 				name,
 			}
 		});*/
-
 		const track = await getManager().createQueryBuilder(Track, "track")
 			.select()
 			.where("LOWER(track.path) LIKE :path", { path: `%${name.toString().toLowerCase()}%` }).getOne();
+
 
 		return !track ? file : false;
 
