@@ -8,7 +8,7 @@ export class Albums {
 	@Get("/art/:id")
 	public async art(@Context() context: IContext) {
 		context.headers = {
-			"Content-type": "image/png",
+			"Content-Type": "image/png",
 		};
 		const id = context.params.id;
 		const image = existsSync(`${process.env.ART_PATH}/${id}`) ?
