@@ -13,8 +13,7 @@ services:
       - DB_PASSWORD=DATABASE_PASSWORD
       - DB_NAME=DATABASE_NAME
       - MUSIC_PATH=/music
-      - TRANSCODE_PATH=/transcoded-audio
-      - ART_PATH=/album-art
+      - CACHE_PATH=/cache
       - SPOTIFY_ID=YOUR_SPOTIFY_ID
       - SPOTIFY_SECRET=YOUR_SPOTIFY_SECRET
       - LAST_FM_KEY=YOUR_LAST_FM_API_KEY
@@ -23,7 +22,6 @@ services:
       - HOST=http://127.0.0.1:5000
     volumes:
       - YOUR_MUSIC_PATH:/music # Mount your music inside docker
-      - ./album-art:/album-art # Mount album art cache inside docker
-      - ./transcoded-audio:/transcoded-audio # Mount transcoded audio cache inside docker
+      - ./cache:/cache # Cache to store album art and transcoded audio
     ports:
       - 5000:5000

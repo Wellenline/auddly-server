@@ -1,6 +1,7 @@
 <a href="https://music.auddly.app" target="_blank">
 	<img src="https://raw.githubusercontent.com/Wellenline/auddly/dev/app-icon.png" width="100">
 </a>
+
 # Auddly Music Server
 [![Discord](https://img.shields.io/discord/712899309242286090?logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/mJQm8SJ)
 
