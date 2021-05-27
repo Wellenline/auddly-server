@@ -4,7 +4,6 @@ import { readFileSync, statSync, createReadStream } from "fs";
 import { Track } from "../entities/track";
 import { getManager } from "typeorm";
 import { transcode } from "@src/common/library";
-import { Lyric } from "@src/entities/lyric";
 @Resource("/tracks")
 export class Tracks {
 	@Get("/")
@@ -188,15 +187,6 @@ export class Tracks {
 		track.updated_at = new Date();
 		return await track.save();
 
-	}
-
-	@Get("/lyrics/:id")
-	public async lyrics(@Context("params") params: { id: string }) {
-		return await Lyric.findOne({
-			where: {
-				track: params.id
-			}
-		});
 	}
 
 	@Get("/random")

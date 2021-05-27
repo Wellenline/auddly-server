@@ -1,7 +1,7 @@
 {
-	"name": "waveline-server",
+	"name": "auddly-server",
 	"version": "3.2.0",
-	"description": "Waveline Music Server",
+	"description": "Auddly Music Server",
 	"main": "dist/app.js",
 	"bin": "dist/app.js",
 	"scripts": {
@@ -22,7 +22,6 @@
 		"@types/dotenv": "^4.0.0",
 		"@types/formidable": "^1.0.29",
 		"@types/ip": "^0.0.30",
-		"@types/jsdom": "^16.2.10",
 		"@types/mime": "^2.0.2",
 		"@types/node": "^14.0.5",
 		"@types/progress": "^2.0.3",
@@ -47,9 +46,7 @@
 		"cors": "^2.8.1",
 		"dotenv": "^4.0.0",
 		"formidable": "^1.2.2",
-		"genius-lyrics-api": "^3.0.6",
 		"ip": "^1.1.5",
-		"jsdom": "^16.5.3",
 		"mime": "^2.4.5",
 		"mssql": "^6.2.0",
 		"music-metadata": "^2.6.1",
@@ -61,7 +58,7 @@
 		"tsconfig-paths": "^3.9.0",
 		"typeorm": "^0.2.25"
 	},
-	"repository": "https://github.com/MihkelBaranov/waveline-server.git",
+	"repository": "https://github.com/Wellenline/waveline-server.git",
 	"commitlint": {
 		"extends": [
 			"@commitlint/config-conventional"

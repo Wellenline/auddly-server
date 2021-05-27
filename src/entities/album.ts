@@ -48,7 +48,7 @@ export class Album extends BaseEntity {
 		if (!album) {
 			if (data.picture && typeof data.picture === "object") {
 				const id = createHash("md5").update(`${data.artist.id}-${data.album}`).digest("hex");
-				writeFileSync(`${process.env.ART_PATH}/${id}.png`, data.picture);
+				writeFileSync(`${process.env.CACHE_PATH}/album-art/${id}.png`, data.picture);
 				data.picture = `/albums/art/${id}.png`;
 			} else {
 				data.picture = await getPicture(Type.ALBUM, KeyType.ALBUMS, `album:${data.album} artist:${data.artist.name}`) as string;

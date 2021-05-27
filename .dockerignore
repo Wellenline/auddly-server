@@ -8,3 +8,4 @@ Deep
 docker-compose.yml
 .env-docker
 .album-art/
+cache/

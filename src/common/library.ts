@@ -1,7 +1,6 @@
 import { Album } from "@src/entities/album";
 import { Artist } from "@src/entities/artist";
 import { Genre } from "@src/entities/genre";
-import { Lyric } from "@src/entities/lyric";
 import { Server } from "@src/entities/server";
 import { Track } from "@src/entities/track";
 import { watch as dirWatch } from "chokidar";
@@ -46,7 +45,7 @@ export function watch(ext?: string[]) {
 
 export function transcode(track: Track, options: SoxOptions): Promise<string> {
 	return new Promise((resolve, reject) => {
-		const audioFile = `${process.env.TRANSCODE_PATH}/${(track as any).id}.mp3`;
+		const audioFile = `${process.env.CACHE_PATH}/transcode/${(track as any).id}.mp3`;
 
 		if (existsSync(audioFile)) {
 			return resolve(audioFile);
@@ -69,12 +68,16 @@ export function transcode(track: Track, options: SoxOptions): Promise<string> {
 }
 
 export async function build(files: string[]) {
-	if (!existsSync(process.env.ART_PATH as string)) {
-		mkdirSync(process.env.ART_PATH as string);
+	if (!existsSync(`${process.env.CACHE_PATH as string}`)) {
+		mkdirSync(`${process.env.CACHE_PATH as string}`);
 	}
 
-	if (!existsSync(process.env.TRANSCODE_PATH as string)) {
-		mkdirSync(process.env.TRANSCODE_PATH as string);
+	if (!existsSync(`${process.env.CACHE_PATH as string}/album-art`)) {
+		mkdirSync(`${process.env.CACHE_PATH as string}/album-art`);
+	}
+
+	if (!existsSync(`${process.env.CACHE_PATH as string}/transcode`)) {
+		mkdirSync(`${process.env.CACHE_PATH as string}/transcode`);
 	}
 
 	const libraryInfo: any = {
@@ -149,14 +152,6 @@ export async function build(files: string[]) {
 				lossless: metadata.format.lossless || false,
 				year: metadata.common.year || 0,
 				created_at: new Date(),
-			} as any);
-
-
-			// find lyrics
-			Lyric.findOrCreate({
-				track: track.id,
-				name: metadata.common.title,
-				artist: track.artist,
 			} as any);
 
 		} catch (err) {

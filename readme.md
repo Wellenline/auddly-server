@@ -1,11 +1,11 @@
-# Waveline Music Server
+<a href="https://music.auddly.app" target="_blank">
+	<img src="https://raw.githubusercontent.com/Wellenline/auddly/dev/app-icon.png" width="100">
+</a>
+# Auddly Music Server
 [![Discord](https://img.shields.io/discord/712899309242286090?logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/mJQm8SJ)
 
-![](https://preview.redd.it/3vujqpdulbi41.png?width=2756&format=png&auto=webp&s=2cd56216825a7e9d9145e6b1fb2eb7750bb079d3)
+![](https://raw.githubusercontent.com/Wellenline/auddly/dev/preview.png)
 
-<a href="https://play.google.com/store/apps/details?id=com.waveline.app" target="_blank">
-	<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" width="200">
-</a>
 
 ```Use the 3.1.0 version if you wish to keep using the mongodb version```
 
@@ -18,7 +18,7 @@ You can pull the latest Waveline image from [Docker Hub](https://hub.docker.com/
 docker run -d --name="Waveline-Server" \
   -e DB_DRIVER=sqlite \
   -e MUSIC_PATH=/music \
-  -e TRANSCODE_PATH=/transcoded-audio \
+  -e CACHE_PATH=/cache \
   -e ART_PATH=/album-art \
   -e SPOTIFY_ID=YOUR_SPOTIFY_ID \
   -e SPOTIFY_SECRET=YOUR_SPOTIFY_SECRET \
@@ -30,8 +30,7 @@ docker run -d --name="Waveline-Server" \
   -e HOST=http://127.0.0.1:5000 \
   -p 5000:5000 \
   -v YOUR_MUSIC_PATH:/music \
-  -v ./album-art:/album-art \
-  -v ./transcoded-audio:/transcoded-audio \
+  -v ./data:/data \
   --restart unless-stopped \
   wellenline/waveline-server:latest
 ```
@@ -53,19 +52,17 @@ services:
       - DB_PASSWORD=DATABASE_PASSWORD
       - DB_NAME=DATABASE_NAME
       - MUSIC_PATH=/music
-      - TRANSCODE_PATH=/transcoded-audio
+      - CACHE_PATH=/cache
       - ART_PATH=/album-art
       - SPOTIFY_ID=YOUR_SPOTIFY_ID
       - SPOTIFY_SECRET=YOUR_SPOTIFY_SECRET
-      - GENIUS_ACCESS_TOKEN=YOUR_GENIUS_ACCESS_TOKEN
       - LAST_FM_KEY=YOUR_LAST_FM_API_KEY
       - API_KEY=12345 # remove if you wish to disable auth
       - PORT=5000
       - HOST=http://127.0.0.1:5000
     volumes:
       - YOUR_MUSIC_PATH:/music # Mount your music inside docker
-      - ./album-art:/album-art # Mount album art cache inside docker
-      - ./transcoded-audio:/transcoded-audio # Mount transcoded audio cache inside docker
+      - ./cache:/cache # Mount dir for album art cache
     ports:
       - 5000:5000
 ```
@@ -101,11 +98,9 @@ DB_USERNAME=DATABASE_USERNAME
 DB_PASSWORD=DATABASE_PASSWORD
 DB_NAME=DATABASE_NAME
 MUSIC_PATH=PATH_TO_YOUR_MUSIC
-TRANSCODE_PATH=./transcoded-audio
-ART_PATH=./album-art
+CACHE_PATH=./cache
 SPOTIFY_ID=YOUR_SPOTIFY_ID
 SPOTIFY_SECRET=YOUR_SPOTIFY_SECRET
-GENIUS_ACCESS_TOKEN=YOUR_GENIUS_ACCESS_TOKEN
 LAST_FM_KEY=YOUR_LAST_FM_API_KEY
 API_KEY=xxxxxxxxxxxx # replace it with something more secure
 PORT=5000
@@ -120,18 +115,6 @@ https://developer.spotify.com/dashboard/login
 To display artist bio, get similar artists and tags you need to create a new Lastfm application
 https://www.last.fm/api/account/create
 
-## Lyrics (from Genius)
-If you wish to include lyrics with the song metadata you can use Genius API for that
-https://genius.com/developers
-
-## Roadmap
-Waveline is a personal project and my current goals are
-
-* Offline mode
-* Transcoding
-* <s>Casting support (chromecast)</s>
-* <s>Desktop app</s>  [Wellenline/waveline-web](https://github.com/Wellenline/waveline-web)
-* iOS version
 
 
 ## API

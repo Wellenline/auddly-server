@@ -18,7 +18,6 @@ import { Sync } from "@src/resources/sync";
 import { Info } from "@src/resources/info";
 import { Tracks } from "@src/resources/tracks";
 import { watch } from "./common/library";
-import { Lyric } from "./entities/lyric";
 import { Connect } from "./resources/connect";
 
 export class App {
@@ -28,7 +27,7 @@ export class App {
 
 	public async run() {
 
-		const REQUIRED_ENV_VARS = ["MUSIC_PATH", "ART_PATH", "TRANSCODE_PATH", "DB_DRIVER", "DB_NAME", "PORT", "HOST"];
+		const REQUIRED_ENV_VARS = ["MUSIC_PATH", "CACHE_PATH", "DB_DRIVER", "DB_NAME", "PORT", "HOST"];
 
 		for (const key of REQUIRED_ENV_VARS) {
 			if (!process.env[key]) {
@@ -54,7 +53,7 @@ export class App {
 			username: process.env.DB_USERNAME,
 			synchronize: true,
 			logging: false,
-			entities: [Album, Artist, Genre, Playlist, Server, Track, Lyric],
+			entities: [Album, Artist, Genre, Playlist, Server, Track],
 		}).catch((err) => {
 			console.log(err);
 			process.exit(0);

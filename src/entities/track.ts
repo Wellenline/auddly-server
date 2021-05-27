@@ -3,7 +3,6 @@ import { Artist } from "./artist";
 import { Album } from "./album";
 import { Genre } from "./genre";
 import { Playlist } from "./playlist";
-import { Lyric } from "./lyric";
 
 
 @Entity()
@@ -36,10 +35,6 @@ export class Track extends BaseEntity {
 	@ManyToOne(type => Genre, genre => genre.id)
 	@JoinColumn()
 	public genre: Genre;
-
-	@OneToOne(type => Lyric, lyric => lyric.id)
-	@JoinColumn()
-	public lyrics: Lyric;
 
 	@Column()
 	public path: string;
