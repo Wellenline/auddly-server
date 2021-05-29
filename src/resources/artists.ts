@@ -1,22 +1,17 @@
-import { Resource, Get, Context } from "@wellenline/via";
+import { ArtistModel } from "@src/models/artist";
+import { Resource, Get, Context, IContext } from "@wellenline/via";
 import { Artist } from "../entities/artist";
 @Resource("/artists")
 export class Artists {
 	@Get("/")
-	public async index(@Context("query") query: { skip?: number, limit?: number, sort?: number, }) {
-		const skip = query.skip || 0;
-		const limit = query.limit || 20;
+	public async index(@Context() context: IContext) {
+		const skip = context.query.skip || 0;
+		const limit = context.query.limit || 20;
+
 		return {
-			artists: await Artist.find({
-				order: {
-					created_at: query.sort !== undefined && query.sort > -1 ? "ASC" : "DESC",
-				},
-				skip,
-				take: limit,
-			}),
-			total: await Artist.count(),
+			artists: await ArtistModel.find().sort(context.query.sort > -1 ? "created_at" : "-created_at").skip(skip).limit(limit),
+			total: await ArtistModel.countDocuments(),
 			query: {
-				...query,
 				skip,
 				limit,
 			},
@@ -25,12 +20,12 @@ export class Artists {
 
 	@Get("/random")
 	public async random(@Context("query") query: { total: number }) {
-		return await Artist.random(query.total);
+		return await ArtistModel.random(query.total);
 	}
 
 	@Get("/:id")
-	public async artist(@Context("params") params: { id: string }) {
-		return await Artist.findOne(params.id);
+	public async artist(@Context() context: IContext) {
+		return await ArtistModel.findById(context.params.id);
 	}
 
 }

@@ -1,29 +1,113 @@
 import { getType } from "mime";
-import { Context, IContext, Resource, Get, HttpException } from "@wellenline/via";
-import { readFileSync, statSync, createReadStream } from "fs";
+import { Context, IContext, Resource, Get, HttpException, Put } from "@wellenline/via";
+import { statSync, createReadStream } from "fs";
 import { Track } from "../entities/track";
-import { getManager } from "typeorm";
 import { transcode } from "@src/common/library";
+import { TrackModel } from "@src/models/track";
+export interface ITrackQueryOptions {
+	skip?: number;
+	limit?: number;
+	genre?: string;
+	liked?: boolean;
+	sort?: boolean;
+	sort_by?: string;
+	artist?: string;
+	album?: string;
+	playlist?: string;
+	popular?: boolean;
+	artists?: string;
+
+}
 @Resource("/tracks")
 export class Tracks {
 	@Get("/")
 	public async tracks(@Context() context: IContext) {
+		const { skip, limit, genre, liked, sort_by, artist, album, playlist, popular }: ITrackQueryOptions = context.query;
 
-		const query: {
+
+		const query: any = {};
+		const sort = {
+			field: sort_by || "-created_at",
+		};
+
+		if (genre) {
+			query.genre = genre;
+		}
+
+		if (liked) {
+			query.liked = liked;
+		}
+
+		if (artist) {
+			query.artists = artist;
+		}
+
+		if (album) {
+			query.album = album;
+			sort.field = "number";
+		}
+
+		if (playlist) {
+			query.playlists = playlist;
+		}
+
+		if (popular) {
+			query.plays = {
+				$gte: 10,
+			};
+		}
+
+
+		const tracks = await TrackModel.find(query).sort(sort.field).populate([{
+			path: "album",
+			populate: [{
+				path: "artist",
+			}],
+		}, {
+			path: "genre",
+		}, {
+			path: "artists",
+
+		}, {
+			path: "playlist"
+		}]).skip(skip || 0).limit(limit || 20);
+
+		const total = await TrackModel.countDocuments({});
+
+
+		/*const query: {
 			skip?: number,
 			limit?: number,
 			genre?: number,
 			liked?: boolean,
 			sort?: boolean,
+			sort_by?: string,
 			artist?: number,
 			album?: number,
 			playlist?: number,
 			popular?: boolean,
 		} = context.query;
 
-		const skip = query.skip || 0;
-		const limit = query.limit || 20;
+		const skip = context.query.skip || 0;
+		const limit = context.query.limit || 20;
 
+		const sort = "";
+
+		const tracks = await TrackModel.find().populate("playlist genre album artists").skip(skip).limit(limit);
+
+		const total = await TrackModel.countDocuments({});
+*/
+		return {
+			tracks,
+			query: {
+				...query,
+				skip,
+				limit,
+				sort
+			},
+			total,
+		};
+		/*
 		// have to use querybuilder cuz im too dumb to figure out how to make it work with typeorm find-options
 		// for reference https://github.com/typeorm/typeorm/issues/6036
 		// https://stackoverflow.com/questions/52246722/how-to-query-a-many-to-many-relation-with-typeorm
@@ -61,15 +145,12 @@ export class Tracks {
 		queryBuilder.leftJoinAndSelect("track.playlists", "playlists");
 		queryBuilder.leftJoinAndSelect("track.album", "album");
 
-
-		queryBuilder.leftJoinAndSelect("track.lyrics", "lyrics");
-
 		queryBuilder.leftJoinAndSelect("album.artist", "albumArtist");
 
 		queryBuilder.leftJoinAndSelect("track.genre", "genre");
 		if (query.popular) {
 			queryBuilder.orderBy("plays", "DESC");
-			queryBuilder.andWhere("track.plays >= :plays", { plays: 1 });
+			queryBuilder.andWhere("track.plays >= :plays", { plays: 10 });
 		} else {
 			// queryBuilder.orderBy("track.created_at", "ASC");
 
@@ -86,19 +167,7 @@ export class Tracks {
 
 		const total = await queryBuilder.getCount();
 		const tracks = await queryBuilder.getMany();
-		/*const tracks = await Track.find({
-			join: {
-				alias: "track",
-				leftJoinAndSelect: {
-					artists: "track.artists",
-					album: "track.album",
-					genre: "track.genre",
-				}
-			},
-			where,
-			skip,
-			take: limit,
-		});*/
+
 		return {
 			tracks,
 			query: {
@@ -107,20 +176,20 @@ export class Tracks {
 				limit,
 			},
 			total,
-		};
+		};*/
 	}
 
 
 	@Get("/play/:id")
 	public async stream(@Context() context: IContext) {
-		const track = await Track.findOne(context.params.id);
+		const track = await TrackModel.findById(context.params.id);
 		if (!track) {
 			throw new Error("Failed to load track metadata");
 		}
-		track.plays = parseInt(track.plays as any, 10) + 1;
+		/*track.plays = parseInt(track.plays as any, 10) + 1;
 		track.last_play = new Date();
 
-		await track.save();
+		await track.save();*/
 		// wait until audio has finished transcodig... probably not the best way of doing it
 		if (track.path.toString().endsWith(".flac") && context.query.transcode) {
 			track.path = await transcode(track as any, {
@@ -176,8 +245,8 @@ export class Tracks {
 	}
 
 	@Get("/like/:id")
-	public async like(@Context("params") params: { id: string }) {
-		const track = await Track.findOne(params.id);
+	public async like(@Context() context: IContext) {
+		const track = await TrackModel.findById(context.params.id);
 
 		if (!track) {
 			throw new HttpException("Invalid track");
@@ -190,8 +259,20 @@ export class Tracks {
 	}
 
 	@Get("/random")
-	public async random(@Context("query") query: { total: number }) {
-		return await Track.random(query.total);
+	public async random(@Context() context: IContext) {
+		return await TrackModel.random(context.query.total);
 	}
 
+
+	@Put(`/plays/:id`)
+	public async create(@Context() context: IContext) {
+		const track = await Track.findOne(context.params.id);
+		if (!track) {
+			throw new Error("Failed to load track metadata");
+		}
+		track.plays = parseInt(track.plays as any, 10) + 1;
+		track.last_play = new Date();
+
+		await track.save();
+	}
 }

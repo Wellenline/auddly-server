@@ -1,27 +1,18 @@
 import { Playlist } from "@src/entities/playlist";
 import { Track } from "@src/entities/track";
+import { PlaylistModel } from "@src/models/playlist";
+import { TrackModel } from "@src/models/track";
 import { Resource, Get, Post, Context, IContext, Put, HttpException, HttpStatus, Delete } from "@wellenline/via";
 @Resource("/playlists")
 export class Playlists {
 
-	/**
-	 * @api {get} /playlists List all playlists
-	 * @apiDescription List all playlists
-	 * @apiGroup Playlists
-	 * @apiName playlists.index
-	 * @apiVersion 3.0.0
-	 * @returns Playlist[]
-	 */
 	@Get("/")
 	public async index(@Context() context: IContext) {
 		const skip = context.query.skip || 0;
 		const limit = context.query.limit || 20;
 		return {
-			playlists: await Playlist.find({
-				skip,
-				take: limit,
-			}),
-			total: await Playlist.count(),
+			playlists: await PlaylistModel.find().skip(skip).limit(limit),
+			total: await PlaylistModel.countDocuments(),
 			query: {
 				...context.query,
 				skip,
@@ -41,7 +32,7 @@ export class Playlists {
 	 */
 	@Get("/:id")
 	public async view(@Context() context: IContext) {
-		return await Playlist.findOne(context.params.id);
+		return await PlaylistModel.findById(context.params.id);
 	}
 
 	/**
@@ -56,7 +47,7 @@ export class Playlists {
 	 */
 	@Post("/")
 	public async create(@Context() context: IContext) {
-		return await Playlist.insert(context.body);
+		return await PlaylistModel.create({ ...context.body, created_at: new Date(), updated_at: new Date() });
 	}
 
 	/**
@@ -72,26 +63,19 @@ export class Playlists {
 	@Post("/:id")
 	public async add(@Context() context: IContext) {
 
-		const playlist = await Playlist.findOne(context.params.id);
+		const playlist = await PlaylistModel.findById(context.params.id);
 
 		if (!playlist) {
 			throw new HttpException("Playlist not found", HttpStatus.NOT_FOUND);
 		}
 
-		const track = await Track.findOne(context.body.track, {
-			join: {
-				alias: "track",
-				leftJoinAndSelect: {
-					playlists: "track.playlists",
-				}
-			}
-		});
+		const track = await TrackModel.findByIdAndUpdate(context.body.track);
 
 		if (!track) {
 			throw new HttpException("Track not found", HttpStatus.NOT_FOUND);
 		}
 
-		track.playlists = (track.playlists || []).concat([playlist]);
+		track.playlists = (track.playlists || []).concat([playlist._id]);
 
 		return await track.save();
 
@@ -111,7 +95,7 @@ export class Playlists {
 	@Put("/:id")
 	public async update(@Context() context: IContext) {
 		const { name, picture } = context.body;
-		return await Playlist.update(context.params.id, {
+		return await PlaylistModel.findByIdAndUpdate(context.params.id, {
 			name,
 			picture,
 		});
@@ -128,7 +112,7 @@ export class Playlists {
 	 */
 	@Delete("/:id")
 	public async delete(@Context() context: IContext) {
-		return await Playlist.delete(context.params.id);
+		return await PlaylistModel.findByIdAndRemove(context.params.id);
 	}
 
 	/**
@@ -143,20 +127,13 @@ export class Playlists {
 	 */
 	@Delete("/:id/:track")
 	public async removeFromPlaylist(@Context() context: IContext) {
-		const track = await Track.findOne(context.params.track, {
-			join: {
-				alias: "track",
-				leftJoinAndSelect: {
-					playlists: "track.playlists",
-				}
-			}
-		});
+		const track = await TrackModel.findByIdAndRemove(context.params.track);
 
 		if (!track) {
 			throw new HttpException("Invalid track", HttpStatus.NOT_FOUND);
 		}
 
-		track.playlists = track.playlists.filter((playlist) => context.params.id !== playlist.id);
+		track.playlists = track.playlists.filter((playlist) => context.params.id !== playlist.toString());
 
 		return await track.save();
 	}

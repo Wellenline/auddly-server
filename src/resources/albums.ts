@@ -1,4 +1,5 @@
 import { Album } from "@src/entities/album";
+import { AlbumModel } from "@src/models/album";
 import { Resource, Get, Context, IContext } from "@wellenline/via";
 import { existsSync, readFileSync } from "fs";
 
@@ -11,36 +12,27 @@ export class Albums {
 			"Content-Type": "image/png",
 		};
 		const id = context.params.id;
-		const image = existsSync(`${process.env.ART_PATH}/${id}`) ?
-			readFileSync(`${process.env.ART_PATH}/${id}`) : readFileSync(`./assets/placeholder.png`);
+		const image = existsSync(`${process.env.CACHE_PATH}/album-art/${id}`) ?
+			readFileSync(`${process.env.CACHE_PATH}/album-art/${id}`) : readFileSync(`./assets/placeholder.png`);
 		return image;
 	}
 
 	@Get("/")
-	public async index(@Context("query") query: { skip?: number, limit?: number, artist?: number, sort?: number }) {
-		const skip = query.skip || 0;
-		const limit = query.limit || 20;
-		const where = query.artist ? {
-			artist: query.artist
-		} : {};
+	public async index(@Context() context: IContext) {
+		const skip = context.query.skip || 0;
+		const limit = context.query.limit || 20;
+
+		const query: { artist?: string } = {};
+
+		if (context.query.artist) {
+			query.artist = context.query.artist;
+		}
+
+		const albums = await AlbumModel.find(query).populate("artist").sort(context.query.sort > -1 ? "created_at" : "-created_at").skip(skip).limit(limit);
+
 		return {
-			albums: await Album.find({
-				join: {
-					alias: "album",
-					leftJoinAndSelect: {
-						artist: "album.artist",
-					}
-				},
-				where,
-				order: {
-					created_at: query.sort && query.sort > -1 ? "ASC" : "DESC",
-				},
-				skip,
-				take: limit,
-			}),
-			total: await Album.count({
-				where,
-			}),
+			albums,
+			total: await AlbumModel.countDocuments(query),
 			query: {
 				...query,
 				skip,
@@ -51,20 +43,12 @@ export class Albums {
 
 	@Get("/random")
 	public async random(@Context() context: IContext) {
-		return await Album.random(context.query.total);
+		return await AlbumModel.random(context.query.total);
 	}
 
 	@Get("/:id")
 	public async album(@Context() context: IContext) {
-		return await Album.findOne({
-			join: {
-				alias: "album",
-				leftJoinAndSelect: {
-					artist: "album.artist",
-				}
-			},
-			where: { id: context.params.id },
-		});
+		return await AlbumModel.findById(context.params.id).populate("artist");
 	}
 
 }

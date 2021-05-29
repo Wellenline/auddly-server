@@ -1,14 +1,20 @@
-import { Album } from "@src/entities/album";
+/*import { Album } from "@src/entities/album";
 import { Artist } from "@src/entities/artist";
 import { Genre } from "@src/entities/genre";
 import { Server } from "@src/entities/server";
-import { Track } from "@src/entities/track";
+import { Track } from "@src/entities/track";*/
+import { AlbumModel } from "@src/models/album";
+import { ArtistModel } from "@src/models/artist";
+import { GenreModel } from "@src/models/genre";
+import { Scan, ScanModel } from "@src/models/scan";
+import { Track, TrackModel } from "@src/models/track";
 import { watch as dirWatch } from "chokidar";
 import { createReadStream, createWriteStream, existsSync, mkdirSync, Stats, statSync } from "fs";
 import { parseFile } from "music-metadata";
-import { extname, format } from "path";
+import { extname } from "path";
 import ProgressBar from "progress";
 import Sox, { SoxOptions } from "sox-stream";
+import { format } from "util";
 
 
 
@@ -80,7 +86,7 @@ export async function build(files: string[]) {
 		mkdirSync(`${process.env.CACHE_PATH as string}/transcode`);
 	}
 
-	const libraryInfo: any = {
+	const scan: any = {
 		start: new Date(),
 		mount: process.env.MUSIC_PATH,
 		last_scan: new Date(),
@@ -99,7 +105,7 @@ export async function build(files: string[]) {
 		try {
 			// console.log(metadata.common.track.no);
 
-			const exists = await Track.findOne({ path: file });
+			const exists = await TrackModel.exists({ path: file });
 
 			if (exists) {
 				continue;
@@ -119,7 +125,7 @@ export async function build(files: string[]) {
 
 
 			// Find or create new artist(s)
-			const artists = await Artist.findOrCreate(names);
+			const artists = await ArtistModel.findOrCreate(names);
 
 
 			const pictures = metadata.common.picture || [];
@@ -132,20 +138,33 @@ export async function build(files: string[]) {
 			};
 
 			// Find or create a new album
-			const album = await Album.findOrCreate(albumItem);
+			const album = await AlbumModel.findOrCreate(albumItem);
 
 			// Check if metadata contains genre data
 			let genre: any = null;
 			if (metadata.common.genre && metadata.common.genre[0]) {
-				genre = await Genre.findOrCreate(metadata.common.genre[0]);
+				genre = await GenreModel.findOrCreate(metadata.common.genre[0]);
 			}
 
-			const track = await Track.findOrCreate({
+			console.log({
 				name: capitalize(metadata.common.title || ""),
 				artists,
 				album: album.id,
 				artist: names.join(", "),
 				genre,
+				number: metadata.common.track.no,
+				duration: metadata.format.duration || 0,
+				path: file,
+				lossless: metadata.format.lossless || false,
+				year: metadata.common.year || 0,
+				created_at: new Date(),
+			});
+			const track = await TrackModel.findOrCreate({
+				name: capitalize(metadata.common.title || ""),
+				artists,
+				album: album._id,
+				artist: names.join(", "),
+				genre: genre._id,
 				number: metadata.common.track.no,
 				duration: metadata.format.duration || 0,
 				path: file,
@@ -163,16 +182,18 @@ export async function build(files: string[]) {
 
 	logStream.end();
 
-	libraryInfo.end = new Date();
-	libraryInfo.seconds = (libraryInfo.end.getTime() - libraryInfo.start.getTime()) / 1000;
-	libraryInfo.tracks = await Track.count();
-	libraryInfo.albums = await Album.count();
-	libraryInfo.artists = await Artist.count();
-
+	scan.end = new Date();
+	scan.seconds = (scan.end.getTime() - scan.start.getTime()) / 1000;
+	scan.tracks = await TrackModel.countDocuments();
+	scan.albums = await AlbumModel.countDocuments();
+	scan.artists = await ArtistModel.countDocuments();
 	console.log("Done building library");
-	console.log(libraryInfo);
+	console.log(scan);
 
-	return Server.create(libraryInfo as Server).save();
+	return ScanModel.findOneAndUpdate({}, scan as Scan, {
+		upsert: true,
+		new: true,
+	});
 }
 
 export function _onFileAdded(path: string, stat?: Stats) {

@@ -1,5 +1,7 @@
 import * as dotenv from "dotenv";
 import * as ip from "ip";
+import mongoose from "mongoose";
+
 import { bootstrap } from "@wellenline/via";
 import { cors, bodyParser, auth } from "./middleware/global";
 import { Albums } from "./resources/albums";
@@ -19,6 +21,7 @@ import { Info } from "@src/resources/info";
 import { Tracks } from "@src/resources/tracks";
 import { watch } from "./common/library";
 import { Connect } from "./resources/connect";
+import { Insights } from "./resources/insights";
 
 export class App {
 	constructor() {
@@ -39,35 +42,55 @@ export class App {
 		bootstrap({
 			port: (process.env.PORT as number | string),
 			middleware: [cors, bodyParser, auth(["/albums/art", "/tracks/play", "/connect"])],
-			resources: [Albums, Connect, Artists, Genres, Playlists, Search, Info, Tracks, Sync],
+			resources: [Albums, Connect, Artists, Genres, Playlists, Search, Info, Tracks, Sync, Insights],
 		});
 
 
 		console.log("[DEBUG] Establishing connection with database\n");
-		createConnection({
-			type: process.env.DB_DRIVER as any,
-			host: process.env.DB_HOST,
-			port: parseInt(process.env.DB_PORT as string, 10),
-			database: process.env.DB_NAME,
-			password: process.env.DB_PASSWORD,
-			username: process.env.DB_USERNAME,
-			synchronize: true,
-			logging: false,
-			entities: [Album, Artist, Genre, Playlist, Server, Track],
+
+		mongoose.set("useFindAndModify", false);
+		mongoose.connect(process.env.MONGO_URL as string, {
+			useNewUrlParser: true,
+			useUnifiedTopology: true,
+		}).then(() => {
+
+			const HOST = `${process.env.HOST || ip.address()}${process.env.API_KEY
+				&& process.env.API_KEY.length > 0 ? "?key=" + process.env.API_KEY : ""}`;
+
+
+			console.info(`[DEBUG] Server running: ${HOST}\n`);
+
+			watch();
+
 		}).catch((err) => {
 			console.log(err);
 			process.exit(0);
-
 		});
-
-		const HOST = `${process.env.HOST || ip.address()}${process.env.API_KEY
-			&& process.env.API_KEY.length > 0 ? "?key=" + process.env.API_KEY : ""}`;
-
-
-		console.info(`[DEBUG] Server running: ${HOST}\n`);
-
-		watch();
-		// LibraryService.instance.sync(process.env.MUSIC_PATH, [".mp3", ".flac", ".m4a"]);
+		/*
+				createConnection({
+					type: process.env.DB_DRIVER as any,
+					host: process.env.DB_HOST,
+					port: parseInt(process.env.DB_PORT as string, 10),
+					database: process.env.DB_NAME,
+					password: process.env.DB_PASSWORD,
+					username: process.env.DB_USERNAME,
+					synchronize: true,
+					logging: false,
+					entities: [Album, Artist, Genre, Playlist, Server, Track],
+				}).catch((err) => {
+					console.log(err);
+					process.exit(0);
+		
+				});
+		
+				const HOST = `${process.env.HOST || ip.address()}${process.env.API_KEY
+					&& process.env.API_KEY.length > 0 ? "?key=" + process.env.API_KEY : ""}`;
+		
+		
+				console.info(`[DEBUG] Server running: ${HOST}\n`);
+		
+				watch();
+				// LibraryService.instance.sync(process.env.MUSIC_PATH, [".mp3", ".flac", ".m4a"]);*/
 	}
 }
 

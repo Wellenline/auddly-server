@@ -1,49 +1,49 @@
-import { Resource, Get, Context } from "@wellenline/via";
-import { Track } from "../entities/track";
-import { Like, Raw, getManager } from "typeorm";
-import { Album } from "../entities/album";
-import { Artist } from "../entities/artist";
+import { Resource, Get, Context, IContext } from "@wellenline/via";
+
+import { Track, TrackModel } from "@src/models/track";
+import { Album, AlbumModel } from "@src/models/album";
+import { Artist, ArtistModel } from "@src/models/artist";
 @Resource("/search")
 export class Search {
-	/**
-	 * @api {get} /search?q=:SEARCH_QUERY Search
-	 * @apiDescription Search tracks, artists and albums
-	 * @apiGroup Search
-	 * @apiName search.index
-	 * @apiVersion 3.0.0
-	 * @returns { albums: [], artists: [], tracks: []}
-	 */
 	@Get("/")
-	public async index(@Context("query") query: { q: string }) {
-		const results: { albums: Album[], artists: Artist[], tracks: Track[] } = {
+	public async index(@Context() context: IContext) {
+		const results:
+			{ albums: Album[], artists: Artist[], tracks: Track[] } = {
 			albums: [],
 			artists: [],
 			tracks: [],
 		};
-		results.tracks = await getManager().createQueryBuilder(Track, "track")
-			.select()
-			.where("LOWER(track.artist) LIKE :q", { q: `%${query.q.toString().toLowerCase()}%` })
-			.orWhere("LOWER(track.name) LIKE :q", { q: `%${query.q.toString().toLowerCase()}%` })
-			.leftJoinAndSelect("track.artists", "artists")
-			.leftJoinAndSelect("track.playlists", "playlists")
 
-			.leftJoinAndSelect("track.album", "album")
-			.leftJoinAndSelect("album.artist", "albumArtist")
-			.leftJoinAndSelect("track.genre", "genre")
-			.getMany();
+		results.tracks = await TrackModel.find({
+			$or: [{
+				name: {
+					$regex: context.query.q,
+					$options: "i",
+				},
+			}, {
+				artist: {
+					$regex: context.query.q,
+					$options: "i",
+				},
+			}],
+		}).populate("album genre artists");
 
-		results.albums = await getManager().createQueryBuilder(Album, "album")
-			.select()
-			.where("LOWER(album.name) LIKE :q", { q: `%${query.q.toString().toLowerCase()}%` })
-			.leftJoinAndSelect("album.artist", "artist")
-			.getMany();
+		results.albums = await AlbumModel.find({
+			name: {
+				$regex: context.query.q,
+				$options: "i",
+			},
+		}).populate("artist");
 
-		results.artists = await getManager().createQueryBuilder(Artist, "artist")
-			.select()
-			.where("LOWER(name) LIKE :q", { q: `%${query.q.toString().toLowerCase()}%` })
-			.getMany();
+		results.artists = await ArtistModel.find({
+			name: {
+				$regex: context.query.q,
+				$options: "i",
+			},
+		});
 
 		return results;
+
 	}
 
 }
