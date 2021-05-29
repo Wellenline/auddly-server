@@ -9,8 +9,7 @@ export interface ITrackQueryOptions {
 	limit?: number;
 	genre?: string;
 	liked?: boolean;
-	sort?: boolean;
-	sort_by?: string;
+	sort?: string;
 	artist?: string;
 	album?: string;
 	playlist?: string;
@@ -22,12 +21,12 @@ export interface ITrackQueryOptions {
 export class Tracks {
 	@Get("/")
 	public async tracks(@Context() context: IContext) {
-		const { skip, limit, genre, liked, sort_by, artist, album, playlist, popular }: ITrackQueryOptions = context.query;
+		const { skip, limit, genre, liked, sort, artist, album, playlist, popular }: ITrackQueryOptions = context.query;
 
 
 		const query: any = {};
-		const sort = {
-			field: sort_by || "-created_at",
+		const sort_by: { field?: string } = {
+			field: sort || "-created_at",
 		};
 
 		if (genre) {
@@ -44,7 +43,7 @@ export class Tracks {
 
 		if (album) {
 			query.album = album;
-			sort.field = "number";
+			sort_by.field = "number";
 		}
 
 		if (playlist) {
@@ -58,7 +57,7 @@ export class Tracks {
 		}
 
 
-		const tracks = await TrackModel.find(query).sort(sort.field).populate([{
+		const tracks = await TrackModel.find(query).sort(sort_by.field).populate([{
 			path: "album",
 			populate: [{
 				path: "artist",

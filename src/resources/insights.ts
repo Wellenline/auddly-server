@@ -1,5 +1,6 @@
 import { Artist } from "@src/entities/artist";
 import { Track } from "@src/entities/track";
+import { ArtistModel } from "@src/models/artist";
 import { TrackModel } from "@src/models/track";
 import { Resource, Get, Post, Context, IContext } from "@wellenline/via";
 import moment from "moment";
@@ -28,6 +29,7 @@ export class Insights {
 		}]).sort("-plays").limit(10);
 
 
+		// const artists = await ArtistModel.aggregate([])
 
 		return {
 			artists: [],
