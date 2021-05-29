@@ -9,7 +9,7 @@ export class Artists {
 		const limit = context.query.limit || 20;
 
 		return {
-			artists: await ArtistModel.find().sort(context.query.sort > -1 ? "created_at" : "-created_at").skip(skip).limit(limit),
+			artists: await ArtistModel.find().sort(context.query.sort || "-created_at").skip(skip).limit(limit),
 			total: await ArtistModel.countDocuments(),
 			query: {
 				skip,
@@ -19,8 +19,8 @@ export class Artists {
 	}
 
 	@Get("/random")
-	public async random(@Context("query") query: { total: number }) {
-		return await ArtistModel.random(query.total);
+	public async random(@Context() context: IContext) {
+		return await ArtistModel.random(context.query.total);
 	}
 
 	@Get("/:id")

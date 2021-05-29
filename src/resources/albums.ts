@@ -28,7 +28,7 @@ export class Albums {
 			query.artist = context.query.artist;
 		}
 
-		const albums = await AlbumModel.find(query).populate("artist").sort(context.query.sort > -1 ? "created_at" : "-created_at").skip(skip).limit(limit);
+		const albums = await AlbumModel.find(query).populate("artist").sort(context.query.sort || "-created_at").skip(skip).limit(limit);
 
 		return {
 			albums,

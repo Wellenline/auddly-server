@@ -266,7 +266,7 @@ export class Tracks {
 
 	@Put(`/plays/:id`)
 	public async create(@Context() context: IContext) {
-		const track = await Track.findOne(context.params.id);
+		const track = await TrackModel.findById(context.params.id);
 		if (!track) {
 			throw new Error("Failed to load track metadata");
 		}
@@ -274,5 +274,9 @@ export class Tracks {
 		track.last_play = new Date();
 
 		await track.save();
+
+		return {
+			success: true,
+		}
 	}
 }
