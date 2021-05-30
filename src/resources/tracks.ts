@@ -3,6 +3,7 @@ import { Context, IContext, Resource, Get, HttpException, Put } from "@wellenlin
 import { statSync, createReadStream } from "fs";
 import { transcode } from "@src/common/library";
 import { TrackModel } from "@src/models/track";
+import { onScrobble } from "@src/providers/lastfm";
 export interface ITrackQueryOptions {
 	skip?: number;
 	limit?: number;
@@ -171,7 +172,7 @@ export class Tracks {
 
 	@Put(`/plays/:id`)
 	public async create(@Context() context: IContext) {
-		const track = await TrackModel.findById(context.params.id);
+		const track = await TrackModel.findById(context.params.id).populate("album");
 		if (!track) {
 			throw new Error("Failed to load track metadata");
 		}
@@ -180,8 +181,10 @@ export class Tracks {
 
 		await track.save();
 
+		// scrobble
+		onScrobble(track);
 		return {
 			success: true,
-		}
+		};
 	}
 }

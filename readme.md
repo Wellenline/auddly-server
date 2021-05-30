@@ -26,7 +26,10 @@ services:
       - CACHE_PATH=/cache
       - SPOTIFY_ID= # YOUR SPOTIFY ID
       - SPOTIFY_SECRET= # YOUR SPOTIFY SECRET
-      - LAST_FM_KEY= # YOUR LAST FM KEY
+      - LAST_FM_API_KEY=YOUR_LAST_FM_CREDENTIALS
+      - LAST_FM_API_SECRET=YOUR_LAST_FM_CREDENTIALS
+      - LAST_FM_USERNAME=YOUR_LAST_FM_CREDENTIALS
+      - LAST_FM_PASSWORD=YOUR_LAST_FM_CREDENTIALS
       - API_KEY=12345 # Replace this
       - PORT=5000
       - HOST=http://127.0.0.1:5000
@@ -83,7 +86,10 @@ MUSIC_PATH=PATH_TO_YOUR_MUSIC
 CACHE_PATH=./cache
 SPOTIFY_ID=YOUR_SPOTIFY_ID
 SPOTIFY_SECRET=YOUR_SPOTIFY_SECRET
-LAST_FM_KEY=YOUR_LAST_FM_API_KEY
+LAST_FM_API_KEY=YOUR_LAST_FM_CREDENTIALS
+LAST_FM_API_SECRET=YOUR_LAST_FM_CREDENTIALS
+LAST_FM_USERNAME=YOUR_LAST_FM_CREDENTIALS
+LAST_FM_PASSWORD=YOUR_LAST_FM_CREDENTIALS
 API_KEY=xxxxxxxxxxxx # replace it with something more secure
 PORT=5000
 HOST=http://127.0.0.1:5000
@@ -93,8 +99,8 @@ HOST=http://127.0.0.1:5000
 To display artist pictures you need to sign up for Spotify Developer Account and create a new application
 https://developer.spotify.com/dashboard/login
 
-## Artist Bio, similar artists and tags (from Lastfm)
-To display artist bio, get similar artists and tags you need to create a new Lastfm application
+## Artist Bio, similar artists, tags & scrobble (from Lastfm)
+To display artist bio, get similar artists, tags and scrobble your music you need to create a new Lastfm application
 https://www.last.fm/api/account/create
 
 
