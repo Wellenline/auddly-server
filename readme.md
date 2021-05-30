@@ -18,7 +18,8 @@ services:
   app:
     container_name: auddly-server
     restart: always
-    build: ./
+    build: 
+      context: https://github.com/Wellenline/auddly-server.git
     environment:
       - MONGO_URL=mongodb://auddly:SUPER_SECRET_PASSWORD@mongodb/auddly?authSource=admin
       - MUSIC_PATH=/music
@@ -64,8 +65,8 @@ You'll need [NPM](https://www.npmjs.com/get-npm) and [MongoDB](https://docs.mong
 
 Clone the repo:
 ```sh
-git clone https://github.com/wellenline/waveline-server.git
-cd waveline-server
+git clone https://github.com/wellenline/auddly-server.git
+cd auddly-server
 ```
 
 Initialize the build using NPM:
