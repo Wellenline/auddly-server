@@ -167,7 +167,7 @@ export class Genre {
 	public static async findOrCreate(this: ReturnModelType<typeof Genre>, genre: string) {
 
 		// cleanup
-		const name = capitalize(genre.replace(/[^a-zA-Z ]/g, ""));
+		const name = capitalize(genre.replace(/[^a-zA-Z ]/g, " "));
 		const exits = await this.findOne({ name });
 		return exits ? exits : await this.create({ name });
 	}
