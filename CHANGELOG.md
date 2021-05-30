@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0](https://github.com/Wellenline/waveline-server/compare/v3.2.0...v4.0.0) (2021-05-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* **database:** SQL will be dropped
+
+### Features
+
+* **genre:** change how genres are formatted ([207755c](https://github.com/Wellenline/waveline-server/commit/207755cde4475dc3c143f57b1a1d515028e3d2b6))
+* **lyrics:** fetch song lyrics from genius ([2b5cfed](https://github.com/Wellenline/waveline-server/commit/2b5cfed15a5423352254f8deb321cd30f7a6d873))
+* **sort:** ability to sort by all properties ([7959305](https://github.com/Wellenline/waveline-server/commit/79593056c9e5f20f6e2dcbffbf0d3b6e8d53312e))
+* **track:** scrobble audio using lastfm ([77d1475](https://github.com/Wellenline/waveline-server/commit/77d1475029df66af0fd51c2de3be7e83a2df866b))
+* **tracks:** track sorting ([6187e34](https://github.com/Wellenline/waveline-server/commit/6187e3490fcd8b90a980e7b1cf0cfc16fb7702cb))
+
+
+### Bug Fixes
+
+* **albums:** fix content type ([1bc0ac2](https://github.com/Wellenline/waveline-server/commit/1bc0ac2c3f69ce831b7b3a4c9eaebe6cf975e41e))
+* **artists:** remove optional chaining ([9c88d80](https://github.com/Wellenline/waveline-server/commit/9c88d80d30d84acaf6ff648d97c126184b5916af))
+* **docker:** fix builds ([cfa4d9c](https://github.com/Wellenline/waveline-server/commit/cfa4d9c078888ba074ae667acab866b65d10cf8f))
+* **docker ts-node:** update to latest version ([87d850e](https://github.com/Wellenline/waveline-server/commit/87d850e8825ff162d120e6a2d7ee95b8259573de))
+* **genius:** cache access_token ([de67942](https://github.com/Wellenline/waveline-server/commit/de67942156e4c8d6a1c5228ded2467469412582a))
+* **genius:** use pre-generated accesstoken ([0963da4](https://github.com/Wellenline/waveline-server/commit/0963da461c9b247551e36a19e8643b7ccc28d543))
+* **library:** check if genre exists ([dd65d25](https://github.com/Wellenline/waveline-server/commit/dd65d256114cd4e4ee63e7140282a18f924bf659))
+* **library:** remove console log and update model ([6e9cee9](https://github.com/Wellenline/waveline-server/commit/6e9cee97af6fee0b346d1d1867bc71c7f11c5dbd))
+* **package:** fix start command ([a97b955](https://github.com/Wellenline/waveline-server/commit/a97b9556f1fce1b6b0d825c8603f7e7b394beb66))
+* **playlists:** make sure playlist exists before deleting a track ([637247e](https://github.com/Wellenline/waveline-server/commit/637247edc9bcc2ce1614f962ff2e26df1c517025))
+* **sync:** debug logs ([5a9a2dd](https://github.com/Wellenline/waveline-server/commit/5a9a2dd6fa3204325c4bcbd1e4b0af3b1fa32e62))
+* **tracks:** switch from .limit -> .take ([7d1c4d9](https://github.com/Wellenline/waveline-server/commit/7d1c4d9d0f6ea5d9d137810039fc5079c15381b0))
+
+
+* **database:** stop using typeorm and SQL in general ([895182d](https://github.com/Wellenline/waveline-server/commit/895182db9baf7c2740e742466ec16758165bbefd))
+
 ## [3.2.0](https://github.com/MihkelBaranov/waveline-server/compare/v3.1.0...v3.2.0) (2020-05-29)
 
 
