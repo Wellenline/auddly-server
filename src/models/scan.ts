@@ -9,18 +9,14 @@ export class Scan {
 	@prop()
 	public last_scan: Date;
 
-
 	@prop()
 	public seconds: number;
-
 
 	@prop()
 	public tracks: number;
 
-
 	@prop()
 	public albums: number;
-
 
 	@prop()
 	public artists: number;
