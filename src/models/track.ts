@@ -111,28 +111,28 @@ export class Track {
 	public artists: Ref<Artist>[];
 
 	@prop({ ref: "Playlist" })
-	public playlists: Ref<Playlist, string>[];
+	public playlists?: Ref<Playlist, string>[];
 
 	@prop({ ref: "Album" })
 	public album: Ref<Album>;
 
 	@prop({ ref: "Genre" })
-	public genre: Ref<Genre>;
+	public genre?: Ref<Genre>;
 
 	@prop()
 	public path: string;
 
 	@prop({ default: 0 })
-	public plays: number;
+	public plays?: number;
 
 	@prop({ default: 0 })
 	public duration: number;
 
 	@prop({ default: false })
-	public liked: boolean;
+	public liked?: boolean;
 
 	@prop()
-	public last_play: Date;
+	public last_play?: Date;
 
 	@prop()
 	public year: number;

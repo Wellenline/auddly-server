@@ -141,20 +141,7 @@ export async function build(files: string[]) {
 				genre = await GenreModel.findOrCreate(metadata.common.genre[0]);
 			}
 
-			console.log({
-				name: capitalize(metadata.common.title || ""),
-				artists,
-				album: album.id,
-				artist: names.join(", "),
-				genre,
-				number: metadata.common.track.no,
-				duration: metadata.format.duration || 0,
-				path: file,
-				lossless: metadata.format.lossless || false,
-				year: metadata.common.year || 0,
-				created_at: new Date(),
-			});
-			const track = await TrackModel.findOrCreate({
+			await TrackModel.findOrCreate({
 				name: capitalize(metadata.common.title || ""),
 				artists,
 				album: album._id,
@@ -166,7 +153,8 @@ export async function build(files: string[]) {
 				lossless: metadata.format.lossless || false,
 				year: metadata.common.year || 0,
 				created_at: new Date(),
-			} as any);
+				updated_at: new Date(),
+			});
 
 		} catch (err) {
 			console.log(err);
