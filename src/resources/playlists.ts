@@ -130,9 +130,10 @@ export class Playlists {
 		if (!track) {
 			throw new HttpException("Invalid track", HttpStatus.NOT_FOUND);
 		}
+		if (track.playlists) {
+			track.playlists = track.playlists.filter((playlist) => context.params.id !== playlist.toString());
 
-		track.playlists = track.playlists.filter((playlist) => context.params.id !== playlist.toString());
-
-		return await track.save();
+			return await track.save();
+		}
 	}
 }
