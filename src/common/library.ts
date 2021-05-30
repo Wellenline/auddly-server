@@ -1,8 +1,3 @@
-/*import { Album } from "@src/entities/album";
-import { Artist } from "@src/entities/artist";
-import { Genre } from "@src/entities/genre";
-import { Server } from "@src/entities/server";
-import { Track } from "@src/entities/track";*/
 import { AlbumModel } from "@src/models/album";
 import { ArtistModel } from "@src/models/artist";
 import { GenreModel } from "@src/models/genre";

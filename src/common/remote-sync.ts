@@ -1,7 +1,6 @@
-import { Track } from "@src/entities/track";
+import { TrackModel } from "@src/models/track";
 import { HttpException, HttpStatus } from "@wellenline/via";
 import { existsSync, mkdirSync, createReadStream, createWriteStream } from "fs";
-import { getManager } from "typeorm";
 
 export interface IFilesForSync {
 	files: string[];
@@ -33,10 +32,12 @@ export async function _considerFilesForSync(payload: IFilesForSync) {
 				name,
 			}
 		});*/
-		const track = await getManager().createQueryBuilder(Track, "track")
-			.select()
-			.where("LOWER(track.path) LIKE :path", { path: `%${name.toString().toLowerCase()}%` }).getOne();
-
+		const track = TrackModel.findOne({
+			path: {
+				$regex: name.toString(),
+				$options: "i",
+			}
+		});
 
 		return !track ? file : false;
 

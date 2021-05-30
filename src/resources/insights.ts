@@ -1,10 +1,6 @@
-import { Artist } from "@src/entities/artist";
-import { Track } from "@src/entities/track";
-import { ArtistModel } from "@src/models/artist";
 import { TrackModel } from "@src/models/track";
-import { Resource, Get, Post, Context, IContext } from "@wellenline/via";
+import { Resource, Get } from "@wellenline/via";
 import moment from "moment";
-import { IsNull, LessThan, MoreThan, Not } from "typeorm";
 
 @Resource("/insights")
 export class Insights {

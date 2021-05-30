@@ -1,5 +1,4 @@
-import * as os from "os";
-import { Resource, Get, Post, Context, IContext, HttpException } from "@wellenline/via";
+import { Resource, Post, Context, IContext } from "@wellenline/via";
 
 @Resource("/connect")
 export class Connect {

@@ -1,6 +1,5 @@
 import { ArtistModel } from "@src/models/artist";
 import { Resource, Get, Context, IContext } from "@wellenline/via";
-import { Artist } from "../entities/artist";
 @Resource("/artists")
 export class Artists {
 	@Get("/")

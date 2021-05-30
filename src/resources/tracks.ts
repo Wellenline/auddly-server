@@ -1,7 +1,6 @@
 import { getType } from "mime";
 import { Context, IContext, Resource, Get, HttpException, Put } from "@wellenline/via";
 import { statSync, createReadStream } from "fs";
-import { Track } from "../entities/track";
 import { transcode } from "@src/common/library";
 import { TrackModel } from "@src/models/track";
 export interface ITrackQueryOptions {

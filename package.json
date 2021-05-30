@@ -52,15 +52,10 @@
 		"mime": "^2.4.5",
 		"moment": "^2.29.1",
 		"mongoose": "^5.12.12",
-		"mssql": "^6.2.0",
 		"music-metadata": "^2.6.1",
-		"mysql": "^2.18.1",
-		"pg": "^8.2.1",
 		"progress": "^2.0.3",
 		"sox-stream": "^2.0.3",
-		"sqlite3": "^4.2.0",
-		"tsconfig-paths": "^3.9.0",
-		"typeorm": "^0.2.25"
+		"tsconfig-paths": "^3.9.0"
 	},
 	"repository": "https://github.com/Wellenline/waveline-server.git",
 	"commitlint": {

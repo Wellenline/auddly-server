@@ -8,64 +8,49 @@
 ![](https://raw.githubusercontent.com/Wellenline/auddly/dev/preview.png)
 
 
-```Use the 3.1.0 version if you wish to keep using the mongodb version```
-
 ## Getting Started
-Waveline works with following databases: `postgres`, `mysql`, `cockroachdb`, `mariadb`, `sqlite`, `mssql`
-
-You can pull the latest Waveline image from [Docker Hub](https://hub.docker.com/r/wellenline/waveline-server) and run it by using the following command:
-
-```
-docker run -d --name="Waveline-Server" \
-  -e DB_DRIVER=sqlite \
-  -e MUSIC_PATH=/music \
-  -e CACHE_PATH=/cache \
-  -e ART_PATH=/album-art \
-  -e SPOTIFY_ID=YOUR_SPOTIFY_ID \
-  -e SPOTIFY_SECRET=YOUR_SPOTIFY_SECRET \
-  -e GENIUS_ACCESS_TOKEN=YOUR_GENIUS_ACCESS_TOKEN \
-  -e LAST_FM_KEY=YOUR_LAST_FM_KEY \
-  -e AUTH_ENABLED=true \
-  -e API_KEY=12345 \
-  -e PORT=5000 \
-  -e HOST=http://127.0.0.1:5000 \
-  -p 5000:5000 \
-  -v YOUR_MUSIC_PATH:/music \
-  -v ./data:/data \
-  --restart unless-stopped \
-  wellenline/waveline-server:latest
-```
+Auddly has built docker images. You can use docker compose to run all the required services.
 
 ## Using Docker-Compose
 ```docker
-version: '3'
+version: "3"
 services:
   app:
-    container_name: waveline-api
+    container_name: auddly-server
     restart: always
-    build:
-      context: https://github.com/Wellenline/waveline-server.git
+    build: ./
     environment:
-      - DB_DRIVER=sqlite # postgres,  mysql, cockroachdb, mariadb, sqlite, mssql,
-      - DB_HOST=DATABASE_HOST
-      - DB_PORT=DATABASE_PORT
-      - DB_USERNAME=DATABASE_USERNAME
-      - DB_PASSWORD=DATABASE_PASSWORD
-      - DB_NAME=DATABASE_NAME
+      - MONGO_URL=mongodb://auddly:SUPER_SECRET_PASSWORD@mongodb/auddly?authSource=admin
       - MUSIC_PATH=/music
       - CACHE_PATH=/cache
-      - ART_PATH=/album-art
-      - SPOTIFY_ID=YOUR_SPOTIFY_ID
-      - SPOTIFY_SECRET=YOUR_SPOTIFY_SECRET
-      - LAST_FM_KEY=YOUR_LAST_FM_API_KEY
-      - API_KEY=12345 # remove if you wish to disable auth
+      - SPOTIFY_ID= # YOUR SPOTIFY ID
+      - SPOTIFY_SECRET= # YOUR SPOTIFY SECRET
+      - LAST_FM_KEY= # YOUR LAST FM KEY
+      - API_KEY=12345 # Replace this
       - PORT=5000
       - HOST=http://127.0.0.1:5000
     volumes:
-      - YOUR_MUSIC_PATH:/music # Mount your music inside docker
-      - ./cache:/cache # Mount dir for album art cache
+      - ./CHANGE_THIS_TO_YOUR_MUSIC_PATH:/music # Mount your music inside docker
+      - ./cache:/cache # Cache to store album art and transcoded audio
     ports:
       - 5000:5000
+    links:
+      - mongodb
+    depends_on:
+      - mongodb
+  mongodb:
+    image: mongo:latest
+    container_name: "auddly-mongo"
+    environment:
+      - MONGO_DATA_DIR=/data
+      - MONGO_LOG_DIR=/dev/null
+      - MONGO_INITDB_ROOT_USERNAME=auddly
+      - MONGO_INITDB_ROOT_PASSWORD=SUPER_SECRET_PASSWORD # Replace this
+    volumes:
+      - ./data/mongo:/data
+    ports:
+      - 27018:27017
+    command: mongod --auth --logpath=/dev/null
 ```
 
 ```sh
@@ -75,7 +60,7 @@ docker-compose up -d
 
 ## Building From Source
 
-You'll need [NPM](https://www.npmjs.com/get-npm) installed before continuing.
+You'll need [NPM](https://www.npmjs.com/get-npm) and [MongoDB](https://docs.mongodb.com/manual/administration/install-community/) installed before continuing.
 
 Clone the repo:
 ```sh
@@ -92,12 +77,7 @@ npm start
 
 Sample .env file:
 ```env
-DB_DRIVER=sqlite # postgres,  mysql, cockroachdb, mariadb, sqlite, mssql,
-DB_HOST=DATABASE_HOST
-DB_PORT=DATABASE_PORT
-DB_USERNAME=DATABASE_USERNAME
-DB_PASSWORD=DATABASE_PASSWORD
-DB_NAME=DATABASE_NAME
+MONGO_URL=YOUR_MONGO_DB
 MUSIC_PATH=PATH_TO_YOUR_MUSIC
 CACHE_PATH=./cache
 SPOTIFY_ID=YOUR_SPOTIFY_ID

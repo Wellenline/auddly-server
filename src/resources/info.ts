@@ -1,6 +1,5 @@
 import * as os from "os";
 import { Resource, Get } from "@wellenline/via";
-import { Server } from "../entities/server";
 import { ScanModel } from "@src/models/scan";
 
 @Resource("/info")
