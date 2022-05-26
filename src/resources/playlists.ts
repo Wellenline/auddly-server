@@ -28,7 +28,22 @@ export class Playlists {
 	@Get("/:id")
 	@Before(Can("read:playlist"))
 	public async view(@Context() context: IContext) {
-		return await PlaylistModel.findById(context.params.id).populate("tracks");
+		return await PlaylistModel.findById(context.params.id).populate([{
+			path: "tracks",
+			populate: [{
+				path: "album",
+				populate: [{
+					path: "artist",
+				}],
+			}, {
+				path: "genre",
+			}, {
+				path: "artists",
+
+			}]
+		}, {
+			path: "created_by",
+		}]);
 	}
 
 	@Post("/")
@@ -47,7 +62,7 @@ export class Playlists {
 			throw new HttpException("Playlist not found", HttpStatus.NOT_FOUND);
 		}
 
-		if (playlist.tracks.map((track) => track.toString()).includes(context.params.track)) {
+		if (playlist.tracks.map((track) => track.toString()).includes(context.body.track)) {
 			throw new HttpException("Track already in playlist", HttpStatus.BAD_REQUEST);
 		}
 
