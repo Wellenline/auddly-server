@@ -1,10 +1,12 @@
+import { Can } from "@src/middleware/access";
 import { TrackModel } from "@src/models/track";
-import { Resource, Get } from "@wellenline/via";
+import { Resource, Get, Before } from "@wellenline/via";
 import moment from "moment";
 
 @Resource("/insights")
 export class Insights {
 	@Get("/")
+	@Before(Can())
 	public async index() {
 		const tracks = await TrackModel.find({
 			last_play: {

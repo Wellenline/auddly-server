@@ -8,9 +8,9 @@ export class Artists {
 		const limit = context.query.limit || 20;
 
 		return {
-			artists: await ArtistModel.find().sort(context.query.sort || "-created_at").skip(skip).limit(limit),
+			data: await ArtistModel.find().sort(context.query.sort || "-created_at").skip(skip).limit(limit),
 			total: await ArtistModel.countDocuments(),
-			query: {
+			metadata: {
 				skip,
 				limit,
 			},

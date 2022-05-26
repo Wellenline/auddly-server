@@ -1,11 +1,13 @@
-import { Resource, Get, Context, IContext } from "@wellenline/via";
+import { Resource, Get, Context, IContext, Before } from "@wellenline/via";
 
 import { Track, TrackModel } from "@src/models/track";
 import { Album, AlbumModel } from "@src/models/album";
 import { Artist, ArtistModel } from "@src/models/artist";
+import { Can } from "@src/middleware/access";
 @Resource("/search")
 export class Search {
 	@Get("/")
+	@Before(Can())
 	public async index(@Context() context: IContext) {
 		const results:
 			{ albums: Album[], artists: Artist[], tracks: Track[] } = {

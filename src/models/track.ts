@@ -1,7 +1,9 @@
 import { getModelForClass, mongoose, pre, prop, Ref, ReturnModelType } from "@typegoose/typegoose";
+import { HttpException, HttpStatus } from "@wellenline/via";
 import { Album } from "./album";
 import { Artist } from "./artist";
 import { Genre } from "./genre";
+import { LikeModel } from "./like";
 import { Playlist } from "./playlist";
 
 
@@ -101,6 +103,31 @@ export class Track {
 		return track;
 	}
 
+	public static async like(this: ReturnModelType<typeof Track>, id: string, user: string) {
+		const track = await this.findById(id);
+
+		if (!track) {
+			throw new HttpException("Track not found", HttpStatus.NOT_FOUND);
+		}
+
+		// check if user has already liked post
+		const like = await LikeModel.findOne({ created_by: user, track: track._id });
+
+		if (like) {
+			await like.remove();
+		} else {
+			await LikeModel.create({
+				track: id,
+				created_by: user,
+				created_at: new Date()
+			});
+		}
+
+		return {
+			success: true,
+		};
+	}
+
 	@prop()
 	public name: string;
 
@@ -109,9 +136,6 @@ export class Track {
 
 	@prop({ ref: "Artist" })
 	public artists: Ref<Artist>[];
-
-	@prop({ ref: "Playlist" })
-	public playlists?: Ref<Playlist, string>[];
 
 	@prop({ ref: "Album" })
 	public album: Ref<Album>;
@@ -138,7 +162,7 @@ export class Track {
 	public year: number;
 
 	@prop()
-	public number: number;
+	public number!: number;
 
 	@prop({ default: false })
 	public lossless: boolean;

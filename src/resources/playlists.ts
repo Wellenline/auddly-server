@@ -1,17 +1,23 @@
+import { Can } from "@src/middleware/access";
 import { PlaylistModel } from "@src/models/playlist";
 import { TrackModel } from "@src/models/track";
-import { Resource, Get, Post, Context, IContext, Put, HttpException, HttpStatus, Delete } from "@wellenline/via";
+import { Resource, Get, Post, Context, IContext, Put, HttpException, HttpStatus, Delete, Before } from "@wellenline/via";
 @Resource("/playlists")
 export class Playlists {
 
 	@Get("/")
+	@Before(Can("read:playlist"))
 	public async index(@Context() context: IContext) {
 		const skip = context.query.skip || 0;
 		const limit = context.query.limit || 20;
+
+		const query = {
+			created_by: context.payload.id
+		}
 		return {
-			playlists: await PlaylistModel.find().skip(skip).limit(limit),
-			total: await PlaylistModel.countDocuments(),
-			query: {
+			data: await PlaylistModel.find(query).skip(skip).limit(limit),
+			total: await PlaylistModel.countDocuments(query),
+			metadata: {
 				...context.query,
 				skip,
 				limit,
@@ -19,121 +25,68 @@ export class Playlists {
 		};
 	}
 
-	/**
-	 * @api {get} /playlists/:id Get playlist
-	 * @apiDescription Get playlist
-	 * @apiGroup Playlists
-	 * @apiName playlists.view
-	 * @apiParam {id} playlist id
-	 * @apiVersion 3.0.0
-	 * @returns Playlist
-	 */
 	@Get("/:id")
+	@Before(Can("read:playlist"))
 	public async view(@Context() context: IContext) {
-		return await PlaylistModel.findById(context.params.id);
+		return await PlaylistModel.findById(context.params.id).populate("tracks");
 	}
 
-	/**
-	 * @api {post} /playlists Create a new playlist
-	 * @apiDescription Create a new playlist
-	 * @apiGroup Playlists
-	 * @apiName playlists.create
-	 * @apiParam {string} name playlist name
-	 * @apiParam {string} picture Optional playlist picture
-	 * @apiVersion 3.0.0
-	 * @returns Track
-	 */
 	@Post("/")
+	@Before(Can("create:playlist"))
 	public async create(@Context() context: IContext) {
-		return await PlaylistModel.create({ ...context.body, created_at: new Date(), updated_at: new Date() });
+		return await PlaylistModel.create({ ...context.body, created_by: context.payload.id, created_at: new Date(), updated_at: new Date() });
 	}
 
-	/**
-	 * @api {post} /playlists/:playlistId Add track to playlist
-	 * @apiDescription Add track to playlist
-	 * @apiGroup Playlists
-	 * @apiName playlists.upload
-	 * @apiParam {playlistId} playlist id
-	 * @apiParam {string[]} tracks track ids to add to playlist
-	 * @apiVersion 3.0.0
-	 * @returns Track
-	 */
 	@Post("/:id")
+	@Before(Can("update:playlist"))
 	public async add(@Context() context: IContext) {
 
-		const playlist = await PlaylistModel.findById(context.params.id);
+		const playlist = await PlaylistModel.findOne({ created_by: context.payload.id, _id: context.params.id });
 
 		if (!playlist) {
 			throw new HttpException("Playlist not found", HttpStatus.NOT_FOUND);
 		}
 
-		const track = await TrackModel.findByIdAndUpdate(context.body.track);
-
-		if (!track) {
-			throw new HttpException("Track not found", HttpStatus.NOT_FOUND);
+		if (playlist.tracks.map((track) => track.toString()).includes(context.params.track)) {
+			throw new HttpException("Track already in playlist", HttpStatus.BAD_REQUEST);
 		}
 
-		track.playlists = (track.playlists || []).concat([playlist._id]);
+		playlist.tracks = (playlist.tracks || []).concat([context.body.track]);
 
-		return await track.save();
+		return await playlist.save();
 
 	}
 
-	/**
-	 * @api {put} /playlists/:playlistId/ Update playlist
-	 * @apiDescription Update playlist
-	 * @apiGroup Playlists
-	 * @apiName playlists.update
-	 * @apiParam {playlistId} playlist id
-	 * @apiParam {name} playlist name
-	 * @apiParam {picture} playlist picture (optional)
-	 * @apiVersion 3.0.0
-	 * @returns Playlist<Result>
-	 */
 	@Put("/:id")
+	@Before(Can("update:playlist"))
 	public async update(@Context() context: IContext) {
 		const { name, picture } = context.body;
-		return await PlaylistModel.findByIdAndUpdate(context.params.id, {
+		return await PlaylistModel.findOneAndUpdate({ _id: context.params.id, created_by: context.payload.id }, {
 			name,
 			picture,
 		});
 	}
 
-	/**
-	 * @api {delete} /playlists/:playlistId/ Delete playlist
-	 * @apiDescription Delete playlist
-	 * @apiGroup Playlists
-	 * @apiName playlists.delete
-	 * @apiParam {id} playlist id
-	 * @apiVersion 3.0.0
-	 * @returns DeleteResult
-	 */
+
 	@Delete("/:id")
+	@Before(Can("delete:playlist"))
 	public async delete(@Context() context: IContext) {
-		return await PlaylistModel.findByIdAndRemove(context.params.id);
+		return await PlaylistModel.findOneAndRemove({ _id: context.params.id, created_by: context.payload.id });
 	}
 
-	/**
-	 * @api {delete} /playlists/:playlistId/:trackId Remove track from playlist
-	 * @apiDescription Remove track from playlist
-	 * @apiGroup Playlists
-	 * @apiName playlists.removeFromPlaylist
-	 * @apiParam {playlistId} playlist id
-	 * @apiParam {trackId} track id
-	 * @apiVersion 3.0.0
-	 * @returns Track
-	 */
+
 	@Delete("/:id/:track")
+	@Before(Can("update:playlist"))
 	public async removeFromPlaylist(@Context() context: IContext) {
-		const track = await TrackModel.findByIdAndRemove(context.params.track);
+		const playlist = await PlaylistModel.findById(context.params.id);
 
-		if (!track) {
-			throw new HttpException("Invalid track", HttpStatus.NOT_FOUND);
+		if (!playlist) {
+			throw new HttpException("Invalid playlist", HttpStatus.NOT_FOUND);
 		}
-		if (track.playlists) {
-			track.playlists = track.playlists.filter((playlist) => context.params.id !== playlist.toString());
+		if (playlist.tracks) {
+			playlist.tracks = playlist.tracks.filter((track) => context.params.track !== track.toString());
 
-			return await track.save();
+			return await playlist.save();
 		}
 	}
 }

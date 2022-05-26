@@ -18,7 +18,7 @@ export interface IFileIncoming {
 }
 
 export async function _considerFilesForSync(payload: IFilesForSync) {
-	console.log("consider files for syn");
+	console.log("consider files for sync");
 	const { files, separator, root } = payload;
 	console.log(files);
 	const syncFiles = (await Promise.all(files.map(async (file: any) => {
@@ -32,13 +32,13 @@ export async function _considerFilesForSync(payload: IFilesForSync) {
 				name,
 			}
 		});*/
-		const track = TrackModel.findOne({
+		const track = await TrackModel.findOne({
 			path: {
 				$regex: name.toString(),
 				$options: "i",
 			}
 		});
-
+		console.log(track, !track ? file : false);
 		return !track ? file : false;
 
 	}))).filter((file) => file);
@@ -63,7 +63,7 @@ export async function _handleIncomingFile(payload: IFileIncoming) {
 		mkdirSync(`${process.env.MUSIC_PATH}/${dir}`, { recursive: true });
 	}
 
-	const source = createReadStream(data.path);
+	const source = createReadStream(data.filepath);
 	const dest = createWriteStream(`${process.env.MUSIC_PATH}/${dir}/${name}`);
 
 

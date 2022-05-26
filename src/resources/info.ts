@@ -1,10 +1,12 @@
 import * as os from "os";
-import { Resource, Get } from "@wellenline/via";
+import { Resource, Get, Before } from "@wellenline/via";
 import { ScanModel } from "@src/models/scan";
+import { Can } from "@src/middleware/access";
 
 @Resource("/info")
 export class Info {
 	@Get("/")
+	@Before(Can())
 	public async info() {
 		const info = await ScanModel.findOne().sort("-end").lean();
 		return {

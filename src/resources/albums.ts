@@ -1,5 +1,6 @@
+import { Can } from "@src/middleware/access";
 import { AlbumModel } from "@src/models/album";
-import { Resource, Get, Context, IContext } from "@wellenline/via";
+import { Resource, Get, Context, IContext, Before } from "@wellenline/via";
 import { existsSync, readFileSync } from "fs";
 
 @Resource("/albums")
@@ -17,6 +18,8 @@ export class Albums {
 	}
 
 	@Get("/")
+	@Before(Can("read:album"))
+
 	public async index(@Context() context: IContext) {
 		const skip = context.query.skip || 0;
 		const limit = context.query.limit || 20;
@@ -30,9 +33,9 @@ export class Albums {
 		const albums = await AlbumModel.find(query).populate("artist").sort(context.query.sort || "-created_at").skip(skip).limit(limit);
 
 		return {
-			albums,
+			data: albums,
 			total: await AlbumModel.countDocuments(query),
-			query: {
+			metadata: {
 				...query,
 				skip,
 				limit,
@@ -41,11 +44,13 @@ export class Albums {
 	}
 
 	@Get("/random")
+	@Before(Can("read:album"))
 	public async random(@Context() context: IContext) {
 		return await AlbumModel.random(context.query.total);
 	}
 
 	@Get("/:id")
+	@Before(Can("read:album"))
 	public async album(@Context() context: IContext) {
 		return await AlbumModel.findById(context.params.id).populate("artist");
 	}

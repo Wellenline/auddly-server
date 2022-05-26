@@ -147,7 +147,7 @@ export async function build(files: string[]) {
 				album: album._id,
 				artist: names.join(", "),
 				genre: genre ? genre._id : undefined,
-				number: metadata.common.track.no,
+				number: metadata?.common?.track?.no || 1,
 				duration: metadata.format.duration || 0,
 				path: file,
 				lossless: metadata.format.lossless || false,

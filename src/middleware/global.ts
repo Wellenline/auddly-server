@@ -29,43 +29,17 @@ export const cors = async (context: IContext) => {
  */
 export const bodyParser = async (context: IContext) => {
 	return await new Promise((resolve, reject) => {
-		const form = new IncomingForm();
-		form.maxFields = 500;
-		form.maxFieldsSize = 2 * 1024 * 1024;
+		const form = new IncomingForm({
+			maxFields: 500,
+			maxFieldsSize: 2 * 1024 * 1024,
+		});
 		form.parse(context.req, (err, fields, files) => {
 			context.req.files = files;
 			context.req.body = fields;
 
 			context.files = files;
 			context.body = fields;
-
 			resolve(true);
 		});
 	});
-
-};
-
-export const auth = (whitelist: string[]) => {
-	return (context: IContext) => {
-		if (process.env.API_KEY && process.env.API_KEY.length > 0) {
-			if (whitelist.some((v) => context.req.parsed.path.startsWith(v))) {
-				return true;
-			}
-
-			const api_key = context.req.headers["x-api-key"] || context.req.query.key;
-			if (!api_key) {
-				throw new HttpException("API key missing", HttpStatus.UNAUTHORIZED);
-			}
-
-			if (process.env.API_KEY !== api_key.toString()) {
-				throw new HttpException("Invalid API key", HttpStatus.UNAUTHORIZED);
-			}
-
-			return true;
-		}
-
-		return true;
-
-	};
-
 };

@@ -1,9 +1,14 @@
+import { Can } from "@src/middleware/access";
 import { GenreModel } from "@src/models/genre";
-import { Resource, Get } from "@wellenline/via";
+import { Resource, Get, Before } from "@wellenline/via";
 @Resource("/genres")
 export class Genres {
 	@Get("/")
+	@Before(Can("read:genre"))
 	public async index() {
-		return await GenreModel.find();
+		return {
+			data: await GenreModel.find(),
+			total: await GenreModel.countDocuments(),
+		}
 	}
 }

@@ -1,9 +1,11 @@
 import { getType } from "mime";
-import { Context, IContext, Resource, Get, HttpException, Put } from "@wellenline/via";
+import { Context, IContext, Resource, Get, HttpException, Put, Before } from "@wellenline/via";
 import { statSync, createReadStream } from "fs";
 import { transcode } from "@src/common/library";
 import { TrackModel } from "@src/models/track";
 import { onScrobble } from "@src/providers/lastfm";
+import { Can } from "@src/middleware/access";
+import { LikeModel } from "@src/models/like";
 export interface ITrackQueryOptions {
 	skip?: number;
 	limit?: number;
@@ -20,6 +22,7 @@ export interface ITrackQueryOptions {
 @Resource("/tracks")
 export class Tracks {
 	@Get("/")
+	@Before(Can("read:track"))
 	public async tracks(@Context() context: IContext) {
 		const { skip, limit, genre, liked, sort, artist, album, playlist, popular }: ITrackQueryOptions = context.query;
 
@@ -34,7 +37,9 @@ export class Tracks {
 		}
 
 		if (liked) {
-			query.liked = liked;
+			const data = await LikeModel.find({ created_by: context.payload.id });
+			const ids = data.map(l => l.track);
+			query._id = { $in: ids };
 		}
 
 		if (artist) {
@@ -67,15 +72,13 @@ export class Tracks {
 		}, {
 			path: "artists",
 
-		}, {
-			path: "playlists"
 		}]).skip(skip || 0).limit(limit || 20);
 
 		const total = await TrackModel.countDocuments(query);
 
 		return {
-			tracks,
-			query: {
+			data: tracks,
+			metadata: {
 				...query,
 				skip,
 				limit,
@@ -87,6 +90,7 @@ export class Tracks {
 
 
 	@Get("/play/:id")
+	// @Before(Can())
 	public async stream(@Context() context: IContext) {
 		const track = await TrackModel.findById(context.params.id);
 		if (!track) {
@@ -137,40 +141,24 @@ export class Tracks {
 			return createReadStream(track.path);
 		}
 
-
-		/*const audio = readFileSync(track.path);
-		const stat = statSync(track.path);
-
-		context.headers = {
-			"Content-Type": getType(track.path),
-			"Accept-Ranges": "bytes",
-			"Content-Length": stat.size,
-		};
-
-		return audio;*/
 	}
 
 	@Get("/like/:id")
+	@Before(Can("read:track"))
 	public async like(@Context() context: IContext) {
-		const track = await TrackModel.findById(context.params.id);
-
-		if (!track) {
-			throw new HttpException("Invalid track");
-		}
-
-		track.liked = !track.liked;
-		track.updated_at = new Date();
-		return await track.save();
-
+		return await TrackModel.like(context.params.id, context.payload.id);
 	}
 
+
 	@Get("/random")
+	@Before(Can("read:track"))
 	public async random(@Context() context: IContext) {
 		return await TrackModel.random(context.query.total);
 	}
 
 
 	@Put(`/plays/:id`)
+	@Before(Can())
 	public async create(@Context() context: IContext) {
 		const track = await TrackModel.findById(context.params.id).populate("album");
 		if (!track) {
