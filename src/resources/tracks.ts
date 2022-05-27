@@ -6,6 +6,8 @@ import { TrackModel } from "@src/models/track";
 import { onScrobble } from "@src/providers/lastfm";
 import { Can } from "@src/middleware/access";
 import { LikeModel } from "@src/models/like";
+import { ChartModel } from "@src/models/chart";
+import { Album } from "@src/models/album";
 export interface ITrackQueryOptions {
 	skip?: number;
 	limit?: number;
@@ -168,6 +170,14 @@ export class Tracks {
 		track.last_play = new Date();
 
 		await track.save();
+
+		ChartModel.log({
+			track: track._id,
+			artist: (track.album as Album).artist?.toString(),
+			album: (track.album as any)._id.toString(),
+			genre: track.genre?.toString(),
+			created_by: context.payload.id,
+		});
 
 		// scrobble
 		onScrobble(track);
