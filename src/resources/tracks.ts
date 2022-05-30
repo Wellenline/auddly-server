@@ -39,8 +39,9 @@ export class Tracks {
 
 		if (liked) {
 			const data = await LikeModel.find({ created_by: context.payload.id });
-			const ids = data.map(l => l.track);
-			query._id = { $in: ids };
+			if (data.length > 0) {
+				query._id = { $in: data.map(l => l.track) };
+			}
 		}
 
 		if (artist) {
