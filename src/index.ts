@@ -10,14 +10,13 @@ import { Artists } from "./resources/artists";
 import { Playlists } from "./resources/playlists";
 import { Search } from "./resources/search";
 import { Sync } from "./resources/sync";
-import { Info } from "./resources/info";
 import { Tracks } from "./resources/tracks";
 import { watch } from "./common/library";
 import { Insights } from "./resources/insights";
 import { Roles } from "./resources/roles";
 import { Auth } from "./resources/auth";
 import { init } from "./common/setup";
-import { Index } from "./resources";
+import { Index } from "./resources/index";
 import { Users } from "./resources/users";
 
 export class App {
@@ -39,7 +38,7 @@ export class App {
 		bootstrap({
 			port: (process.env.PORT as number | string),
 			middleware: [cors, bodyParser],
-			resources: [Albums, Artists, Genres, Playlists, Search, Info, Tracks, Sync, Roles, Auth, Insights, Index, Users],
+			resources: [Albums, Artists, Genres, Playlists, Search, Tracks, Sync, Roles, Auth, Insights, Index, Users],
 		});
 
 

@@ -9,6 +9,6 @@ export class Genres {
 		return {
 			data: await GenreModel.find(),
 			total: await GenreModel.countDocuments(),
-		}
+		};
 	}
 }

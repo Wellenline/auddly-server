@@ -12,9 +12,8 @@ export class Albums {
 			"Content-Type": "image/png",
 		};
 		const id = context.params.id;
-		const image = existsSync(`${process.env.CACHE_PATH}/album-art/${id}`) ?
+		return existsSync(`${process.env.CACHE_PATH}/album-art/${id}`) ?
 			readFileSync(`${process.env.CACHE_PATH}/album-art/${id}`) : readFileSync(`./assets/placeholder.png`);
-		return image;
 	}
 
 	@Get("/")

@@ -47,7 +47,6 @@ export class Auth {
 		return await TokenModel.generateNew(context.body.access_token, context.body.refresh_token);
 	}
 
-
 	@Post("/password")
 	@Before(Validator.validate(AuthSchema.password))
 	public async password(@Context() context: IContext) {

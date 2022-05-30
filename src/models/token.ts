@@ -31,7 +31,7 @@ export class Token {
 			created_by: options.id,
 			created_at: new Date(),
 			...token,
-		} as any);
+		});
 
 		return token;
 	}
@@ -69,6 +69,7 @@ export class Token {
 	public static async findAccessToken(this: ReturnModelType<typeof Token>, access_token: string) {
 		return this.findOne({ access_token });
 	}
+
 	@prop()
 	public access_token: string;
 

@@ -12,7 +12,7 @@ export enum AuthProvider {
 
 export interface IAuthenticate {
 	provider: AuthProvider;
-	data: { token?: string, email?: string, password?: string, code?: string, state?: string, phone?: string, };
+	data: { email?: string, password?: string };
 }
 
 export interface ISignup {
@@ -43,7 +43,7 @@ export class User {
 		}
 
 		if (request.provider === AuthProvider.email) {
-			const user = await this.findOne({ email: request.data.email }).select("password account role email activated").populate("role");
+			const user = await this.findOne({ email: request.data.email }).select("password role email activated").populate("role");
 
 			if (!user || !user.password) {
 				throw new HttpException("Email address or password doesn't match any account!",
@@ -72,7 +72,7 @@ export class User {
 		const exists = await UserModel.findOne({ email: request.email.toLowerCase() }).select("email password");
 
 		if (exists) {
-			throw new HttpException("User already exists or the username is already taken!", HttpStatus.BAD_REQUEST);
+			throw new HttpException("User already exists!", HttpStatus.BAD_REQUEST);
 		}
 
 		const role = await RoleModel.findById(request.role);
@@ -83,7 +83,7 @@ export class User {
 
 		const user = await UserModel.create({
 			email: request.email.toLowerCase(),
-			password: hashSync(request.password, genSaltSync(10)),
+			password: hashSync(request.password, genSaltSync()),
 			provider: AuthProvider.email,
 			first_name: request?.first_name,
 			last_name: request?.last_name,
@@ -115,7 +115,7 @@ export class User {
 			throw new HttpException("Invalid user", HttpStatus.BAD_REQUEST);
 		}
 
-		user.password = hashSync(password, genSaltSync(10));
+		user.password = hashSync(password, genSaltSync());
 
 		await user.save();
 

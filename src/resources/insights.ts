@@ -4,20 +4,16 @@ import { ScanModel } from "@src/models/scan";
 import { TrackModel } from "@src/models/track";
 import { Resource, Get, Before, Context, IContext } from "@wellenline/via";
 import moment from "moment";
+import * as os from "os";
+
 
 @Resource("/insights")
 export class Insights {
 	@Get("/")
 	@Before(Can())
 	public async albums(@Context() context: IContext) {
-		// aggergate redirection data to group devices for last 14 days
 		const start = context.query.start || moment().subtract(1, "week").format("YYYY-MM-DD");
 		const end = context.query.end || moment().add(1, "day").format("YYYY-MM-DD");
-
-
-		/**
-		 * Get orders by country
-		 */
 		const albums = await ChartModel.aggregate([
 			{
 				$match: {
@@ -80,6 +76,7 @@ export class Insights {
 					album: {
 						_id: "$album._id",
 						name: "$album.name",
+						picture: "$album.picture",
 					},
 					artist: {
 						_id: "$artist._id",
@@ -180,7 +177,7 @@ export class Insights {
 				},
 			},
 			{
-				$limit: 5,
+				$limit: 15,
 			},
 			{
 				$lookup: {
@@ -199,11 +196,9 @@ export class Insights {
 
 			{
 				$project: {
-					_id: 0,
-					artist: {
-						_id: "$artist._id",
-						name: "$artist.name",
-					},
+					_id: "$artist._id",
+					name: "$artist.name",
+					picture: "$artist.picture",
 
 					playcount: "$count",
 				}
@@ -313,19 +308,28 @@ export class Insights {
 
 		const server = await ScanModel.findOne().sort("-end").lean();
 
+
 		return {
 			plays: {
 				labels: dateRange,
 				values: mappedData.map((item) => item.count),
 			},
-			server,
+			server: {
+				...server,
+				version: process.env.npm_package_version,
+				arch: os.arch(),
+				node_version: process.version,
+				num_cpus: os.cpus().length,
+				uptime: process.uptime(),
+				free_mem: os.freemem(),
+			},
 			streams_by_day,
 			stream_seconds: playtime[0],
 			albums,
 			tracks,
-			artists,
+			artists: artists.sort(() => Math.random() - 0.5),
 
-		}
+		};
 
 	}
 }

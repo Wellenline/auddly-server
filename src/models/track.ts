@@ -66,32 +66,7 @@ export class Track {
 
 			return track;
 		});
-		/*const total = await this.estimatedDocumentCount();
 
-		const data = [];
-
-		for (let i = 0; i < limit; i++) {
-			const skip = Math.floor(Math.random() * (total - min + 1)) + min;
-			const doc = await this.findOne().populate([{
-				path: "album",
-				populate: [{
-					path: "artist",
-				}],
-			}, {
-				path: "genre",
-			}, {
-				path: "artists",
-
-			}, {
-				path: "playlist"
-			}]).skip(skip).limit(1);
-
-			if (doc) {
-				data.push(doc);
-			}
-		}
-
-		return data;*/
 	}
 	public static async findOrCreate(this: ReturnModelType<typeof Track>, data: Track) {
 		let track = await this.findOne({ name: data.name, album: data.album });

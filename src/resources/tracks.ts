@@ -2,7 +2,7 @@ import { getType } from "mime";
 import { Context, IContext, Resource, Get, HttpException, Put, Before } from "@wellenline/via";
 import { statSync, createReadStream } from "fs";
 import { transcode } from "@src/common/library";
-import { TrackModel } from "@src/models/track";
+import { Track, TrackModel } from "@src/models/track";
 import { onScrobble } from "@src/providers/lastfm";
 import { Can } from "@src/middleware/access";
 import { LikeModel } from "@src/models/like";
@@ -16,7 +16,6 @@ export interface ITrackQueryOptions {
 	sort?: string;
 	artist?: string;
 	album?: string;
-	playlist?: string;
 	popular?: boolean;
 	artists?: string;
 
@@ -26,7 +25,7 @@ export class Tracks {
 	@Get("/")
 	@Before(Can("read:track"))
 	public async tracks(@Context() context: IContext) {
-		const { skip, limit, genre, liked, sort, artist, album, playlist, popular }: ITrackQueryOptions = context.query;
+		const { skip, limit, genre, liked, sort, artist, album, popular }: ITrackQueryOptions = context.query;
 
 
 		const query: any = {};
@@ -53,10 +52,6 @@ export class Tracks {
 			sort_by.field = "number";
 		}
 
-		if (playlist) {
-			query.playlists = playlist;
-		}
-
 		if (popular) {
 			query.plays = {
 				$gte: 10,
@@ -79,7 +74,11 @@ export class Tracks {
 		const total = await TrackModel.countDocuments(query);
 
 		return {
-			data: tracks,
+			data: tracks, /*  await Promise.all(tracks.map(async (track) => {
+				track.liked = !!(await LikeModel.findOne({ created_by: context.payload.id, track: track._id }));
+				return track;
+			})),
+			*/
 			metadata: {
 				...query,
 				skip,

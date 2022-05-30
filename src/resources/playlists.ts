@@ -13,7 +13,7 @@ export class Playlists {
 
 		const query = {
 			created_by: context.payload.id
-		}
+		};
 		return {
 			data: await PlaylistModel.find(query).skip(skip).limit(limit),
 			total: await PlaylistModel.countDocuments(query),
