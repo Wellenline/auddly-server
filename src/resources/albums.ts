@@ -18,7 +18,6 @@ export class Albums {
 
 	@Get("/")
 	@Before(Can("read:album"))
-
 	public async index(@Context() context: IContext) {
 		const skip = context.query.skip || 0;
 		const limit = context.query.limit || 20;

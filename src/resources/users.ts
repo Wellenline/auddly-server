@@ -1,4 +1,4 @@
-import { Resource, Context, IContext, Get, Before, Put, HttpException, HttpStatus } from "@wellenline/via";
+import { Resource, Context, IContext, Get, Before, Put, HttpException, HttpStatus, Post } from "@wellenline/via";
 import { UserModel } from "../models/user";
 import { Can } from "../middleware/access";
 import { Validator } from "@src/middleware/validator";
@@ -76,6 +76,23 @@ export class Users {
 		}
 
 		return await user.save();
+
+	}
+
+	@Post("/")
+	@Before(Can("create:user"), Validator.validate(UserSchema.create))
+	public async create(@Context() context: IContext) {
+		const { role, first_name, last_name, email, password } = context.body;
+
+
+		return await UserModel.signup({
+			first_name,
+			last_name,
+			email,
+			role,
+			password
+		});
+
 
 	}
 
