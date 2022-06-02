@@ -12,7 +12,7 @@ export interface ITrackQueryOptions {
 	skip?: number;
 	limit?: number;
 	genre?: string;
-	liked?: boolean;
+	liked?: boolean | string;
 	sort?: string;
 	artist?: string;
 	album?: string;
@@ -37,7 +37,7 @@ export class Tracks {
 			query.genre = genre;
 		}
 
-		if (liked) {
+		if (liked === "true") {
 			const data = await LikeModel.find({ created_by: context.payload.id });
 			if (data.length > 0) {
 				query._id = { $in: data.map(l => l.track) };

@@ -31,16 +31,6 @@ export class Track {
 				},
 			},
 
-			{
-				$lookup:
-				{
-					from: "playlists",
-					localField: "playlists",
-					foreignField: "_id",
-					as: "playlists",
-				},
-			},
-
 			{ $unwind: { path: "$album" } },
 
 
