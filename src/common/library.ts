@@ -12,11 +12,6 @@ import Sox, { SoxOptions } from "sox-stream";
 import { format } from "util";
 
 
-
-/**
- * Acceptable extensions
- */
-
 const library = {
 	ext: [".mp3", ".flac", ".m4a"],
 };
@@ -25,6 +20,12 @@ let timer: NodeJS.Timeout;
 let tracks: any[] = [];
 let size = 0;
 
+/**
+ * It takes a string, makes it lowercase, splits it into an array of words, capitalizes the first
+ * letter of each word, and then joins the array back into a string
+ * @param {string} string - string - The string to capitalize.
+ * @returns A function that takes a string and returns a string.
+ */
 export function capitalize(string: string) {
 	return string ? string.toLowerCase()
 		.split(" ")
@@ -32,6 +33,11 @@ export function capitalize(string: string) {
 		.join(" ") : string;
 }
 
+/**
+ * It watches the music directory for new files and removes them from the library when they are deleted
+ * @param {string[]} [ext] - An array of file extensions to watch for. If not provided, it will default
+ * to the following:
+ */
 export function watch(ext?: string[]) {
 	if (ext && ext.length > 0) {
 		library.ext = ext;
@@ -44,6 +50,13 @@ export function watch(ext?: string[]) {
 	}).on("add", _onFileAdded).on("unlink", _onFileRemoved);
 }
 
+/**
+ * It takes a track and some options, and returns a promise that resolves to the path of the transcoded
+ * audio file
+ * @param {Track} track - The track object that contains the path to the audio file.
+ * @param {SoxOptions} options - {
+ * @returns A promise that resolves to a string.
+ */
 export function transcode(track: Track, options: SoxOptions): Promise<string> {
 	return new Promise((resolve, reject) => {
 		const audioFile = `${process.env.CACHE_PATH}/transcode/${(track as any).id}.mp3`;
@@ -68,6 +81,12 @@ export function transcode(track: Track, options: SoxOptions): Promise<string> {
 	});
 }
 
+/**
+ * It takes an array of file paths, parses the metadata of each file, and then creates a new document
+ * in the database for each file
+ * @param {string[]} files - string[] - An array of file paths to scan
+ * @returns The return value is a promise that resolves to the updated scan document.
+ */
 export async function build(files: string[]) {
 	if (!existsSync(`${process.env.CACHE_PATH as string}`)) {
 		mkdirSync(`${process.env.CACHE_PATH as string}`);
@@ -179,6 +198,12 @@ export async function build(files: string[]) {
 	});
 }
 
+/**
+ * It adds a file to the list of tracks to be added to the library, and if the list is not empty after
+ * 3 seconds, it sorts the list by creation time and adds the tracks to the library
+ * @param {string} path - The path of the file that was added.
+ * @param {Stats} [stat] - Stats - The stats of the file that was added.
+ */
 export function _onFileAdded(path: string, stat?: Stats) {
 	clearTimeout(timer);
 	if (library.ext.includes(extname(path))) {
@@ -198,6 +223,10 @@ export function _onFileAdded(path: string, stat?: Stats) {
 	}, 3000);
 }
 
+/**
+ * > When a file is removed, delete the records from the database
+ * @param {string} path - The path of the file that was removed.
+ */
 export function _onFileRemoved(path: string) {
 	console.log(`TODO: delete records from db on file delete event`);
 	console.log(`File ${path} has been removed`);

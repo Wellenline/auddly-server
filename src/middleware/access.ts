@@ -2,9 +2,11 @@ import { TokenModel } from "@src/models/token";
 import { IContext, HttpException, HttpStatus } from "@wellenline/via";
 import cookie from "cookie";
 
+
 /**
- * Extract access token from request
- * @param context Request context
+ * It gets the access token from the request headers, query string, or cookies
+ * @param {IContext} context - IContext - This is the context object that is passed to the resolver.
+ * @returns A function that takes a context object and returns a token.
  */
 export const getAccessToken = (context: IContext) => {
 	/// console.log(context.req.headers.cookie);
@@ -26,9 +28,12 @@ export const getAccessToken = (context: IContext) => {
 	return token;
 };
 
+
 /**
- * Check if user has access to resource
- * @param permission string
+ * It takes a permission as an argument, and returns a function that takes a context as an argument,
+ * and returns a boolean
+ * @param {string} [permission] - The permission you want to check for.
+ * @returns A function that takes a context and returns a boolean.
  */
 export const Can = (permission?: string) => {
 	return async (context: IContext) => {

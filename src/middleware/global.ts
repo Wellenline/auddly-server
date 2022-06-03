@@ -2,8 +2,9 @@ import { IContext, HttpStatus, app, HttpException } from "@wellenline/via";
 import { IncomingForm } from "formidable";
 
 /**
- * Basic cors module
- * @param context request
+ * It sets the headers for the response object
+ * @param {IContext} context - IContext - This is the context object that is passed to the middleware.
+ * @returns a boolean value.
  */
 export const cors = async (context: IContext) => {
 	app.headers = {
@@ -24,8 +25,9 @@ export const cors = async (context: IContext) => {
 };
 
 /**
- * Simple body parser
- * @param context request
+ * It parses the incoming request body and attaches the parsed data to the request object
+ * @param {IContext} context - IContext - This is the context object that is passed to the middleware.
+ * @returns A function that returns a promise.
  */
 export const bodyParser = async (context: IContext) => {
 	return await new Promise((resolve, reject) => {

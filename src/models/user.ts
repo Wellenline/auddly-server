@@ -32,6 +32,10 @@ export interface ISignup {
 		this.updated_at = new Date();
 	}
 
+	if (this.isModified("password") || this.isNew) {
+		this.password = hashSync(this.password as string, genSaltSync());
+	}
+
 	next();
 })
 export class User {
@@ -83,7 +87,8 @@ export class User {
 
 		const user = await UserModel.create({
 			email: request.email.toLowerCase(),
-			password: hashSync(request.password, genSaltSync()),
+			password: request.password,
+			// password: hashSync(request.password, genSaltSync()),
 			provider: AuthProvider.email,
 			first_name: request?.first_name,
 			last_name: request?.last_name,
@@ -115,7 +120,7 @@ export class User {
 			throw new HttpException("Invalid user", HttpStatus.BAD_REQUEST);
 		}
 
-		user.password = hashSync(password, genSaltSync());
+		user.password = password;
 
 		await user.save();
 

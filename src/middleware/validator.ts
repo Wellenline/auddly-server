@@ -1,13 +1,13 @@
 import Joi from "joi";
 import { IContext, HttpException, HttpStatus } from "@wellenline/via";
-
 export class Validator {
 
 	/**
-	 * Validate Requests
-	 * @param  {IRequest} req
-	 * @param  {IResponse} res
-	 * @param  {Function} next
+	 * It takes a Joi schema, validates the request body against it, and if it passes, it assigns the
+	 * validated result to the request body
+	 * @param schema - Joi.ObjectSchema - This is the Joi schema that you want to validate the request
+	 * body against.
+	 * @returns A function that takes a context and returns a boolean.
 	 */
 	public static validate(schema: Joi.ObjectSchema) {
 		return async (context: IContext) => {

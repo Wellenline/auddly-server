@@ -7,6 +7,8 @@ export const UserSchema = {
 		last_name: Joi.string().optional(),
 		email: Joi.string().required(),
 		role: Joi.string().optional(),
+		password: Joi.string().optional().min(8).alphanum().error(new Error("Please make sure your password is at least 8 characters and includes at least one uppercase/lowercase letter!")),
+
 	}),
 
 	create: Joi.object().keys({
