@@ -1,6 +1,6 @@
 {
 	"name": "auddly-server",
-	"version": "4.0.0",
+	"version": "5.0.0",
 	"description": "Auddly Music Server",
 	"main": "dist/app.js",
 	"bin": "dist/app.js",

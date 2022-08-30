@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.0.0](https://github.com/Wellenline/waveline-server/compare/v4.0.0...v5.0.0) (2022-08-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* **core:** Api endpoints have changed
+
+### Features
+
+* **core:** users ([46ba169](https://github.com/Wellenline/waveline-server/commit/46ba16962fbb6b91ddc54094ae9a95ed50090cc1))
+* **insights:** basic insights about listening habits ([64ceee4](https://github.com/Wellenline/waveline-server/commit/64ceee489d7076722aac3576fef84adb6077dec6))
+* **playlists:** populate track, album, artist metadata when querying playlists ([5a61b24](https://github.com/Wellenline/waveline-server/commit/5a61b24c4001c154bc5eea4fb5d537f14d7aaff0))
+* **tracks:** fix filtering ([3131d95](https://github.com/Wellenline/waveline-server/commit/3131d952686b7eee2d95b25eaec1aece3c7ce39b))
+* **users:** multi user support ([8c4bfa1](https://github.com/Wellenline/waveline-server/commit/8c4bfa141e8f303dd12b0dd6ca1dd6e2fe2ade7c))
+
 ## [4.0.0](https://github.com/Wellenline/waveline-server/compare/v3.2.0...v4.0.0) (2021-05-30)
 
 
