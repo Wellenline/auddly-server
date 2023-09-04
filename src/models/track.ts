@@ -6,7 +6,62 @@ import { Genre } from "./genre";
 import { LikeModel } from "./like";
 import { Playlist } from "./playlist";
 
+export class Features {
 
+	@prop()
+	public danceability: number;
+
+	@prop()
+	public energy: number;
+
+	@prop()
+	public key: number;
+
+	@prop()
+	public loudness: number;
+
+	@prop()
+	public mode: number;
+
+	@prop()
+	public speechiness: number;
+
+	@prop()
+	public acousticness: number;
+
+	@prop()
+	public instrumentalness: number;
+
+	@prop()
+	public liveness: number;
+
+	@prop()
+	public valence: number;
+
+	@prop()
+	public tempo: number;
+
+	@prop()
+	public type: string;
+
+	@prop()
+	public spotify_id: string;
+
+	@prop()
+	public uri: string;
+
+	@prop()
+	public track_href: string;
+
+	@prop()
+	public analysis_url: string;
+
+	@prop()
+	public duration_ms: number;
+
+	@prop()
+	public time_signature: number;
+}
 export class Track {
 	public static async random(this: ReturnModelType<typeof Track>, size: number = 5, min = 0) {
 
@@ -58,10 +113,11 @@ export class Track {
 		});
 
 	}
-	public static async findOrCreate(this: ReturnModelType<typeof Track>, data: Track) {
+	public static async findOrCreate(this: ReturnModelType<typeof Track>, data: any) {
 		let track = await this.findOne({ name: data.name, album: data.album });
 
 		if (!track) {
+
 			track = await this.create(data);
 		}
 
@@ -79,7 +135,7 @@ export class Track {
 		const like = await LikeModel.findOne({ created_by: user, track: track._id });
 
 		if (like) {
-			await like.remove();
+			await like.deleteOne();
 		} else {
 			await LikeModel.create({
 				track: id,
@@ -131,6 +187,9 @@ export class Track {
 
 	@prop({ default: false })
 	public lossless: boolean;
+
+	@prop()
+	public features?: Features
 
 	@prop()
 	public updated_at: Date;

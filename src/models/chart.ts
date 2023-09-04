@@ -4,9 +4,10 @@ import { Artist } from "./artist";
 import { Genre } from "./genre";
 import { Track } from "./track";
 import { User } from "./user";
+import { Types } from "mongoose";
 
 export class Chart {
-	public static async log(this: ReturnModelType<typeof Chart>, options: { created_by: string, artist?: string, album?: string, track?: string, genre?: string }) {
+	public static async log(this: ReturnModelType<typeof Chart>, options: { created_by: string, artist?: string, album?: string, track?: string | Types.ObjectId, genre?: string }) {
 		await this.create({ ...options, created_at: new Date() });
 	}
 

@@ -135,6 +135,6 @@ export class Users {
 			created_by: user._id
 		});
 
-		return await user.remove();
+		return await user.deleteOne();
 	}
 }

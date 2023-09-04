@@ -3,10 +3,10 @@ import { Resource, Post, Context, IContext, Before, Get, HttpStatus, HttpExcepti
 import moment from "moment";
 import cookie from "cookie";
 
-import { AuthProvider, UserModel } from "../models/user";
-import { Validator } from "../middleware/validator";
-import { AuthSchema } from "../middleware/schemas/auth";
-import { TokenModel } from "../models/token";
+import { AuthProvider, UserModel } from "@src/models/user";
+import { Validator } from "@src/middleware/validator";
+import { AuthSchema } from "@src/middleware/schemas/auth";
+import { TokenModel } from "@src/models/token";
 
 
 @Resource("/auth")

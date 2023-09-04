@@ -25,6 +25,130 @@ export class Playlists {
 		};
 	}
 
+	@Get("/suggest")
+	@Before(Can("read:playlist"))
+	public async suggest(@Context() context: IContext) {
+		/*const DEFAULT_PLAYLIST_SIZE = 20;
+		const DEFAULT_AGGREGATION = [
+			{ $sample: { size: DEFAULT_PLAYLIST_SIZE } },
+			{
+				$lookup: {
+					from: "albums",
+					localField: "album",
+					foreignField: "_id",
+					as: "album",
+				},
+			},
+			{
+				$lookup: {
+					from: "artists",
+					localField: "artists",
+					foreignField: "_id",
+					as: "artists",
+				},
+			},
+			{ $unwind: { path: "$album" } },
+			{
+				$lookup: {
+					from: "artists",
+					localField: "album.artist",
+					foreignField: "_id",
+					as: "album.artist",
+				},
+			},
+			{ $unwind: { path: "$album.artist" } },
+		];
+
+		const getTracksByFeatures = async (features) => {
+			const tracks = await TrackModel.aggregate([
+				{ $match: features },
+				...DEFAULT_AGGREGATION,
+			]);
+
+			return {
+				tracks,
+				playlistName: `${features.name} Tracks`,
+			};
+		};
+
+		const playlists = await Promise.all([
+			getTracksByFeatures({
+				name: "Danceable",
+				"features.danceability": { $gt: 0.5 },
+			}),
+			getTracksByFeatures({
+				name: "Energetic",
+				"features.energy": { $gt: 0.8 },
+			}),
+			getTracksByFeatures({
+				name: "Happy",
+				"features.valence": { $gt: 0.8 },
+			}),
+			getTracksByFeatures({
+				name: "Sad",
+				valence: { $lt: 0.3 },
+				energy: { $lt: 0.5 },
+			}),
+			getTracksByFeatures({
+				name: "Emotional",
+				valence: { $lt: 0.5 },
+				energy: { $lt: 0.7 },
+			}),
+			getTracksByFeatures({
+				name: "Chill",
+				"features.energy": { $lt: 0.3 },
+			}),
+			getTracksByFeatures({
+				name: "Instrumental",
+				"features.instrumentalness": { $gt: 0.8 },
+			}),
+			getTracksByFeatures({
+				name: "Upbeat",
+				"features.valence": { $gt: 0.7 },
+				"features.energy": { $gt: 0.7 },
+			}),
+			getTracksByFeatures({
+				name: "Mellow",
+				"features.valence": { $lt: 0.5 },
+				"features.energy": { $lt: 0.5 },
+			}),
+			getTracksByFeatures({
+				name: "Fast",
+				"features.tempo": { $gt: 120 },
+			}),
+			{
+				tracks: await TrackModel.aggregate([
+					{ $sort: { plays: -1 } },
+					{ $limit: DEFAULT_PLAYLIST_SIZE },
+					...DEFAULT_AGGREGATION,
+				]),
+				playlistName: "Popular Tracks",
+			},
+			{
+				tracks: await TrackModel.aggregate([
+					{ $sort: { created_at: -1 } },
+					{ $limit: DEFAULT_PLAYLIST_SIZE },
+					...DEFAULT_AGGREGATION,
+				]),
+				playlistName: "Recently Added Tracks",
+			},
+		]);
+
+		playlists.forEach((playlist: any) => {
+			playlist.tracks.forEach((track) => {
+				if (track.album.picture && !track.album.picture.includes("http")) {
+					track.album.picture = `${process.env.HOST}${track.album.picture}`;
+				}
+			});
+
+			playlist.name = playlist.playlistName;
+			delete playlist.playlistName;
+		});
+
+		return playlists;*/
+
+	}
+
 	@Get("/:id")
 	@Before(Can("read:playlist"))
 	public async view(@Context() context: IContext) {

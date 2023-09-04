@@ -3,6 +3,7 @@ import { ArtistModel } from "@src/models/artist";
 import { GenreModel } from "@src/models/genre";
 import { Scan, ScanModel } from "@src/models/scan";
 import { Track, TrackModel } from "@src/models/track";
+import { Type, KeyType, getTrack } from "@src/providers/spotify";
 import { watch as dirWatch } from "chokidar";
 import { createReadStream, createWriteStream, existsSync, mkdirSync, Stats, statSync } from "fs";
 import { parseFile } from "music-metadata";
@@ -138,15 +139,18 @@ export async function build(files: string[]) {
 				.map((name) => name.trim());
 
 
+
 			// Find or create new artist(s)
 			const artists = await ArtistModel.findOrCreate(names);
 
+			const albumArtist = await ArtistModel.findOrCreate([metadata.common.albumartist as string]);
 
 			const pictures = metadata.common.picture || [];
 
 			const albumItem = {
 				album: metadata.common.album || "",
-				artist: artists[0], // assume first artist is the album artist
+				artist: albumArtist[0], // assume first artist is the album artist
+				artists, // assume first artist is the album artist
 				year: metadata.common.year || 1970,
 				picture: pictures.length > 0 ? pictures[0].data : false,
 			};
@@ -159,6 +163,10 @@ export async function build(files: string[]) {
 			if (metadata.common.genre && metadata.common.genre[0]) {
 				genre = await GenreModel.findOrCreate(metadata.common.genre[0]);
 			}
+
+
+			const features = await getTrack(Type.TRACK, KeyType.TRACKS, `album:${metadata.common.album} artist:${metadata.common.artist} track:${metadata.common.title}`);
+
 
 			await TrackModel.findOrCreate({
 				name: capitalize(metadata.common.title || ""),
@@ -173,6 +181,7 @@ export async function build(files: string[]) {
 				year: metadata.common.year || 0,
 				created_at: new Date(),
 				updated_at: new Date(),
+				features,
 			});
 
 		} catch (err) {

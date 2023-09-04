@@ -75,11 +75,11 @@ export class Tracks {
 		const total = await TrackModel.countDocuments(query);
 
 		return {
-			data: tracks, /*  await Promise.all(tracks.map(async (track) => {
+			data: await Promise.all(tracks.map(async (track) => {
 				track.liked = !!(await LikeModel.findOne({ created_by: context.payload.id, track: track._id }));
 				return track;
 			})),
-			*/
+
 			metadata: {
 				...query,
 				skip,

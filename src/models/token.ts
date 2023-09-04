@@ -30,7 +30,10 @@ export class Token {
 		await TokenModel.create({
 			created_by: options.id,
 			created_at: new Date(),
-			...token,
+			access_token,
+			refresh_token: token.refresh_token,
+			expires_in: token.expires_at,
+			token_type: token.token_type,
 		});
 
 		return token;
@@ -46,7 +49,7 @@ export class Token {
 		const base64Url = exists.access_token.split(".")[1];
 		const data = JSON.parse(Buffer.from(base64Url, "base64").toString());
 
-		await exists.remove();
+		await exists.deleteOne();
 		return await this.generate(data.payload);
 	}
 

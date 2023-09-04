@@ -6,7 +6,8 @@ import { Artist } from "./artist";
 
 export interface IAlbumData {
 	album: string;
-	artist: Artist;
+	artists: Artist[] | Ref<Artist>[];
+	artist: Artist | Ref<Artist>;
 	year: number;
 	picture: Buffer | boolean | string;
 }
@@ -49,12 +50,13 @@ export class Album {
 				writeFileSync(`${process.env.CACHE_PATH}/album-art/${id}.png`, data.picture);
 				data.picture = `/albums/art/${id}.png`;
 			} else {
-				data.picture = await getPicture(Type.ALBUM, KeyType.ALBUMS, `album:${data.album} artist:${data.artist.name}`) as string;
+				data.picture = await getPicture(Type.ALBUM, KeyType.ALBUMS, `album:${data.album} artist:${data.artist}`) as string;
 			}
 
 			album = await this.create({
-				artist: data.artist,
+				artists: data.artists,
 				picture: data.picture,
+				artist: data.artist,
 				name: data.album,
 				year: data.year,
 				created_at: new Date(),
@@ -69,8 +71,14 @@ export class Album {
 	@prop()
 	public name: string;
 
+	@prop()
+	public album: string;
+
 	@prop({ ref: () => Artist })
 	public artist: Ref<Artist>;
+
+	@prop({ ref: () => Artist })
+	public artists: Ref<Artist>[];
 
 	@prop()
 	public picture: string;

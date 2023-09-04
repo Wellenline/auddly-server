@@ -5,6 +5,7 @@ import { randomBytes } from "crypto";
 import moment from "moment";
 import { Role, RoleModel } from "./role";
 import { TokenModel } from "./token";
+import { Types } from "mongoose";
 
 export enum AuthProvider {
 	email = "email",
@@ -21,7 +22,7 @@ export interface ISignup {
 	first_name?: string;
 	last_name?: string;
 	activated?: boolean;
-	role?: string;
+	role?: string | Types.ObjectId;
 }
 
 @pre<User>("save", function (next) {
@@ -62,7 +63,7 @@ export class User {
 			}
 
 			return await TokenModel.generate({
-				id: user._id,
+				id: user._id.toString(),
 				scopes: (user?.role as Role).scopes,
 				provider: AuthProvider.email,
 			});
@@ -99,7 +100,7 @@ export class User {
 		});
 
 		return await TokenModel.generate({
-			id: user._id,
+			id: user._id.toString(),
 			scopes: role.scopes,
 			provider: AuthProvider.email,
 		});
