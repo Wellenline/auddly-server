@@ -13,9 +13,10 @@ export class Artist {
 	}
 	public static async findOrCreate(this: ReturnModelType<typeof Artist>, names: string[]) {
 		const artists = [];
-		for (const name of names) {
+		// remove duplicate names
+		for (const name of [...new Set(names.filter((name) => name).map((name) => name.trim()))]) {
 
-			const hash = createHash("md5").update(name.toLowerCase().replace(/ /g, "_").trim()).digest("hex");
+			const hash = createHash("md5").update(name?.toLowerCase().replace(/ /g, "_").trim()).digest("hex");
 
 			let artist = await this.findOne({ hash });
 

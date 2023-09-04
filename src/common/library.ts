@@ -141,7 +141,7 @@ export async function build(files: string[]) {
 
 
 			// Find or create new artist(s)
-			const artists = await ArtistModel.findOrCreate(names);
+			const artists = await ArtistModel.findOrCreate([...names, metadata.common.albumartist as string]);
 
 			const albumArtist = await ArtistModel.findOrCreate([metadata.common.albumartist as string]);
 
