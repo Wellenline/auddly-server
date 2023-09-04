@@ -143,13 +143,13 @@ export async function build(files: string[]) {
 			// Find or create new artist(s)
 			const artists = await ArtistModel.findOrCreate([...names, metadata.common.albumartist as string]);
 
-			const albumArtist = await ArtistModel.findOrCreate([metadata.common.albumartist as string]);
+			// const albumArtist = await ArtistModel.findOrCreate([metadata.common.albumartist as string]);
 
 			const pictures = metadata.common.picture || [];
 
 			const albumItem = {
 				album: metadata.common.album || "",
-				artist: albumArtist[0], // assume first artist is the album artist
+				artist: artists[0], // assume first artist is the album artist
 				artists, // assume first artist is the album artist
 				year: metadata.common.year || 1970,
 				picture: pictures.length > 0 ? pictures[0].data : false,
