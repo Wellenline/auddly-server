@@ -28,7 +28,7 @@ export class Playlists {
 	@Get("/suggest")
 	@Before(Can("read:playlist"))
 	public async suggest(@Context() context: IContext) {
-		/*const DEFAULT_PLAYLIST_SIZE = 20;
+		const DEFAULT_PLAYLIST_SIZE = 150;
 		const DEFAULT_AGGREGATION = [
 			{ $sample: { size: DEFAULT_PLAYLIST_SIZE } },
 			{
@@ -59,15 +59,16 @@ export class Playlists {
 			{ $unwind: { path: "$album.artist" } },
 		];
 
-		const getTracksByFeatures = async (features) => {
+		const getTracksByFeatures = async (features: any) => {
+			const name = features.name;
+			delete features.name;
 			const tracks = await TrackModel.aggregate([
 				{ $match: features },
 				...DEFAULT_AGGREGATION,
 			]);
-
 			return {
 				tracks,
-				playlistName: `${features.name} Tracks`,
+				playlistName: `${name} Tracks`,
 			};
 		};
 
@@ -126,16 +127,16 @@ export class Playlists {
 			},
 			{
 				tracks: await TrackModel.aggregate([
-					{ $sort: { created_at: -1 } },
-					{ $limit: DEFAULT_PLAYLIST_SIZE },
 					...DEFAULT_AGGREGATION,
+					{ $limit: DEFAULT_PLAYLIST_SIZE },
+					{ $sort: { created_at: -1 } },
 				]),
 				playlistName: "Recently Added Tracks",
 			},
 		]);
 
 		playlists.forEach((playlist: any) => {
-			playlist.tracks.forEach((track) => {
+			playlist.tracks.forEach((track: any) => {
 				if (track.album.picture && !track.album.picture.includes("http")) {
 					track.album.picture = `${process.env.HOST}${track.album.picture}`;
 				}
@@ -145,7 +146,8 @@ export class Playlists {
 			delete playlist.playlistName;
 		});
 
-		return playlists;*/
+		return playlists;
+
 
 	}
 

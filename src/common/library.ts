@@ -7,6 +7,7 @@ import { Type, KeyType, getTrack } from "@src/providers/spotify";
 import { watch as dirWatch } from "chokidar";
 import { createReadStream, createWriteStream, existsSync, mkdirSync, Stats, statSync } from "fs";
 import { parseFile } from "music-metadata";
+import { TagType } from "music-metadata/lib/common/GenericTagTypes";
 import { extname } from "path";
 import ProgressBar from "progress";
 import Sox, { SoxOptions } from "sox-stream";
@@ -123,7 +124,7 @@ export async function build(files: string[]) {
 			const exists = await TrackModel.exists({ path: file });
 
 			if (exists) {
-				continue;
+				// 	continue;
 			}
 
 			const metadata = await parseFile(file);
@@ -132,11 +133,20 @@ export async function build(files: string[]) {
 				throw new Error("Not metadata found");
 			}
 
+			const lyrics = metadata.native[(metadata.format.tagTypes as TagType[])[0]]
+				?.find((tag: { id?: string }) => tag.id === "USLT")?.value;
 
-			const names = (metadata.common.artists || metadata.common.artist?.split(/[&,]+/) || [])
+
+
+			/*const names = (metadata.common.artists || metadata.common.artist?.split(/[&,]+/) || [])
 				.map((name) => name.split(/[&,]+/))
 				.reduce((a, b) => [...a, ...b], [])
-				.map((name) => name.trim());
+				.map((name) => name.trim());*/
+
+			const names: string[] = [...new Set(([
+				metadata.common.albumartist,
+				...metadata.common?.artists?.map((name: string) => name.split(/[&,]+/) || []) || [],
+				...(metadata.common.artist?.split(/[&,]+/) || [])]).flat().filter((name) => name as string).map((name) => name?.trim()))] as string[];
 
 
 
@@ -164,11 +174,7 @@ export async function build(files: string[]) {
 				genre = await GenreModel.findOrCreate(metadata.common.genre[0]);
 			}
 
-
-			const features = await getTrack(Type.TRACK, KeyType.TRACKS, `album:${metadata.common.album} artist:${metadata.common.artist} track:${metadata.common.title}`);
-
-
-			await TrackModel.findOrCreate({
+			const song: any = {
 				name: capitalize(metadata.common.title || ""),
 				artists,
 				album: album._id,
@@ -181,8 +187,32 @@ export async function build(files: string[]) {
 				year: metadata.common.year || 0,
 				created_at: new Date(),
 				updated_at: new Date(),
-				features,
-			});
+				lyrics,
+				metadata: {
+					disc: metadata?.common?.disk?.no ?? undefined,
+					genre: metadata?.common?.genre ?? undefined,
+					bitrate: metadata?.format?.bitrate ?? undefined,
+					sampleRate: metadata?.format?.sampleRate ?? undefined,
+					channels: metadata?.format?.numberOfChannels ?? undefined,
+					codec: metadata?.format?.codec ?? undefined,
+					container: metadata?.format?.container ?? undefined,
+					codecProfile: metadata?.format?.codecProfile ?? undefined,
+					encoder: metadata?.format?.tool ?? undefined,
+					encoderSettings: metadata?.format?.albumGain ?? undefined,
+					md5: metadata?.format?.audioMD5 ?? undefined,
+				}
+			}
+
+			if (!exists) {
+
+
+				const features = await getTrack(Type.TRACK, KeyType.TRACKS, `album:${metadata.common.album} artist:${metadata.common.artist} track:${metadata.common.title}`);
+
+				song.features = features;
+
+			}
+
+			await TrackModel.findOrCreate(song);
 
 		} catch (err) {
 			console.log(err);

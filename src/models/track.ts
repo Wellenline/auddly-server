@@ -117,11 +117,13 @@ export class Track {
 		let track = await this.findOne({ name: data.name, album: data.album });
 
 		if (!track) {
-
 			track = await this.create(data);
 		}
 
-		return track;
+		// update track
+		return await track.updateOne(data);
+
+		// return updated;
 	}
 
 	public static async like(this: ReturnModelType<typeof Track>, id: string, user: string) {
@@ -184,6 +186,16 @@ export class Track {
 
 	@prop()
 	public number!: number;
+
+	@prop()
+	public lyrics!: {
+		language: string;
+		text: string;
+		description: string;
+	};
+
+	@prop()
+	public metadata?: any;
 
 	@prop({ default: false })
 	public lossless: boolean;
